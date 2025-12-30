@@ -7,7 +7,8 @@ useHead({
     { rel: 'icon', href: '/favicon.ico' }
   ],
   htmlAttrs: {
-    lang: 'en'
+    lang: 'en',
+    class: 'dark'
   }
 })
 
@@ -20,12 +21,6 @@ useSeoMeta({
   ogTitle: title,
   ogDescription: description,
   twitterCard: 'summary_large_image'
-})
-
-// Set color mode to dark by default
-const colorMode = useColorMode()
-onMounted(() => {
-  colorMode.preference = 'dark'
 })
 </script>
 
@@ -43,7 +38,6 @@ onMounted(() => {
       </template>
 
       <template #right>
-        <UColorModeButton class="cursor-pointer" />
         <UButton
           to="https://github.com"
           target="_blank"

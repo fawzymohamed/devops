@@ -11,6 +11,14 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // Force dark mode only
+  colorMode: {
+    preference: 'dark',
+    fallback: 'dark',
+    classPrefix: '',
+    classSuffix: ''
+  },
+
   // GitHub Pages configuration
   ssr: false,
   app: {
