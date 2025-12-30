@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps to DevSecOps Learning Roadmap</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e4e4e4;
+        }
+        #root {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState } = React;
+
+        const roadmapData = [
+            {
+                phase: 0,
+                title: "Phase 0: Software Development Lifecycle (SDLC)",
+                duration: "1-2 weeks",
+                color: "#6366f1",
+                icon: "🔄",
+                description: "Understand how software is planned, built, tested, and delivered",
+                topics: [
+                    {
+                        name: "SDLC Models",
+                        subtopics: ["Waterfall Model", "Agile Methodology", "Scrum Framework", "Kanban", "DevOps as SDLC Evolution"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "SDLC Phases",
+                        subtopics: ["Requirements Gathering", "Design & Architecture", "Development/Coding", "Testing & QA", "Deployment", "Maintenance & Operations"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Development Workflows",
+                        subtopics: ["Feature Branching", "Code Reviews", "Pull Requests", "Release Management", "Hotfix Procedures"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Project Management Basics",
+                        subtopics: ["User Stories", "Sprint Planning", "Backlog Management", "Velocity & Estimation", "Retrospectives"],
+                        priority: "recommended"
+                    }
+                ]
+            },
+            {
+                phase: 1,
+                title: "Phase 1: Foundations",
+                duration: "6-8 weeks",
+                color: "#22c55e",
+                icon: "🏗️",
+                description: "Build the essential foundation everything else depends on",
+                topics: [
+                    {
+                        name: "Linux Fundamentals",
+                        subtopics: ["File System Hierarchy", "Navigation Commands (cd, ls, pwd)", "File Operations (cp, mv, rm, mkdir)", "File Permissions (chmod, chown)", "Users & Groups", "Process Management (ps, top, kill)", "Package Managers (apt, yum, dnf)", "System Services (systemd, systemctl)", "Cron Jobs & Scheduling", "Log Files & Journalctl"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Bash Scripting",
+                        subtopics: ["Variables & Data Types", "Conditionals (if/else)", "Loops (for, while)", "Functions", "Input/Output Redirection", "Pipes & Filters", "Text Processing (grep, sed, awk)", "Script Arguments", "Exit Codes", "Error Handling"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Networking Fundamentals",
+                        subtopics: ["OSI Model (7 Layers)", "TCP/IP Model", "IP Addressing & Subnetting", "DNS (Domain Name System)", "DHCP", "HTTP/HTTPS Protocols", "SSL/TLS Basics", "Firewalls & Ports", "Load Balancers", "VPNs", "Network Troubleshooting (ping, traceroute, netstat, ss, curl)"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Git Version Control",
+                        subtopics: ["Git Basics (init, clone, add, commit)", "Branching & Merging", "Remote Repositories", "Git Flow Workflow", "Rebasing vs Merging", "Cherry Picking", "Stashing Changes", "Resolving Conflicts", "Git Hooks", "Tags & Releases"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Python for Automation",
+                        subtopics: ["Python Syntax & Basics", "Data Types & Structures", "Control Flow", "Functions & Modules", "File Operations", "Error Handling (try/except)", "Working with APIs (requests)", "JSON/YAML Parsing", "Regular Expressions", "Virtual Environments (venv, pip)"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "YAML & JSON",
+                        subtopics: ["YAML Syntax", "JSON Syntax", "Data Structures", "Nested Objects", "Arrays/Lists", "Configuration Files", "Validation"],
+                        priority: "important"
+                    }
+                ]
+            },
+            {
+                phase: 2,
+                title: "Phase 2: Cloud Platforms (AWS Focus)",
+                duration: "6-8 weeks",
+                color: "#f59e0b",
+                icon: "☁️",
+                description: "Master cloud infrastructure - AWS is dominant in Saudi market",
+                topics: [
+                    {
+                        name: "Cloud Concepts",
+                        subtopics: ["IaaS vs PaaS vs SaaS", "Public vs Private vs Hybrid Cloud", "Regions & Availability Zones", "High Availability", "Scalability (Vertical vs Horizontal)", "Elasticity", "Fault Tolerance", "Disaster Recovery", "Cloud Pricing Models", "Shared Responsibility Model"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "AWS Identity & Access (IAM)",
+                        subtopics: ["Users & Groups", "Policies & Permissions", "Roles", "Multi-Factor Authentication (MFA)", "Access Keys", "Identity Federation", "AWS Organizations", "Service Control Policies", "Permission Boundaries", "IAM Best Practices"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "AWS Compute (EC2)",
+                        subtopics: ["Instance Types & Sizing", "Amazon Machine Images (AMIs)", "Key Pairs & SSH Access", "Security Groups", "Elastic IPs", "Instance Storage vs EBS", "Auto Scaling Groups", "Launch Templates", "Spot Instances", "Reserved Instances"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "AWS Networking (VPC)",
+                        subtopics: ["VPC Basics", "Subnets (Public vs Private)", "Internet Gateway", "NAT Gateway", "Route Tables", "Network ACLs", "VPC Peering", "VPC Endpoints", "Transit Gateway", "AWS Direct Connect Basics"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "AWS Storage",
+                        subtopics: ["S3 (Simple Storage Service)", "S3 Storage Classes", "S3 Lifecycle Policies", "S3 Versioning", "EBS (Elastic Block Store)", "EBS Volume Types", "EFS (Elastic File System)", "S3 Bucket Policies", "Cross-Region Replication"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "AWS Databases",
+                        subtopics: ["RDS (Relational Database Service)", "RDS Multi-AZ", "Read Replicas", "Aurora Basics", "DynamoDB Basics", "ElastiCache Overview", "Database Backup & Recovery"],
+                        priority: "important"
+                    },
+                    {
+                        name: "AWS Additional Services",
+                        subtopics: ["Route 53 (DNS)", "CloudFront (CDN)", "Elastic Load Balancer (ALB/NLB)", "Lambda (Serverless)", "CloudWatch (Monitoring)", "CloudTrail (Auditing)", "SNS & SQS (Messaging)", "Secrets Manager", "Systems Manager"],
+                        priority: "important"
+                    },
+                    {
+                        name: "AWS CLI & SDK",
+                        subtopics: ["AWS CLI Installation", "CLI Configuration", "Common CLI Commands", "AWS SDK (Python boto3)", "Infrastructure Queries", "Automation Scripts"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Azure Basics (Secondary)",
+                        subtopics: ["Azure Resource Manager", "Virtual Machines", "Azure VNet", "Azure Storage", "Azure Active Directory", "Azure DevOps Services"],
+                        priority: "recommended"
+                    }
+                ]
+            },
+            {
+                phase: 3,
+                title: "Phase 3: Containerization",
+                duration: "4-6 weeks",
+                color: "#0ea5e9",
+                icon: "🐳",
+                description: "Package and run applications consistently anywhere",
+                topics: [
+                    {
+                        name: "Container Concepts",
+                        subtopics: ["What are Containers?", "Containers vs Virtual Machines", "Container Runtime", "Container Images", "Image Layers", "Container Registries", "Microservices Architecture", "12-Factor App Principles"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Docker Fundamentals",
+                        subtopics: ["Docker Installation", "Docker Architecture", "Docker CLI Basics", "Running Containers", "Container Lifecycle", "Port Mapping", "Volume Mounts", "Environment Variables", "Container Logs", "Exec into Containers"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Docker Images",
+                        subtopics: ["Dockerfile Syntax", "Base Images", "COPY vs ADD", "RUN Instructions", "CMD vs ENTRYPOINT", "Multi-stage Builds", "Image Optimization", "Image Tagging", "Pushing to Registry", ".dockerignore"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Docker Compose",
+                        subtopics: ["Compose File Structure", "Services Definition", "Networks in Compose", "Volumes in Compose", "Environment Files", "Depends On", "Health Checks", "Scaling Services", "Override Files"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Container Registries",
+                        subtopics: ["Docker Hub", "Amazon ECR", "Azure Container Registry", "Private Registries", "Image Scanning Basics", "Registry Authentication"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Docker Networking",
+                        subtopics: ["Bridge Network", "Host Network", "None Network", "Custom Networks", "Container DNS", "Network Inspection"],
+                        priority: "important"
+                    }
+                ]
+            },
+            {
+                phase: 4,
+                title: "Phase 4: Container Orchestration (Kubernetes)",
+                duration: "6-8 weeks",
+                color: "#8b5cf6",
+                icon: "☸️",
+                description: "Manage containers at scale in production environments",
+                topics: [
+                    {
+                        name: "Kubernetes Concepts",
+                        subtopics: ["Why Kubernetes?", "K8s Architecture", "Control Plane Components", "Worker Node Components", "Declarative vs Imperative", "Desired State", "kubectl CLI"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Core Workloads",
+                        subtopics: ["Pods", "ReplicaSets", "Deployments", "StatefulSets", "DaemonSets", "Jobs & CronJobs", "Pod Lifecycle", "Init Containers", "Sidecar Containers"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Kubernetes Networking",
+                        subtopics: ["Services (ClusterIP, NodePort, LoadBalancer)", "Ingress Controllers", "Ingress Resources", "Network Policies", "DNS in Kubernetes", "Service Mesh Concepts"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Configuration & Storage",
+                        subtopics: ["ConfigMaps", "Secrets", "Persistent Volumes (PV)", "Persistent Volume Claims (PVC)", "Storage Classes", "Volume Types"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Kubernetes Security",
+                        subtopics: ["RBAC (Role-Based Access Control)", "Service Accounts", "Security Contexts", "Pod Security Standards", "Network Policies", "Secrets Management"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Helm Package Manager",
+                        subtopics: ["What is Helm?", "Helm Charts", "Chart Structure", "Values Files", "Helm Repositories", "Installing Charts", "Upgrading & Rollback", "Creating Custom Charts", "Chart Dependencies"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Managed Kubernetes",
+                        subtopics: ["Amazon EKS", "Azure AKS", "Google GKE", "EKS Node Groups", "EKS Add-ons", "eksctl CLI"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Advanced Concepts",
+                        subtopics: ["Horizontal Pod Autoscaler (HPA)", "Vertical Pod Autoscaler", "Cluster Autoscaler", "Resource Quotas", "Limit Ranges", "Pod Disruption Budgets", "Taints & Tolerations", "Node Affinity"],
+                        priority: "recommended"
+                    }
+                ]
+            },
+            {
+                phase: 5,
+                title: "Phase 5: Infrastructure as Code (IaC)",
+                duration: "4-6 weeks",
+                color: "#ec4899",
+                icon: "📝",
+                description: "Define and manage infrastructure through code",
+                topics: [
+                    {
+                        name: "IaC Concepts",
+                        subtopics: ["What is Infrastructure as Code?", "Benefits of IaC", "Declarative vs Imperative IaC", "Immutable Infrastructure", "Idempotency", "State Management", "Drift Detection"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Terraform Fundamentals",
+                        subtopics: ["Terraform Architecture", "HCL Syntax", "Providers", "Resources", "Data Sources", "Variables", "Outputs", "Terraform CLI Commands", "terraform init/plan/apply/destroy"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Terraform State",
+                        subtopics: ["Local State", "Remote State (S3 Backend)", "State Locking (DynamoDB)", "State Commands", "Import Existing Resources", "State Migration"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Terraform Advanced",
+                        subtopics: ["Modules", "Module Registry", "Workspaces", "Count & For Each", "Dynamic Blocks", "Conditional Expressions", "Local Values", "Built-in Functions", "Provisioners"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Terraform Best Practices",
+                        subtopics: ["Project Structure", "Naming Conventions", "Version Constraints", "Sensitive Data Handling", "Code Organization", "Testing Terraform", "CI/CD Integration"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Ansible Basics",
+                        subtopics: ["Ansible Architecture", "Inventory Files", "Ad-hoc Commands", "Playbooks", "Tasks & Handlers", "Variables & Facts", "Templates (Jinja2)", "Roles", "Ansible Galaxy", "Ansible Vault"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Configuration Management",
+                        subtopics: ["Ansible vs Terraform", "When to Use Each", "Combining IaC Tools", "Configuration Drift", "Desired State Configuration"],
+                        priority: "recommended"
+                    }
+                ]
+            },
+            {
+                phase: 6,
+                title: "Phase 6: CI/CD Pipelines",
+                duration: "4-6 weeks",
+                color: "#14b8a6",
+                icon: "🔄",
+                description: "Automate building, testing, and deploying applications",
+                topics: [
+                    {
+                        name: "CI/CD Concepts",
+                        subtopics: ["Continuous Integration (CI)", "Continuous Delivery vs Deployment", "Pipeline Stages", "Build Automation", "Automated Testing", "Deployment Strategies", "Blue-Green Deployments", "Canary Releases", "Rolling Updates", "Feature Flags"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Jenkins",
+                        subtopics: ["Jenkins Installation", "Jenkins Architecture", "Freestyle Projects", "Pipeline as Code (Jenkinsfile)", "Declarative vs Scripted Pipelines", "Pipeline Stages & Steps", "Jenkins Agents", "Jenkins Plugins", "Credentials Management", "Shared Libraries", "Multibranch Pipelines"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "GitHub Actions",
+                        subtopics: ["Workflow Files", "Events & Triggers", "Jobs & Steps", "Actions Marketplace", "Environment Variables", "Secrets", "Matrix Builds", "Reusable Workflows", "Self-hosted Runners", "Caching"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "GitLab CI/CD",
+                        subtopics: [".gitlab-ci.yml Structure", "Stages & Jobs", "Variables", "Artifacts", "Caching", "Runners", "Environments", "Review Apps", "Auto DevOps"],
+                        priority: "important"
+                    },
+                    {
+                        name: "GitOps & ArgoCD",
+                        subtopics: ["GitOps Principles", "ArgoCD Installation", "Application CRD", "Sync Strategies", "Rollback", "App of Apps Pattern", "Multi-cluster Management"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Artifact Management",
+                        subtopics: ["Artifact Repositories", "Nexus Repository", "JFrog Artifactory", "Container Registries", "Versioning Artifacts", "Artifact Promotion"],
+                        priority: "recommended"
+                    }
+                ]
+            },
+            {
+                phase: 7,
+                title: "Phase 7: Monitoring & Observability",
+                duration: "3-4 weeks",
+                color: "#f97316",
+                icon: "📊",
+                description: "Monitor, log, and trace application and infrastructure health",
+                topics: [
+                    {
+                        name: "Observability Concepts",
+                        subtopics: ["Three Pillars: Metrics, Logs, Traces", "Monitoring vs Observability", "SLIs, SLOs, SLAs", "Error Budgets", "Mean Time to Recovery (MTTR)", "Alerting Strategies", "On-Call Practices"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Prometheus",
+                        subtopics: ["Prometheus Architecture", "Metrics Types (Counter, Gauge, Histogram)", "PromQL Basics", "Exporters", "Service Discovery", "Recording Rules", "Alerting Rules", "AlertManager", "Prometheus Operator"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Grafana",
+                        subtopics: ["Grafana Installation", "Data Sources", "Dashboard Creation", "Panels & Visualizations", "Variables & Templates", "Alerting in Grafana", "Dashboard as Code", "Grafana Loki Integration"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Log Management",
+                        subtopics: ["Centralized Logging", "ELK Stack Overview", "Elasticsearch Basics", "Logstash/Fluentd", "Kibana Dashboards", "Grafana Loki", "Log Aggregation Patterns", "Log Retention"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Distributed Tracing",
+                        subtopics: ["Tracing Concepts", "OpenTelemetry", "Jaeger Basics", "Trace Context Propagation", "Span Analysis"],
+                        priority: "recommended"
+                    },
+                    {
+                        name: "AWS CloudWatch",
+                        subtopics: ["CloudWatch Metrics", "CloudWatch Logs", "CloudWatch Alarms", "CloudWatch Dashboards", "Log Insights", "Container Insights"],
+                        priority: "important"
+                    }
+                ]
+            },
+            {
+                phase: 8,
+                title: "Phase 8: DevSecOps - Security Integration",
+                duration: "6-8 weeks",
+                color: "#ef4444",
+                icon: "🔐",
+                description: "Integrate security throughout the entire DevOps lifecycle",
+                topics: [
+                    {
+                        name: "DevSecOps Fundamentals",
+                        subtopics: ["Shift Left Security", "Security as Code", "Security in SDLC", "Threat Modeling", "OWASP Top 10", "Defense in Depth", "Zero Trust Architecture", "Compliance as Code"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "SAST (Static Application Security Testing)",
+                        subtopics: ["What is SAST?", "SonarQube", "Semgrep", "Checkmarx", "CodeQL", "IDE Security Plugins", "Pre-commit Hooks", "Pipeline Integration"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "DAST (Dynamic Application Security Testing)",
+                        subtopics: ["What is DAST?", "OWASP ZAP", "Burp Suite", "Nikto", "Testing in CI/CD", "API Security Testing"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Container Security",
+                        subtopics: ["Image Scanning (Trivy, Clair)", "Base Image Security", "Dockerfile Best Practices", "Runtime Security (Falco)", "Container Hardening", "Distroless Images", "Image Signing", "Admission Controllers"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Kubernetes Security",
+                        subtopics: ["Pod Security Standards", "OPA/Gatekeeper", "Kyverno Policies", "Network Policies", "Secrets Encryption", "Audit Logging", "Service Mesh Security", "Kubernetes CIS Benchmarks"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Secrets Management",
+                        subtopics: ["HashiCorp Vault", "Vault Architecture", "Secret Engines", "Dynamic Secrets", "AWS Secrets Manager", "Azure Key Vault", "External Secrets Operator", "Sealed Secrets"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Infrastructure Security",
+                        subtopics: ["IaC Security Scanning (tfsec, Checkov)", "Cloud Security Posture (CSPM)", "AWS Security Hub", "Terraform Sentinel", "Compliance Scanning", "CIS Benchmarks"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Dependency & Supply Chain Security",
+                        subtopics: ["SCA (Software Composition Analysis)", "Snyk", "Dependabot", "SBOM (Software Bill of Materials)", "Dependency Scanning", "License Compliance", "Supply Chain Attacks"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Security Monitoring & Response",
+                        subtopics: ["Security Information & Event Management (SIEM)", "Intrusion Detection", "Incident Response", "Security Dashboards", "Compliance Reporting", "Vulnerability Management"],
+                        priority: "important"
+                    },
+                    {
+                        name: "Compliance & Governance",
+                        subtopics: ["SOC 2", "ISO 27001", "PCI DSS Basics", "GDPR Considerations", "Saudi NDMO Compliance", "Audit Trails", "Policy Enforcement"],
+                        priority: "recommended"
+                    }
+                ]
+            },
+            {
+                phase: 9,
+                title: "Phase 9: Certifications & Job Preparation",
+                duration: "4-8 weeks",
+                color: "#84cc16",
+                icon: "🎓",
+                description: "Validate your skills and prepare for the Saudi job market",
+                topics: [
+                    {
+                        name: "Priority Certifications",
+                        subtopics: ["AWS Solutions Architect Associate (SAA-C03)", "Certified Kubernetes Administrator (CKA)", "HashiCorp Terraform Associate", "AWS DevOps Professional (Optional)", "Azure Administrator AZ-104 (Optional)"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Hands-on Projects Portfolio",
+                        subtopics: ["End-to-End CI/CD Pipeline Project", "Kubernetes Deployment Project", "Infrastructure as Code Project", "Security Scanning Pipeline", "Monitoring Stack Deployment", "GitHub Portfolio Preparation"],
+                        priority: "essential"
+                    },
+                    {
+                        name: "Saudi Market Preparation",
+                        subtopics: ["CV Optimization for ATS", "LinkedIn Profile Update", "DevSecOps-focused CV Version", "Saudi Aramco Compliance Knowledge", "Vision 2030 Alignment", "Networking in Saudi Tech Community"],
+                        priority: "important"
+                    }
+                ]
+            }
+        ];
+
+        const priorityColors = {
+            essential: { bg: '#dc2626', text: 'white', label: 'Must Know' },
+            important: { bg: '#f59e0b', text: 'black', label: 'Should Know' },
+            recommended: { bg: '#3b82f6', text: 'white', label: 'Good to Know' }
+        };
+
+        function TopicCard({ topic, phaseColor }) {
+            const [expanded, setExpanded] = useState(false);
+            const priority = priorityColors[topic.priority];
+
+            return (
+                <div 
+                    style={{
+                        background: 'rgba(255,255,255,0.05)',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        marginBottom: '12px',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                    }}
+                    onClick={() => setExpanded(!expanded)}
+                >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span style={{ 
+                                fontSize: '18px', 
+                                fontWeight: '600',
+                                color: phaseColor
+                            }}>
+                                {topic.name}
+                            </span>
+                            <span style={{
+                                background: priority.bg,
+                                color: priority.text,
+                                padding: '2px 8px',
+                                borderRadius: '12px',
+                                fontSize: '11px',
+                                fontWeight: '600'
+                            }}>
+                                {priority.label}
+                            </span>
+                        </div>
+                        <span style={{ 
+                            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                            transition: 'transform 0.3s ease',
+                            fontSize: '20px'
+                        }}>
+                            ▼
+                        </span>
+                    </div>
+                    
+                    {expanded && (
+                        <div style={{ 
+                            marginTop: '16px',
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                            gap: '8px'
+                        }}>
+                            {topic.subtopics.map((subtopic, idx) => (
+                                <div 
+                                    key={idx}
+                                    style={{
+                                        background: 'rgba(255,255,255,0.08)',
+                                        padding: '8px 12px',
+                                        borderRadius: '8px',
+                                        fontSize: '13px',
+                                        borderLeft: `3px solid ${phaseColor}`
+                                    }}
+                                >
+                                    {subtopic}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        function PhaseCard({ phase, isActive, onClick }) {
+            return (
+                <div
+                    onClick={onClick}
+                    style={{
+                        background: isActive 
+                            ? `linear-gradient(135deg, ${phase.color}40, ${phase.color}20)`
+                            : 'rgba(255,255,255,0.05)',
+                        borderRadius: '16px',
+                        padding: '20px',
+                        cursor: 'pointer',
+                        border: isActive ? `2px solid ${phase.color}` : '2px solid transparent',
+                        transition: 'all 0.3s ease',
+                        minWidth: '280px'
+                    }}
+                >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '32px' }}>{phase.icon}</span>
+                        <div>
+                            <div style={{ 
+                                fontSize: '12px', 
+                                color: phase.color,
+                                fontWeight: '600',
+                                textTransform: 'uppercase',
+                                letterSpacing: '1px'
+                            }}>
+                                Phase {phase.phase}
+                            </div>
+                            <div style={{ fontSize: '16px', fontWeight: '600' }}>
+                                {phase.title.replace(`Phase ${phase.phase}: `, '')}
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{ 
+                        fontSize: '13px', 
+                        color: '#9ca3af',
+                        marginBottom: '8px'
+                    }}>
+                        {phase.description}
+                    </div>
+                    <div style={{
+                        display: 'inline-block',
+                        background: phase.color,
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: '600'
+                    }}>
+                        ⏱️ {phase.duration}
+                    </div>
+                </div>
+            );
+        }
+
+        function Roadmap() {
+            const [activePhase, setActivePhase] = useState(0);
+            const [viewMode, setViewMode] = useState('timeline');
+
+            const totalDuration = "8-12 months (accelerated: 5-7 months with your background)";
+            
+            const activeData = roadmapData[activePhase];
+
+            return (
+                <div>
+                    {/* Header */}
+                    <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+                        <h1 style={{ 
+                            fontSize: '36px', 
+                            fontWeight: '700',
+                            marginBottom: '8px',
+                            background: 'linear-gradient(90deg, #22c55e, #0ea5e9, #8b5cf6, #ef4444)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent'
+                        }}>
+                            DevOps → DevSecOps Learning Roadmap
+                        </h1>
+                        <p style={{ color: '#9ca3af', fontSize: '16px', marginBottom: '16px' }}>
+                            Personalized for Fawzy Mohamed | Saudi Arabia Market Focus
+                        </p>
+                        <div style={{
+                            display: 'inline-flex',
+                            gap: '24px',
+                            background: 'rgba(255,255,255,0.05)',
+                            padding: '12px 24px',
+                            borderRadius: '12px'
+                        }}>
+                            <div>
+                                <span style={{ color: '#9ca3af' }}>Total Duration: </span>
+                                <span style={{ fontWeight: '600', color: '#22c55e' }}>{totalDuration}</span>
+                            </div>
+                            <div>
+                                <span style={{ color: '#9ca3af' }}>Phases: </span>
+                                <span style={{ fontWeight: '600' }}>10</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Legend */}
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '24px',
+                        marginBottom: '32px',
+                        flexWrap: 'wrap'
+                    }}>
+                        {Object.entries(priorityColors).map(([key, value]) => (
+                            <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{
+                                    width: '16px',
+                                    height: '16px',
+                                    borderRadius: '4px',
+                                    background: value.bg
+                                }}></div>
+                                <span style={{ fontSize: '14px', color: '#9ca3af' }}>{value.label}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* View Toggle */}
+                    <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'center',
+                        gap: '8px',
+                        marginBottom: '32px'
+                    }}>
+                        <button
+                            onClick={() => setViewMode('timeline')}
+                            style={{
+                                padding: '10px 20px',
+                                borderRadius: '8px',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                                background: viewMode === 'timeline' ? '#22c55e' : 'rgba(255,255,255,0.1)',
+                                color: viewMode === 'timeline' ? 'black' : 'white'
+                            }}
+                        >
+                            📋 Timeline View
+                        </button>
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            style={{
+                                padding: '10px 20px',
+                                borderRadius: '8px',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                                background: viewMode === 'grid' ? '#22c55e' : 'rgba(255,255,255,0.1)',
+                                color: viewMode === 'grid' ? 'black' : 'white'
+                            }}
+                        >
+                            🔲 Grid View
+                        </button>
+                    </div>
+
+                    {viewMode === 'timeline' ? (
+                        <>
+                            {/* Phase Navigation */}
+                            <div style={{
+                                display: 'flex',
+                                gap: '16px',
+                                overflowX: 'auto',
+                                paddingBottom: '16px',
+                                marginBottom: '32px'
+                            }}>
+                                {roadmapData.map((phase, idx) => (
+                                    <PhaseCard
+                                        key={idx}
+                                        phase={phase}
+                                        isActive={activePhase === idx}
+                                        onClick={() => setActivePhase(idx)}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Active Phase Detail */}
+                            <div style={{
+                                background: 'rgba(255,255,255,0.03)',
+                                borderRadius: '20px',
+                                padding: '32px',
+                                border: `1px solid ${activeData.color}40`
+                            }}>
+                                <div style={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    gap: '16px',
+                                    marginBottom: '24px'
+                                }}>
+                                    <span style={{ fontSize: '48px' }}>{activeData.icon}</span>
+                                    <div>
+                                        <h2 style={{ 
+                                            fontSize: '28px', 
+                                            fontWeight: '700',
+                                            color: activeData.color
+                                        }}>
+                                            {activeData.title}
+                                        </h2>
+                                        <p style={{ color: '#9ca3af' }}>{activeData.description}</p>
+                                    </div>
+                                </div>
+
+                                <div style={{
+                                    display: 'flex',
+                                    gap: '16px',
+                                    marginBottom: '24px',
+                                    flexWrap: 'wrap'
+                                }}>
+                                    <div style={{
+                                        background: activeData.color,
+                                        padding: '8px 16px',
+                                        borderRadius: '8px',
+                                        fontWeight: '600'
+                                    }}>
+                                        ⏱️ Duration: {activeData.duration}
+                                    </div>
+                                    <div style={{
+                                        background: 'rgba(255,255,255,0.1)',
+                                        padding: '8px 16px',
+                                        borderRadius: '8px'
+                                    }}>
+                                        📚 {activeData.topics.length} Topics
+                                    </div>
+                                    <div style={{
+                                        background: 'rgba(255,255,255,0.1)',
+                                        padding: '8px 16px',
+                                        borderRadius: '8px'
+                                    }}>
+                                        🎯 {activeData.topics.reduce((acc, t) => acc + t.subtopics.length, 0)} Skills
+                                    </div>
+                                </div>
+
+                                <h3 style={{ 
+                                    fontSize: '18px', 
+                                    marginBottom: '16px',
+                                    color: '#e4e4e4'
+                                }}>
+                                    Topics to Master (click to expand):
+                                </h3>
+
+                                {activeData.topics.map((topic, idx) => (
+                                    <TopicCard 
+                                        key={idx} 
+                                        topic={topic} 
+                                        phaseColor={activeData.color}
+                                    />
+                                ))}
+                            </div>
+                        </>
+                    ) : (
+                        /* Grid View */
+                        <div style={{
+                            display: 'grid',
+                            gap: '24px'
+                        }}>
+                            {roadmapData.map((phase, idx) => (
+                                <div 
+                                    key={idx}
+                                    style={{
+                                        background: 'rgba(255,255,255,0.03)',
+                                        borderRadius: '16px',
+                                        padding: '24px',
+                                        borderLeft: `4px solid ${phase.color}`
+                                    }}
+                                >
+                                    <div style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        gap: '12px',
+                                        marginBottom: '16px'
+                                    }}>
+                                        <span style={{ fontSize: '32px' }}>{phase.icon}</span>
+                                        <div>
+                                            <h3 style={{ color: phase.color, margin: 0 }}>{phase.title}</h3>
+                                            <span style={{ color: '#9ca3af', fontSize: '14px' }}>
+                                                {phase.duration} | {phase.topics.length} topics | {phase.topics.reduce((acc, t) => acc + t.subtopics.length, 0)} skills
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div style={{
+                                        display: 'flex',
+                                        flexWrap: 'wrap',
+                                        gap: '8px'
+                                    }}>
+                                        {phase.topics.map((topic, tidx) => (
+                                            <span 
+                                                key={tidx}
+                                                style={{
+                                                    background: priorityColors[topic.priority].bg,
+                                                    color: priorityColors[topic.priority].text,
+                                                    padding: '6px 12px',
+                                                    borderRadius: '20px',
+                                                    fontSize: '13px',
+                                                    fontWeight: '500'
+                                                }}
+                                            >
+                                                {topic.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Summary Stats */}
+                    <div style={{
+                        marginTop: '40px',
+                        background: 'linear-gradient(135deg, rgba(34,197,94,0.1), rgba(239,68,68,0.1))',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                        gap: '24px',
+                        textAlign: 'center'
+                    }}>
+                        <div>
+                            <div style={{ fontSize: '36px', fontWeight: '700', color: '#22c55e' }}>10</div>
+                            <div style={{ color: '#9ca3af' }}>Phases</div>
+                        </div>
+                        <div>
+                            <div style={{ fontSize: '36px', fontWeight: '700', color: '#0ea5e9' }}>
+                                {roadmapData.reduce((acc, p) => acc + p.topics.length, 0)}
+                            </div>
+                            <div style={{ color: '#9ca3af' }}>Topics</div>
+                        </div>
+                        <div>
+                            <div style={{ fontSize: '36px', fontWeight: '700', color: '#8b5cf6' }}>
+                                {roadmapData.reduce((acc, p) => acc + p.topics.reduce((a, t) => a + t.subtopics.length, 0), 0)}
+                            </div>
+                            <div style={{ color: '#9ca3af' }}>Skills</div>
+                        </div>
+                        <div>
+                            <div style={{ fontSize: '36px', fontWeight: '700', color: '#f59e0b' }}>8-12</div>
+                            <div style={{ color: '#9ca3af' }}>Months</div>
+                        </div>
+                        <div>
+                            <div style={{ fontSize: '36px', fontWeight: '700', color: '#ef4444' }}>3</div>
+                            <div style={{ color: '#9ca3af' }}>Certifications</div>
+                        </div>
+                    </div>
+
+                    {/* Footer Note */}
+                    <div style={{
+                        marginTop: '32px',
+                        textAlign: 'center',
+                        color: '#6b7280',
+                        fontSize: '14px'
+                    }}>
+                        <p>🔴 <strong>Must Know</strong> = Required for job applications</p>
+                        <p>🟡 <strong>Should Know</strong> = Frequently requested in interviews</p>
+                        <p>🔵 <strong>Good to Know</strong> = Differentiates you from other candidates</p>
+                        <p style={{ marginTop: '16px' }}>
+                            💡 With your Full Stack + Network Security background, phases 1 (Foundations) and parts of phase 2 (Networking) can be accelerated significantly.
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<Roadmap />, document.getElementById('root'));
+    </script>
+</body>
+</html>
