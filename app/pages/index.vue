@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { totalDuration } from '~/data/roadmap'
-
-type ViewMode = 'timeline' | 'grid'
-const viewMode = ref<ViewMode>('timeline')
 </script>
 
 <template>
@@ -34,39 +31,8 @@ const viewMode = ref<ViewMode>('timeline')
       <span>🔵 Good to Know = Differentiates you from other candidates</span>
     </div>
 
-    <!-- View Toggle -->
-    <div class="flex justify-center mb-8">
-      <UButtonGroup>
-        <UButton
-          :color="viewMode === 'timeline' ? 'primary' : 'neutral'"
-          :variant="viewMode === 'timeline' ? 'solid' : 'ghost'"
-          class="cursor-pointer"
-          @click="viewMode = 'timeline'"
-        >
-          <UIcon
-            name="i-lucide-list"
-            class="w-4 h-4 mr-2"
-          />
-          Timeline View
-        </UButton>
-        <UButton
-          :color="viewMode === 'grid' ? 'primary' : 'neutral'"
-          :variant="viewMode === 'grid' ? 'solid' : 'ghost'"
-          class="cursor-pointer"
-          @click="viewMode = 'grid'"
-        >
-          <UIcon
-            name="i-lucide-layout-grid"
-            class="w-4 h-4 mr-2"
-          />
-          Grid View
-        </UButton>
-      </UButtonGroup>
-    </div>
-
-    <!-- View Content -->
-    <RoadmapTimeline v-if="viewMode === 'timeline'" />
-    <RoadmapGrid v-else />
+    <!-- Roadmap Content -->
+    <RoadmapTimeline />
 
     <!-- Stats Footer -->
     <StatsFooter />
