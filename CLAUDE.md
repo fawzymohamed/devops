@@ -56,3 +56,70 @@ Configured for GitHub Pages with:
 - Apply `cursor-pointer` class to all interactive elements (buttons, cards)
 - Use Tailwind CSS for styling with responsive breakpoints (`sm:`, `md:`, `lg:`)
 - TypeScript for type safety
+
+## Documentation & Comments
+
+All code files must include rich, descriptive comments. Follow these guidelines:
+
+### File-Level Comments
+Every file should start with a comprehensive header comment explaining:
+- **Purpose**: What the file/component does
+- **Features**: Key functionality provided
+- **Structure**: Visual ASCII diagram showing component structure (for Vue components)
+- **Data Flow**: How data moves through the component
+- **Props/Events**: For Vue components, document all props and emitted events
+
+### Code Section Comments
+Use section dividers and descriptive comments:
+```typescript
+// =============================================================================
+// SECTION NAME
+// =============================================================================
+
+/**
+ * Function/Variable Name
+ * ----------------------
+ * Description of what this does and why.
+ *
+ * @param paramName - Description of parameter
+ * @returns Description of return value
+ */
+```
+
+### Vue Template Comments
+Use HTML comments to explain template sections:
+```vue
+<!--
+  Section Name
+  ============
+  Description of what this section renders and any important details.
+-->
+```
+
+### Inline Comments
+Add inline comments for:
+- Complex logic or calculations
+- Non-obvious behavior
+- Important configuration values
+- Workarounds or edge cases
+
+### Comment Style Examples
+```typescript
+// Single line for brief explanations
+const value = computed(() => data.length) // Inline explanation
+
+/**
+ * Multi-line JSDoc style for functions and complex logic.
+ * Include @param, @returns, @example as needed.
+ */
+
+// =============================================================================
+// Use section dividers for major code sections
+// =============================================================================
+```
+
+### What to Document
+- **Always document**: Interfaces, types, exported functions, computed properties, watchers
+- **Template sections**: Major layout areas, conditional rendering, loops
+- **Configuration**: Nuxt config options, build settings, environment variables
+- **Complex calculations**: Any reduce, map, or nested operations

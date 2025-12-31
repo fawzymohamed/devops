@@ -1,11 +1,67 @@
+/**
+ * Roadmap Data Module
+ * ===================
+ * This file contains all the data for the DevOps to DevSecOps learning roadmap.
+ * It defines the type system, configuration, and the complete roadmap structure.
+ *
+ * Data Structure:
+ * - Phases: Major learning milestones (10 total)
+ * - Topics: Subject areas within each phase
+ * - Subtopics: Specific skills or concepts to learn
+ *
+ * Priority System:
+ * - Essential (Red): Must-know skills required for job applications
+ * - Important (Yellow): Should-know skills frequently requested in interviews
+ * - Recommended (Blue): Good-to-know skills that differentiate candidates
+ *
+ * Duration Tracking:
+ * - Each phase has a duration in weeks (e.g., "2 weeks")
+ * - Total duration is automatically calculated from all phase durations
+ * - Phases with "Ongoing" duration are excluded from the total
+ */
+
+// =============================================================================
+// TYPE DEFINITIONS
+// =============================================================================
+
+/**
+ * Priority Type
+ * -------------
+ * Defines the three levels of importance for topics:
+ * - essential: Critical skills that are non-negotiable for job applications
+ * - important: Skills that are commonly tested in interviews
+ * - recommended: Nice-to-have skills that set candidates apart
+ */
 export type Priority = 'essential' | 'important' | 'recommended'
 
+/**
+ * Topic Interface
+ * ---------------
+ * Represents a learning topic within a phase.
+ *
+ * @property name - The display name of the topic (e.g., "Linux Fundamentals")
+ * @property subtopics - Array of specific skills or concepts under this topic
+ * @property priority - The importance level (essential, important, recommended)
+ */
 export interface Topic {
   name: string
   subtopics: string[]
   priority: Priority
 }
 
+/**
+ * Phase Interface
+ * ---------------
+ * Represents a major learning phase in the roadmap.
+ *
+ * @property phase - The phase number (1-10)
+ * @property title - Full title including phase number (e.g., "Phase 1: Foundations")
+ * @property duration - Time estimate (e.g., "2 weeks" or "Ongoing")
+ * @property color - Hex color code for visual theming (e.g., "#22c55e")
+ * @property icon - Emoji icon representing the phase (e.g., "🏗️")
+ * @property description - Brief description of what the phase covers
+ * @property topics - Array of Topic objects containing the learning content
+ */
 export interface Phase {
   phase: number
   title: string
@@ -16,17 +72,55 @@ export interface Phase {
   topics: Topic[]
 }
 
+// =============================================================================
+// CONFIGURATION
+// =============================================================================
+
+/**
+ * Priority Configuration
+ * ----------------------
+ * Maps priority levels to their display properties.
+ * Used by UI components to render consistent colors and labels.
+ *
+ * Color Scheme:
+ * - Essential: Red (#dc2626) - Urgent/Critical
+ * - Important: Amber (#f59e0b) - Warning/Attention
+ * - Recommended: Blue (#3b82f6) - Informational
+ */
 export const priorityConfig = {
   essential: { color: 'red', label: 'Must Know' },
   important: { color: 'amber', label: 'Should Know' },
   recommended: { color: 'blue', label: 'Good to Know' }
 } as const
 
+// =============================================================================
+// ROADMAP DATA
+// =============================================================================
+
+/**
+ * Roadmap Data Array
+ * ------------------
+ * Contains all 10 phases of the DevOps to DevSecOps learning journey.
+ *
+ * Phase Overview:
+ * 1. SDLC (1 week) - Software Development Lifecycle fundamentals
+ * 2. Foundations (4 weeks) - Linux, scripting, networking, Git, programming
+ * 3. Cloud Platforms (2 weeks) - AWS services and cloud concepts
+ * 4. Containerization (2 weeks) - Docker and container fundamentals
+ * 5. Kubernetes (2 weeks) - Container orchestration and management
+ * 6. IaC (2 weeks) - Terraform and Ansible
+ * 7. CI/CD (2 weeks) - Jenkins, GitHub Actions, GitOps
+ * 8. Monitoring (1 week) - Prometheus, Grafana, observability
+ * 9. DevSecOps (8 weeks) - Security integration throughout SDLC
+ * 10. Certifications (Ongoing) - Professional certifications and job prep
+ *
+ * Total Duration: Automatically calculated (currently 24 weeks)
+ */
 export const roadmapData: Phase[] = [
   {
-    phase: 0,
-    title: 'Phase 0: Software Development Lifecycle (SDLC)',
-    duration: '1-2 weeks',
+    phase: 1,
+    title: 'Phase 1: Software Development Lifecycle (SDLC)',
+    duration: '1 week',
     color: '#6366f1',
     icon: '🔄',
     description: 'Understand how software is planned, built, tested, and delivered',
@@ -54,9 +148,9 @@ export const roadmapData: Phase[] = [
     ]
   },
   {
-    phase: 1,
-    title: 'Phase 1: Foundations',
-    duration: '6-8 weeks',
+    phase: 2,
+    title: 'Phase 2: Foundations',
+    duration: '4 weeks',
     color: '#22c55e',
     icon: '🏗️',
     description: 'Build the essential foundation everything else depends on',
@@ -87,6 +181,16 @@ export const roadmapData: Phase[] = [
         priority: 'essential'
       },
       {
+        name: 'JavaScript Fundamentals',
+        subtopics: ['Variables (let, const, var)', 'Data Types & Operators', 'Functions & Arrow Functions', 'Arrays & Objects', 'OOP: Classes & Constructors', 'OOP: Inheritance & Prototypes', 'OOP: Encapsulation & Modules', 'Async/Await & Promises', 'Fetch API', 'ES6+ Features', 'Node.js Basics', 'npm Package Manager'],
+        priority: 'essential'
+      },
+      {
+        name: 'TypeScript Essentials',
+        subtopics: ['Type Annotations', 'Interfaces & Types', 'Generics', 'Enums', 'Union & Intersection Types', 'Type Guards', 'tsconfig.json', 'Compiling TypeScript', 'TypeScript with Node.js'],
+        priority: 'important'
+      },
+      {
         name: 'YAML & JSON',
         subtopics: ['YAML Syntax', 'JSON Syntax', 'Data Structures', 'Nested Objects', 'Arrays/Lists', 'Configuration Files', 'Validation'],
         priority: 'important'
@@ -94,9 +198,9 @@ export const roadmapData: Phase[] = [
     ]
   },
   {
-    phase: 2,
-    title: 'Phase 2: Cloud Platforms (AWS Focus)',
-    duration: '6-8 weeks',
+    phase: 3,
+    title: 'Phase 3: Cloud Platforms (AWS Focus)',
+    duration: '2 weeks',
     color: '#f59e0b',
     icon: '☁️',
     description: 'Master cloud infrastructure - AWS is dominant in Saudi market',
@@ -149,9 +253,9 @@ export const roadmapData: Phase[] = [
     ]
   },
   {
-    phase: 3,
-    title: 'Phase 3: Containerization',
-    duration: '4-6 weeks',
+    phase: 4,
+    title: 'Phase 4: Containerization',
+    duration: '2 weeks',
     color: '#0ea5e9',
     icon: '🐳',
     description: 'Package and run applications consistently anywhere',
@@ -189,9 +293,9 @@ export const roadmapData: Phase[] = [
     ]
   },
   {
-    phase: 4,
-    title: 'Phase 4: Container Orchestration (Kubernetes)',
-    duration: '6-8 weeks',
+    phase: 5,
+    title: 'Phase 5: Container Orchestration (Kubernetes)',
+    duration: '2 weeks',
     color: '#8b5cf6',
     icon: '☸️',
     description: 'Manage containers at scale in production environments',
@@ -239,9 +343,9 @@ export const roadmapData: Phase[] = [
     ]
   },
   {
-    phase: 5,
-    title: 'Phase 5: Infrastructure as Code (IaC)',
-    duration: '4-6 weeks',
+    phase: 6,
+    title: 'Phase 6: Infrastructure as Code (IaC)',
+    duration: '2 weeks',
     color: '#ec4899',
     icon: '📝',
     description: 'Define and manage infrastructure through code',
@@ -284,9 +388,9 @@ export const roadmapData: Phase[] = [
     ]
   },
   {
-    phase: 6,
-    title: 'Phase 6: CI/CD Pipelines',
-    duration: '4-6 weeks',
+    phase: 7,
+    title: 'Phase 7: CI/CD Pipelines',
+    duration: '2 weeks',
     color: '#14b8a6',
     icon: '🔄',
     description: 'Automate building, testing, and deploying applications',
@@ -324,9 +428,9 @@ export const roadmapData: Phase[] = [
     ]
   },
   {
-    phase: 7,
-    title: 'Phase 7: Monitoring & Observability',
-    duration: '3-4 weeks',
+    phase: 8,
+    title: 'Phase 8: Monitoring & Observability',
+    duration: '1 week',
     color: '#f97316',
     icon: '📊',
     description: 'Monitor, log, and trace application and infrastructure health',
@@ -364,9 +468,9 @@ export const roadmapData: Phase[] = [
     ]
   },
   {
-    phase: 8,
-    title: 'Phase 8: DevSecOps - Security Integration',
-    duration: '6-8 weeks',
+    phase: 9,
+    title: 'Phase 9: DevSecOps - Security Integration',
+    duration: '8 weeks',
     color: '#ef4444',
     icon: '🔐',
     description: 'Integrate security throughout the entire DevOps lifecycle',
@@ -424,9 +528,9 @@ export const roadmapData: Phase[] = [
     ]
   },
   {
-    phase: 9,
-    title: 'Phase 9: Certifications & Job Preparation',
-    duration: '4-8 weeks',
+    phase: 10,
+    title: 'Phase 10: Certifications & Job Preparation',
+    duration: 'Ongoing',
     color: '#84cc16',
     icon: '🎓',
     description: 'Validate your skills and prepare for the Saudi job market',
@@ -450,4 +554,37 @@ export const roadmapData: Phase[] = [
   }
 ]
 
-export const totalDuration = '8-12 months (accelerated: 5-7 months with your background)'
+// =============================================================================
+// COMPUTED EXPORTS
+// =============================================================================
+
+/**
+ * Total Weeks Calculation
+ * -----------------------
+ * Dynamically calculates the total duration by summing all phase durations.
+ *
+ * How it works:
+ * 1. Iterates through all phases in roadmapData
+ * 2. Uses regex to extract numeric week values (matches "X week" or "X weeks")
+ * 3. Sums up all valid week durations
+ * 4. Ignores non-week durations like "Ongoing"
+ *
+ * This ensures the total automatically updates when phase durations change.
+ */
+export const totalWeeks = roadmapData.reduce((total, phase) => {
+  // Regex pattern: matches "1 week", "2 weeks", "10 weeks", etc.
+  const match = phase.duration.match(/^(\d+)\s*weeks?$/i)
+  if (match) {
+    return total + parseInt(match[1], 10)
+  }
+  // Skip non-week durations (e.g., "Ongoing")
+  return total
+}, 0)
+
+/**
+ * Total Duration String
+ * ---------------------
+ * Formatted string for display in the UI (e.g., "24 weeks").
+ * Used in the header and stats footer components.
+ */
+export const totalDuration = `${totalWeeks} weeks`
