@@ -9,12 +9,21 @@ const props = defineProps<{
 
 const isOpen = ref(false)
 
-const priorityBadgeColor = computed(() => {
-  return priorityConfig[props.topic.priority].color
-})
-
 const priorityLabel = computed(() => {
   return priorityConfig[props.topic.priority].label
+})
+
+const priorityBgColor = computed(() => {
+  const colors: Record<string, string> = {
+    essential: '#dc2626',
+    important: '#f59e0b',
+    recommended: '#3b82f6'
+  }
+  return colors[props.topic.priority]
+})
+
+const priorityTextColor = computed(() => {
+  return props.topic.priority === 'important' ? '#000' : '#fff'
 })
 </script>
 
@@ -36,13 +45,12 @@ const priorityLabel = computed(() => {
         >
           {{ topic.name }}
         </span>
-        <UBadge
-          :color="priorityBadgeColor as any"
-          variant="solid"
-          size="xs"
+        <span
+          class="px-2 py-0.5 rounded-full text-xs font-semibold"
+          :style="{ backgroundColor: priorityBgColor, color: priorityTextColor }"
         >
           {{ priorityLabel }}
-        </UBadge>
+        </span>
       </div>
       <UIcon
         name="i-lucide-chevron-down"

@@ -1,5 +1,15 @@
 <script setup lang="ts">
-import { roadmapData, priorityConfig } from '~/data/roadmap'
+import { roadmapData } from '~/data/roadmap'
+import type { Priority } from '~/data/roadmap'
+
+const getPriorityStyle = (priority: Priority) => {
+  const styles: Record<Priority, { bg: string; text: string }> = {
+    essential: { bg: '#dc2626', text: '#fff' },
+    important: { bg: '#f59e0b', text: '#000' },
+    recommended: { bg: '#3b82f6', text: '#fff' }
+  }
+  return styles[priority]
+}
 </script>
 
 <template>
@@ -33,15 +43,14 @@ import { roadmapData, priorityConfig } from '~/data/roadmap'
 
       <!-- Topics Tags -->
       <div class="flex flex-wrap gap-2">
-        <UBadge
+        <span
           v-for="topic in phase.topics"
           :key="topic.name"
-          :color="priorityConfig[topic.priority].color as any"
-          variant="solid"
-          size="md"
+          class="px-3 py-1 rounded-full text-sm font-medium"
+          :style="{ backgroundColor: getPriorityStyle(topic.priority).bg, color: getPriorityStyle(topic.priority).text }"
         >
           {{ topic.name }}
-        </UBadge>
+        </span>
       </div>
     </UCard>
   </div>

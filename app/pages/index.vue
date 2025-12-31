@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { totalDuration, priorityConfig } from '~/data/roadmap'
+import { totalDuration } from '~/data/roadmap'
 
 type ViewMode = 'timeline' | 'grid'
 const viewMode = ref<ViewMode>('timeline')
@@ -28,22 +28,10 @@ const viewMode = ref<ViewMode>('timeline')
     </div>
 
     <!-- Legend -->
-    <div class="flex flex-wrap justify-center gap-4 sm:gap-6 mb-8">
-      <div
-        v-for="(config, key) in priorityConfig"
-        :key="key"
-        class="flex items-center gap-2"
-      >
-        <div
-          class="w-4 h-4 rounded"
-          :class="{
-            'bg-red-600': key === 'essential',
-            'bg-amber-500': key === 'important',
-            'bg-blue-500': key === 'recommended'
-          }"
-        />
-        <span class="text-sm text-gray-400">{{ config.label }}</span>
-      </div>
+    <div class="flex flex-wrap justify-center gap-4 sm:gap-6 mb-8 text-sm text-gray-400">
+      <span>🔴 Must Know = Required for job applications</span>
+      <span>🟡 Should Know = Frequently requested in interviews</span>
+      <span>🔵 Good to Know = Differentiates you from other candidates</span>
     </div>
 
     <!-- View Toggle -->
