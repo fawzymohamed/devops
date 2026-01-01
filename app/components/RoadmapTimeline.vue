@@ -62,7 +62,7 @@ const openTopicIndex = ref<number | null>(null)
  * Returns the full phase object for the currently selected phase.
  * This includes all topics, duration, color, and other phase metadata.
  */
-const activeData = computed(() => roadmapData[activePhase.value])
+const activeData = computed(() => roadmapData[activePhase.value]!)
 
 /**
  * Toggle Topic Function
@@ -114,11 +114,8 @@ watch(activePhase, () => {
       Uses dynamic coloring based on the phase's assigned color.
     -->
     <UCard
-      :ui="{
-        background: 'bg-gray-900/30',
-        ring: 'ring-1',
-        body: { padding: 'p-6 sm:p-8' }
-      }"
+      class="bg-gray-900/30 ring-1"
+      :ui="{ body: 'p-6 sm:p-8' }"
       :style="{ '--tw-ring-color': `${activeData.color}40` }"
     >
       <!--

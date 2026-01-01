@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__notion__notion-update-page",
+      "mcp__notion__notion-fetch"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -Command \"npm run typecheck --silent 2>&1 | Select-Object -First 20; exit 0\""
+          }
+        ]
+      }
+    ]
+  }
+}

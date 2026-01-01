@@ -110,12 +110,8 @@ const priorityTextColor = computed(() => {
     Has hover effect and cursor pointer for interactivity.
   -->
   <UCard
-    class="cursor-pointer transition-all duration-300 hover:bg-gray-800/50"
-    :ui="{
-      background: 'bg-gray-900/50',
-      ring: 'ring-1 ring-gray-700',
-      body: { padding: 'p-4' }
-    }"
+    class="cursor-pointer transition-all duration-300 hover:bg-gray-800/50 bg-gray-900/50 ring-1 ring-gray-700"
+    :ui="{ body: 'p-4' }"
     @click="emit('toggle')"
   >
     <!--

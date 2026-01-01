@@ -19,6 +19,18 @@ export default defineNuxtConfig({
   ],
 
   /**
+   * GitHub Pages Deployment Configuration
+   * -------------------------------------
+   * - ssr: false - Disables server-side rendering for static site generation
+   * - baseURL: '/devops/' - Sets the base path for GitHub Pages (repo name)
+   * - nitro preset: 'github-pages' - Optimizes build output for GitHub Pages
+   *
+   * Note: The baseURL must match your GitHub repository name for proper routing.
+   * The site will be accessible at: https://<username>.github.io/devops/
+   */
+  ssr: false,
+
+  /**
    * Nuxt DevTools
    * -------------
    * Enables the Nuxt DevTools for debugging and development insights.
@@ -26,6 +38,9 @@ export default defineNuxtConfig({
    */
   devtools: {
     enabled: true
+  },
+  app: {
+    baseURL: '/devops/'
   },
 
   /**
@@ -49,24 +64,6 @@ export default defineNuxtConfig({
   },
 
   /**
-   * GitHub Pages Deployment Configuration
-   * -------------------------------------
-   * - ssr: false - Disables server-side rendering for static site generation
-   * - baseURL: '/devops/' - Sets the base path for GitHub Pages (repo name)
-   * - nitro preset: 'github-pages' - Optimizes build output for GitHub Pages
-   *
-   * Note: The baseURL must match your GitHub repository name for proper routing.
-   * The site will be accessible at: https://<username>.github.io/devops/
-   */
-  ssr: false,
-  app: {
-    baseURL: '/devops/'
-  },
-  nitro: {
-    preset: 'github-pages'
-  },
-
-  /**
    * Route Rules
    * -----------
    * Configures pre-rendering for specific routes.
@@ -83,6 +80,9 @@ export default defineNuxtConfig({
    * This prevents breaking changes from affecting the application.
    */
   compatibilityDate: '2025-01-15',
+  nitro: {
+    preset: 'github-pages'
+  },
 
   /**
    * ESLint Configuration

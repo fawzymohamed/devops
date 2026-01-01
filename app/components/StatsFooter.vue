@@ -77,10 +77,10 @@ const stats = computed(() => {
 
   // Return array of stat objects for template rendering
   return [
-    { value: totalPhases.toString(), label: 'Phases', color: '#22c55e' },      // Green
-    { value: totalTopics.toString(), label: 'Topics', color: '#0ea5e9' },      // Sky blue
-    { value: totalSkills.toString(), label: 'Skills', color: '#8b5cf6' },      // Purple
-    { value: totalDuration, label: 'Duration', color: '#f59e0b' },             // Amber
+    { value: totalPhases.toString(), label: 'Phases', color: '#22c55e' }, // Green
+    { value: totalTopics.toString(), label: 'Topics', color: '#0ea5e9' }, // Sky blue
+    { value: totalSkills.toString(), label: 'Skills', color: '#8b5cf6' }, // Purple
+    { value: totalDuration, label: 'Duration', color: '#f59e0b' }, // Amber
     { value: totalCerts.toString(), label: 'Certifications', color: '#ef4444' } // Red
   ]
 })

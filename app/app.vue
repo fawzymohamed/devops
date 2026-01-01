@@ -36,12 +36,8 @@
  * - Dark mode class on root element
  */
 useHead({
-  meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
-  ],
-  link: [
-    { rel: 'icon', href: '/favicon.ico' }
-  ],
+  meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
+  link: [{ rel: 'icon', href: '/favicon.ico' }],
   htmlAttrs: {
     lang: 'en',
     class: 'dark'
@@ -55,7 +51,8 @@ useHead({
  * Includes Open Graph tags for rich previews on social platforms.
  */
 const title = 'DevOps to DevSecOps Learning Roadmap'
-const description = 'A comprehensive learning roadmap for transitioning from DevOps to DevSecOps, personalized for Fawzy Mohamed with Saudi Arabia market focus.'
+const description
+  = 'A comprehensive learning roadmap for transitioning from DevOps to DevSecOps, personalized for Fawzy Mohamed with Saudi Arabia market focus.'
 
 useSeoMeta({
   title,
@@ -82,7 +79,6 @@ useSeoMeta({
           <span class="font-semibold text-lg hidden sm:inline">DevOps Roadmap</span>
         </NuxtLink>
       </template>
-
     </UHeader>
 
     <!-- Main: Primary content area with minimum full viewport height -->
@@ -99,10 +95,10 @@ useSeoMeta({
       <!-- Left slot: Copyright and attribution text -->
       <template #left>
         <p class="text-sm text-muted">
-          Built with Nuxt UI • DevOps Learning Roadmap © {{ new Date().getFullYear() }}
+          Built with Nuxt UI • DevOps Learning Roadmap ©
+          {{ new Date().getFullYear() }}
         </p>
       </template>
-
     </UFooter>
   </UApp>
 </template>

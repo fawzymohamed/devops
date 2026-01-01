@@ -43,7 +43,7 @@ import type { Phase } from '~/data/roadmap'
  * @prop phase - The phase data object containing all phase information
  * @prop isActive - Whether this phase is currently selected/active
  */
-const props = defineProps<{
+defineProps<{
   phase: Phase
   isActive: boolean
 }>()

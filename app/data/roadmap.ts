@@ -575,7 +575,7 @@ export const totalWeeks = roadmapData.reduce((total, phase) => {
   // Regex pattern: matches "1 week", "2 weeks", "10 weeks", etc.
   const match = phase.duration.match(/^(\d+)\s*weeks?$/i)
   if (match) {
-    return total + parseInt(match[1], 10)
+    return total + parseInt(match[1]!, 10)
   }
   // Skip non-week durations (e.g., "Ongoing")
   return total
