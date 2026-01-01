@@ -12,11 +12,35 @@ export default defineNuxtConfig({
    * ------------
    * - @nuxt/eslint: Provides ESLint integration for code quality
    * - @nuxt/ui: Nuxt UI v4 component library with Tailwind CSS
+   * - @nuxt/content: Markdown-based content management for lessons
    */
   modules: [
     '@nuxt/eslint',
-    '@nuxt/ui'
+    '@nuxt/ui',
+    '@nuxt/content'
   ],
+
+  /**
+   * Nuxt Content Configuration
+   * --------------------------
+   * Configures the @nuxt/content module for lesson markdown files.
+   * - build.markdown.highlight: Syntax highlighting for code blocks using Shiki
+   * - build.markdown.toc: Table of contents generation settings
+   */
+  content: {
+    build: {
+      markdown: {
+        highlight: {
+          theme: 'github-dark',
+          langs: ['bash', 'typescript', 'javascript', 'python', 'yaml', 'dockerfile', 'json', 'sql', 'powershell', 'shell']
+        },
+        toc: {
+          depth: 3,
+          searchDepth: 3
+        }
+      }
+    }
+  },
 
   /**
    * GitHub Pages Deployment Configuration

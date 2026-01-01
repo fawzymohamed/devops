@@ -14,7 +14,10 @@
   "dependencies": {
     "@iconify-json/lucide": "^1.2.82",
     "@iconify-json/simple-icons": "^1.2.63",
+    "@nuxt/content": "^3.10.0",
     "@nuxt/ui": "^4.3.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.4",
     "nuxt": "^4.2.2"
   },
   "devDependencies": {
