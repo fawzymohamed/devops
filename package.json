@@ -16,6 +16,7 @@
     "@iconify-json/simple-icons": "^1.2.63",
     "@nuxt/content": "^3.10.0",
     "@nuxt/ui": "^4.3.0",
+    "better-sqlite3": "^12.5.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.4",
     "nuxt": "^4.2.2"
@@ -26,5 +27,8 @@
     "typescript": "^5.9.3",
     "vue-tsc": "^3.2.1"
   },
-  "packageManager": "pnpm@10.26.1"
+  "packageManager": "pnpm@10.26.1",
+  "pnpm": {
+    "onlyBuiltDependencies": ["better-sqlite3"]
+  }
 }
