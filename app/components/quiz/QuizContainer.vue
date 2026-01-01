@@ -76,6 +76,7 @@ const {
   score,
   passed,
   answers,
+  answeredCount,
   submitAnswer,
   nextQuestion,
   previousQuestion,
@@ -109,9 +110,10 @@ watch(currentIndex, (newIndex) => {
 
 /**
  * Progress percentage for the progress bar
+ * Calculated based on the number of answered questions, not navigation position
  */
 const progressPercent = computed(() => {
-  return ((currentIndex.value + 1) / totalQuestions.value) * 100
+  return (answeredCount.value / totalQuestions.value) * 100
 })
 
 /**
@@ -226,10 +228,10 @@ function formatAnswer(answer: string | readonly string[] | boolean | undefined):
         </UBadge>
       </div>
 
-      <!-- Progress Bar -->
+      <!-- Progress Bar - Static, fills based on answered questions -->
       <UProgress
         v-if="!isComplete"
-        :value="progressPercent"
+        :model-value="progressPercent"
         color="primary"
         size="sm"
         class="mt-3"
