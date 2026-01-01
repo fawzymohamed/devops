@@ -192,15 +192,15 @@ const value = computed(() => data.length) // Inline explanation
 
 ### Lesson Content Progress
 
-**Total: 1/527 lessons created**
+**Total: 3/527 lessons created**
 
 #### Phase 1: Software Development Lifecycle (SDLC)
 <details>
-<summary>SDLC Models (1/5)</summary>
+<summary>SDLC Models (3/5)</summary>
 
 - [x] Waterfall Model
-- [ ] Agile Methodology
-- [ ] Scrum Framework
+- [x] Agile Methodology
+- [x] Scrum Framework
 - [ ] Kanban Method
 - [ ] DevOps SDLC
 
