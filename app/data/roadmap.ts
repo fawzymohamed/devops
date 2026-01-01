@@ -40,11 +40,13 @@ export type Priority = 'essential' | 'important' | 'recommended'
  * Represents a learning topic within a phase.
  *
  * @property name - The display name of the topic (e.g., "Linux Fundamentals")
+ * @property slug - URL-friendly identifier (e.g., "linux-fundamentals")
  * @property subtopics - Array of specific skills or concepts under this topic
  * @property priority - The importance level (essential, important, recommended)
  */
 export interface Topic {
   name: string
+  slug?: string
   subtopics: string[]
   priority: Priority
 }
@@ -56,6 +58,7 @@ export interface Topic {
  *
  * @property phase - The phase number (1-10)
  * @property title - Full title including phase number (e.g., "Phase 1: Foundations")
+ * @property slug - URL-friendly identifier matching content directory (e.g., "phase-1-sdlc")
  * @property duration - Time estimate (e.g., "2 weeks" or "Ongoing")
  * @property color - Hex color code for visual theming (e.g., "#22c55e")
  * @property icon - Emoji icon representing the phase (e.g., "🏗️")
@@ -65,6 +68,7 @@ export interface Topic {
 export interface Phase {
   phase: number
   title: string
+  slug: string
   duration: string
   color: string
   icon: string
@@ -120,6 +124,7 @@ export const roadmapData: Phase[] = [
   {
     phase: 1,
     title: 'Phase 1: Software Development Lifecycle (SDLC)',
+    slug: 'phase-1-sdlc',
     duration: '1 week',
     color: '#6366f1',
     icon: '🔄',
@@ -127,21 +132,25 @@ export const roadmapData: Phase[] = [
     topics: [
       {
         name: 'SDLC Models',
+        slug: 'sdlc-models',
         subtopics: ['Waterfall Model', 'Agile Methodology', 'Scrum Framework', 'Kanban', 'DevOps as SDLC Evolution'],
         priority: 'essential'
       },
       {
         name: 'SDLC Phases',
+        slug: 'sdlc-phases',
         subtopics: ['Requirements Gathering', 'Design & Architecture', 'Development/Coding', 'Testing & QA', 'Deployment', 'Maintenance & Operations'],
         priority: 'essential'
       },
       {
         name: 'Development Workflows',
+        slug: 'development-workflows',
         subtopics: ['Feature Branching', 'Code Reviews', 'Pull Requests', 'Release Management', 'Hotfix Procedures'],
         priority: 'important'
       },
       {
         name: 'Project Management Basics',
+        slug: 'project-management-basics',
         subtopics: ['User Stories', 'Sprint Planning', 'Backlog Management', 'Velocity & Estimation', 'Retrospectives'],
         priority: 'recommended'
       }
@@ -150,6 +159,7 @@ export const roadmapData: Phase[] = [
   {
     phase: 2,
     title: 'Phase 2: Foundations',
+    slug: 'phase-2-foundations',
     duration: '4 weeks',
     color: '#22c55e',
     icon: '🏗️',
@@ -200,6 +210,7 @@ export const roadmapData: Phase[] = [
   {
     phase: 3,
     title: 'Phase 3: Cloud Platforms (AWS Focus)',
+    slug: 'phase-3-cloud',
     duration: '2 weeks',
     color: '#f59e0b',
     icon: '☁️',
@@ -255,6 +266,7 @@ export const roadmapData: Phase[] = [
   {
     phase: 4,
     title: 'Phase 4: Containerization',
+    slug: 'phase-4-containers',
     duration: '2 weeks',
     color: '#0ea5e9',
     icon: '🐳',
@@ -295,6 +307,7 @@ export const roadmapData: Phase[] = [
   {
     phase: 5,
     title: 'Phase 5: Container Orchestration (Kubernetes)',
+    slug: 'phase-5-kubernetes',
     duration: '2 weeks',
     color: '#8b5cf6',
     icon: '☸️',
@@ -345,6 +358,7 @@ export const roadmapData: Phase[] = [
   {
     phase: 6,
     title: 'Phase 6: Infrastructure as Code (IaC)',
+    slug: 'phase-6-iac',
     duration: '2 weeks',
     color: '#ec4899',
     icon: '📝',
@@ -390,6 +404,7 @@ export const roadmapData: Phase[] = [
   {
     phase: 7,
     title: 'Phase 7: CI/CD Pipelines',
+    slug: 'phase-7-cicd',
     duration: '2 weeks',
     color: '#14b8a6',
     icon: '🔄',
@@ -430,6 +445,7 @@ export const roadmapData: Phase[] = [
   {
     phase: 8,
     title: 'Phase 8: Monitoring & Observability',
+    slug: 'phase-8-monitoring',
     duration: '1 week',
     color: '#f97316',
     icon: '📊',
@@ -470,6 +486,7 @@ export const roadmapData: Phase[] = [
   {
     phase: 9,
     title: 'Phase 9: DevSecOps - Security Integration',
+    slug: 'phase-9-devsecops',
     duration: '8 weeks',
     color: '#ef4444',
     icon: '🔐',
@@ -530,6 +547,7 @@ export const roadmapData: Phase[] = [
   {
     phase: 10,
     title: 'Phase 10: Certifications & Job Preparation',
+    slug: 'phase-10-certifications',
     duration: 'Ongoing',
     color: '#84cc16',
     icon: '🎓',

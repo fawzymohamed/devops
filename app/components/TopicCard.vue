@@ -45,11 +45,13 @@ import { priorityConfig } from '~/data/roadmap'
  * ---------------
  * @prop topic - The topic object containing name, subtopics array, and priority
  * @prop phaseColor - Hex color string from parent phase (e.g., "#22c55e")
+ * @prop phaseSlug - URL slug for the phase (e.g., "phase-1-sdlc")
  * @prop isOpen - Whether the card is currently expanded (controlled by parent)
  */
 const props = defineProps<{
   topic: Topic
   phaseColor: string
+  phaseSlug: string
   isOpen: boolean
 }>()
 
@@ -61,6 +63,38 @@ const props = defineProps<{
 const emit = defineEmits<{
   toggle: []
 }>()
+
+/**
+ * Generate Slug
+ * -------------
+ * Converts a name to a URL-friendly slug.
+ * Used for subtopics that don't have explicit slugs.
+ * Example: "Waterfall Model" -> "waterfall-model"
+ */
+function toSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+/**
+ * Topic Slug
+ * ----------
+ * URL-friendly slug for this topic.
+ * Uses explicit slug if available, otherwise generates from name.
+ */
+const topicSlug = computed(() => props.topic.slug || toSlug(props.topic.name))
+
+/**
+ * Generate Subtopic URL
+ * ---------------------
+ * Creates the full URL path for a subtopic lesson.
+ * Pattern: /phase-slug/topic-slug/subtopic-slug
+ */
+function getSubtopicUrl(subtopic: string): string {
+  return `/${props.phaseSlug}/${topicSlug.value}/${toSlug(subtopic)}`
+}
 
 /**
  * Priority Label Computed
@@ -170,20 +204,23 @@ const priorityTextColor = computed(() => {
         - Mobile: 1 column
         - Tablet (sm): 2 columns
         - Desktop (lg): 3 columns
-        Each subtopic has a left border colored by the phase.
+        Each subtopic is a clickable link to its lesson page.
+        Has a left border colored by the phase and hover effect.
       -->
       <div
         v-if="isOpen"
         class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 overflow-hidden"
+        @click.stop
       >
-        <div
+        <NuxtLink
           v-for="(subtopic, idx) in topic.subtopics"
           :key="idx"
-          class="bg-gray-800/60 px-3 py-2 rounded-lg text-sm border-l-3"
+          :to="getSubtopicUrl(subtopic)"
+          class="bg-gray-800/60 px-3 py-2 rounded-lg text-sm border-l-3 cursor-pointer transition-all hover:bg-gray-700/80 hover:translate-x-1"
           :style="{ borderLeftColor: phaseColor }"
         >
           {{ subtopic }}
-        </div>
+        </NuxtLink>
       </div>
     </Transition>
   </UCard>

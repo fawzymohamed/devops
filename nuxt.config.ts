@@ -7,6 +7,7 @@
  * @see https://nuxt.com/docs/api/configuration/nuxt-config
  */
 export default defineNuxtConfig({
+
   /**
    * Nuxt Modules
    * ------------
@@ -19,28 +20,6 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxt/content'
   ],
-
-  /**
-   * Nuxt Content Configuration
-   * --------------------------
-   * Configures the @nuxt/content module for lesson markdown files.
-   * - build.markdown.highlight: Syntax highlighting for code blocks using Shiki
-   * - build.markdown.toc: Table of contents generation settings
-   */
-  content: {
-    build: {
-      markdown: {
-        highlight: {
-          theme: 'github-dark',
-          langs: ['bash', 'typescript', 'javascript', 'python', 'yaml', 'dockerfile', 'json', 'sql', 'powershell', 'shell']
-        },
-        toc: {
-          depth: 3,
-          searchDepth: 3
-        }
-      }
-    }
-  },
 
   /**
    * GitHub Pages Deployment Configuration
@@ -85,6 +64,28 @@ export default defineNuxtConfig({
     fallback: 'dark',
     classPrefix: '',
     classSuffix: ''
+  },
+
+  /**
+   * Nuxt Content Configuration
+   * --------------------------
+   * Configures the @nuxt/content module for lesson markdown files.
+   * - build.markdown.highlight: Syntax highlighting for code blocks using Shiki
+   * - build.markdown.toc: Table of contents generation settings
+   */
+  content: {
+    build: {
+      markdown: {
+        highlight: {
+          theme: 'github-dark',
+          langs: ['bash', 'typescript', 'javascript', 'python', 'yaml', 'dockerfile', 'json', 'sql', 'powershell', 'shell']
+        },
+        toc: {
+          depth: 3,
+          searchDepth: 3
+        }
+      }
+    }
   },
 
   /**

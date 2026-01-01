@@ -65,6 +65,14 @@ const openTopicIndex = ref<number | null>(null)
 const activeData = computed(() => roadmapData[activePhase.value]!)
 
 /**
+ * Active Phase Slug
+ * -----------------
+ * URL-friendly slug for the currently active phase.
+ * Uses the explicit slug property from the phase data.
+ */
+const activePhaseSlug = computed(() => activeData.value.slug)
+
+/**
  * Toggle Topic Function
  * ---------------------
  * Implements accordion behavior for topic cards.
@@ -192,6 +200,7 @@ watch(activePhase, () => {
           :key="idx"
           :topic="topic"
           :phase-color="activeData.color"
+          :phase-slug="activePhaseSlug"
           :is-open="openTopicIndex === idx"
           @toggle="toggleTopic(idx)"
         />
