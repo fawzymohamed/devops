@@ -14,11 +14,13 @@ export default defineNuxtConfig({
    * - @nuxt/eslint: Provides ESLint integration for code quality
    * - @nuxt/ui: Nuxt UI v4 component library with Tailwind CSS
    * - @nuxt/content: Markdown-based content management for lessons
+   * - @nuxt/fonts: Automatic font loading from Google Fonts (configured in main.css)
    */
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui',
-    '@nuxt/content'
+    '@nuxt/content',
+    '@nuxt/fonts'
   ],
 
   /**

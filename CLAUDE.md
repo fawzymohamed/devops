@@ -87,6 +87,21 @@ scripts/              # Build/generation scripts
 - Built with Nuxt UI v4 components: `UCard`, `UBadge`, `UButton`, `UButtonGroup`, `UHeader`, `UFooter`
 - Dark mode default (no color mode toggle)
 
+### Font Configuration
+
+Dual font system using `@nuxt/fonts` (auto-loads from Google Fonts):
+
+| Area | Font | CSS Variable |
+|------|------|--------------|
+| UI (navigation, headers, quizzes, buttons) | Red Hat Text | `--font-sans` |
+| Lesson content (markdown prose) | Fuzzy Bubbles | `--font-content` |
+| SVG Illustrations | Fuzzy Bubbles | `TYPOGRAPHY.fontFamily` |
+
+**To change fonts:**
+1. Open `app/assets/css/main.css`
+2. Update font names in `@theme static` block
+3. For SVG illustrations, also update `app/composables/useIllustrationDesign.ts`
+
 ### SVG Illustration System
 
 Hand-drawn style SVG illustrations for lessons using reusable MDC components:

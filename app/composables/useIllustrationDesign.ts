@@ -110,8 +110,8 @@ export const OPACITY = {
 // =============================================================================
 
 export const TYPOGRAPHY = {
-  /** Font family for all text */
-  fontFamily: '\'Segoe UI\', system-ui, sans-serif',
+  /** Font family for all text (matches --font-content in main.css) */
+  fontFamily: '\'Fuzzy Bubbles\', cursive',
   /** Title/header text size */
   titleSize: 14,
   /** Main label text size */

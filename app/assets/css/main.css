@@ -1,9 +1,25 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+/**
+ * FONT CONFIGURATION
+ * ==================
+ * Two-font system for the LMS:
+ *
+ * --font-sans: UI font for navigation, headers, quizzes, buttons
+ * --font-content: Lesson content font for markdown prose
+ *
+ * To change fonts, update the font names below.
+ * @nuxt/fonts will automatically detect and load them from Google Fonts.
+ */
 @theme static {
-  --font-sans: 'Public Sans', sans-serif;
+  /* UI Font - used for navigation, headers, quizzes, buttons */
+  --font-sans: 'Red Hat Text', sans-serif;
 
+  /* Lesson Content Font - used for markdown prose in lessons */
+  --font-content: 'Fuzzy Bubbles', cursive;
+
+  /* Custom Green Color Palette */
   --color-green-50: #EFFDF5;
   --color-green-100: #D9FBE8;
   --color-green-200: #B3F5D1;
@@ -15,4 +31,20 @@
   --color-green-800: #016538;
   --color-green-900: #0A5331;
   --color-green-950: #052E16;
+}
+
+/**
+ * Apply content font to lesson prose areas
+ * Targets the ContentRenderer output in lesson pages
+ */
+.prose {
+  font-family: var(--font-content);
+}
+
+/**
+ * Utility class for content font
+ * Use this to apply the content font anywhere: class="font-content"
+ */
+.font-content {
+  font-family: var(--font-content);
 }
