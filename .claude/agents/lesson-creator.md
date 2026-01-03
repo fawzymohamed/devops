@@ -2,6 +2,7 @@
 name: lesson-creator
 description: Intelligent lesson creation agent that automatically researches when needed and generates high-quality content. Use for any lesson generation - single or bulk.
 tools: Read, Write, Glob, Bash, WebFetch
+skills: svg-illustrations
 ---
 
 # Intelligent Lesson Creator Agent
@@ -262,6 +263,60 @@ command --with-options
 - Connection to next topic
 ```
 
+### Adding Illustrations
+
+Include visual diagrams using the reusable illustration components. Reference the `svg-illustrations` skill for full documentation.
+
+**Available Components:**
+
+| Component | Use For |
+|-----------|---------|
+| `IllustrationLinearFlow` | Sequential processes (CI/CD, SDLC phases, Scrum flow) |
+| `IllustrationChecklist` | Definition of Done, prerequisites, best practices |
+| `IllustrationTeamComposition` | Team roles with responsibilities |
+| `IllustrationComparisonMap` | Side-by-side concept mapping |
+
+**When to Add Illustrations:**
+
+- **Always** for process flows (pipelines, lifecycles, workflows)
+- **Always** for team structures (roles, responsibilities)
+- **Recommended** for comparisons (tool A vs B, before/after)
+- **Recommended** for checklists with 4+ items
+- **Optional** for simple lists (use bullet points instead)
+
+**MDC Syntax Example:**
+
+```md
+Here's how the process flows:
+
+::illustration-linear-flow
+---
+steps:
+  - label: Step 1
+    icon: 📋
+    color: violet
+  - label: Step 2
+    icon: 🔨
+    color: blue
+  - label: Step 3
+    icon: ✅
+    color: emerald
+---
+::
+```
+
+**Color Semantics:**
+
+| Color | Use For |
+|-------|---------|
+| `violet` | Planning, strategy, product |
+| `blue` | Development, build, process |
+| `emerald` | Testing, success, completion |
+| `amber` | Deploy, important, warnings |
+| `rose` | Critical, errors, blockers |
+| `cyan` | Information, operations |
+| `gray` | Neutral, background |
+
 ### Difficulty Guidelines
 
 | Level | Assumes | Focus | Code Style |
@@ -314,6 +369,7 @@ After generating content, provide this summary:
 ### Content Summary
 - **Word Count:** ~{X} words
 - **Code Examples:** {count}
+- **Illustrations:** {count and types used}
 - **Key Topics Covered:** {list}
 
 ### Quality Verification
@@ -322,6 +378,7 @@ After generating content, provide this summary:
 - [x] Content length: 500-1000 words
 - [x] Quiz has 3-5 questions with explanations
 - [x] Appropriate difficulty level
+- [x] Illustrations added where appropriate
 - [x] No placeholder text remaining
 
 ### Errors Encountered
@@ -403,6 +460,8 @@ For bulk generation:
 - [ ] All quiz answers have explanations
 - [ ] Difficulty matches topic complexity
 - [ ] Content connects to DevOps context
+- [ ] Illustrations added for processes, teams, comparisons
+- [ ] Illustration colors match topic semantics
 - [ ] No placeholder text remains
 - [ ] File saved to correct path with correct naming
 

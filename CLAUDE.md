@@ -45,11 +45,17 @@ app/
 │   ├── PhaseCard.vue        # Phase navigation cards
 │   ├── StatsFooter.vue      # Summary statistics
 │   ├── RoadmapTimeline.vue  # Timeline view mode
-│   └── RoadmapGrid.vue      # Grid view mode
+│   ├── RoadmapGrid.vue      # Grid view mode
+│   └── content/             # MDC components for markdown
+│       ├── IllustrationLinearFlow.vue
+│       ├── IllustrationChecklist.vue
+│       ├── IllustrationTeamComposition.vue
+│       └── IllustrationComparisonMap.vue
 ├── composables/      # Reusable composition functions
 │   ├── useProgress.ts       # Track lesson completion
 │   ├── useQuiz.ts           # Quiz state management
-│   └── useCertificate.ts    # Certificate generation
+│   ├── useCertificate.ts    # Certificate generation
+│   └── useIllustrationDesign.ts  # SVG illustration design system
 ├── data/
 │   ├── roadmap.ts    # Roadmap data with TypeScript types
 │   └── types.ts      # Shared TypeScript interfaces
@@ -80,6 +86,36 @@ scripts/              # Build/generation scripts
 
 - Built with Nuxt UI v4 components: `UCard`, `UBadge`, `UButton`, `UButtonGroup`, `UHeader`, `UFooter`
 - Dark mode default (no color mode toggle)
+
+### SVG Illustration System
+
+Hand-drawn style SVG illustrations for lessons using reusable MDC components:
+
+| Component | Use Case |
+|-----------|----------|
+| `IllustrationLinearFlow` | Sequential processes (CI/CD, SDLC, Scrum flow) |
+| `IllustrationChecklist` | Definition of Done, prerequisites, best practices |
+| `IllustrationTeamComposition` | Team roles with responsibilities |
+| `IllustrationComparisonMap` | Side-by-side concept mapping |
+
+**MDC Usage in Markdown:**
+```md
+::illustration-linear-flow
+---
+steps:
+  - label: Plan
+    icon: 📋
+    color: violet
+  - label: Build
+    icon: 🔨
+    color: blue
+---
+::
+```
+
+**Colors:** `violet`, `blue`, `emerald`, `amber`, `rose`, `cyan`, `gray`
+
+**Important:** Components must be in `app/components/content/` for MDC to work.
 
 ## Deployment
 
@@ -185,6 +221,7 @@ const value = computed(() => data.length) // Inline explanation
   - Mark Complete button with progress tracking
   - Previous/Next navigation using `queryCollectionItemSurroundings`
 - [x] Quiz system (QuizContainer component)
+- [x] SVG Illustration System (4 MDC components + design system composable)
 - [ ] Phase 4: Progress tracking (useProgress composable) - partially implemented
 - [ ] Phase 5: Certificate generation (useCertificate composable)
 - [ ] Phase 6: Navigation and search
