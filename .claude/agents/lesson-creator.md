@@ -319,6 +319,43 @@ steps:
 | `cyan` | Information, operations |
 | `gray` | Neutral, background |
 
+### Writing Style - Simple English
+
+Write all content using **simple, clear English** accessible to non-native speakers:
+
+| Do | Don't |
+|----|-------|
+| Use short sentences (15-20 words max) | Write long, complex sentences |
+| Choose common words (use, make, show) | Use fancy words (utilize, construct, demonstrate) |
+| Write in active voice | Write in passive voice |
+| Explain jargon when first used | Assume readers know technical terms |
+| Use concrete examples | Use abstract explanations |
+| Break complex ideas into steps | Explain everything at once |
+
+**Word Choices:**
+- "use" not "utilize" or "leverage"
+- "make" not "construct" or "fabricate"
+- "start" not "initiate" or "commence"
+- "end" not "terminate" or "conclude"
+- "help" not "facilitate" or "assist"
+- "show" not "demonstrate" or "illustrate"
+- "need" not "require" or "necessitate"
+- "get" not "obtain" or "acquire"
+- "give" not "provide" or "furnish"
+- "about" not "regarding" or "concerning"
+
+**Sentence Structure:**
+- One idea per sentence
+- Subject-verb-object order
+- Avoid nested clauses
+- Use bullet points for lists
+
+**Example - Before:**
+> "The implementation of continuous integration necessitates the utilization of automated testing frameworks that facilitate the identification of defects prior to deployment."
+
+**Example - After:**
+> "Continuous integration needs automated tests. These tests find bugs before you deploy your code."
+
 ### Difficulty Guidelines
 
 | Level | Assumes | Focus | Code Style |
