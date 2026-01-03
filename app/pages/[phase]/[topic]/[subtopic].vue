@@ -188,6 +188,7 @@ function formatPhaseName(slug: string): string {
     .replace(/-/g, ' ')
     .replace(/\b\w/g, c => c.toUpperCase())
     .replace(/Phase (\d+)/, 'Phase $1:')
+    .replace(/Sdlc/g, 'SDLC')
 }
 
 /**
@@ -287,28 +288,20 @@ useSeoMeta({
           Breadcrumb Navigation
           =====================
           Shows path: Home > Phase > Topic > Lesson
+          Uses Nuxt UI v4 items-based API
         -->
         <nav
           class="mb-6"
           aria-label="Breadcrumb"
         >
-          <UBreadcrumb>
-            <UBreadcrumbItem
-              to="/"
-              icon="i-lucide-home"
-            >
-              Roadmap
-            </UBreadcrumbItem>
-            <UBreadcrumbItem>
-              {{ formatPhaseName(phase) }}
-            </UBreadcrumbItem>
-            <UBreadcrumbItem>
-              {{ formatTopicName(topic) }}
-            </UBreadcrumbItem>
-            <UBreadcrumbItem>
-              {{ lesson.title }}
-            </UBreadcrumbItem>
-          </UBreadcrumb>
+          <UBreadcrumb
+            :items="[
+              { label: 'Roadmap', icon: 'i-lucide-home', to: '/' },
+              { label: formatPhaseName(phase) },
+              { label: formatTopicName(topic) },
+              { label: lesson.title }
+            ]"
+          />
         </nav>
 
         <!--

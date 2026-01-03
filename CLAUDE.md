@@ -238,8 +238,8 @@ const value = computed(() => data.length) // Inline explanation
 - [x] Waterfall Model
 - [x] Agile Methodology
 - [x] Scrum Framework
-- [ ] Kanban Method
-- [ ] DevOps SDLC
+- [x] Kanban Method
+- [x] DevOps SDLC
 
 </details>
 
