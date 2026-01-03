@@ -66,7 +66,11 @@ export const SPACING = {
   /** Radius for rounded corners */
   borderRadius: 12,
   /** Icon circle radius */
-  iconRadius: 25
+  iconRadius: 25,
+  /** Maximum items per row in horizontal flow */
+  maxItemsPerRow: 4,
+  /** Vertical gap between rows in multi-row horizontal flow */
+  rowGap: 60
 }
 
 // =============================================================================

@@ -269,12 +269,14 @@ Include visual diagrams using the reusable illustration components. Reference th
 
 **Available Components:**
 
-| Component | Use For |
-|-----------|---------|
-| `IllustrationLinearFlow` | Sequential processes (CI/CD, SDLC phases, Scrum flow) |
-| `IllustrationChecklist` | Definition of Done, prerequisites, best practices |
-| `IllustrationTeamComposition` | Team roles with responsibilities |
-| `IllustrationComparisonMap` | Side-by-side concept mapping |
+| Component | Use For | Default Size |
+|-----------|---------|--------------|
+| `IllustrationLinearFlow` | Sequential processes (CI/CD, SDLC phases, Scrum flow) | `full` (horizontal) / `sm` (vertical) |
+| `IllustrationChecklist` | Definition of Done, prerequisites, best practices | `2xl` |
+| `IllustrationTeamComposition` | Team roles with responsibilities | `full` |
+| `IllustrationComparisonMap` | Side-by-side concept mapping | `full` |
+
+**Size Options:** `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `full` - defaults work well, only override when needed.
 
 **When to Add Illustrations:**
 

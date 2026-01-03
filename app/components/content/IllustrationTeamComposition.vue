@@ -32,11 +32,9 @@
 -->
 
 <template>
-  <div class="illustration-team-composition">
+  <div :class="['illustration-team-composition', sizeClass]">
     <svg
       :viewBox="`0 0 ${viewBox.width} ${viewBox.height}`"
-      :width="viewBox.width"
-      :height="viewBox.height"
       class="w-full h-auto"
       role="img"
       :aria-label="`Team composition: ${title}`"
@@ -218,6 +216,20 @@ interface Role {
   responsibilities: string[]
 }
 
+/** Available size options for the illustration */
+type IllustrationSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'
+
+/** Map size prop to Tailwind max-width classes */
+const SIZE_CLASSES: Record<IllustrationSize, string> = {
+  'sm': 'max-w-sm', // 384px
+  'md': 'max-w-md', // 448px
+  'lg': 'max-w-lg', // 512px
+  'xl': 'max-w-xl', // 576px
+  '2xl': 'max-w-2xl', // 672px - default for team compositions
+  '3xl': 'max-w-3xl', // 768px
+  'full': 'max-w-full'
+}
+
 // =============================================================================
 // PROPS
 // =============================================================================
@@ -231,14 +243,20 @@ const props = withDefaults(defineProps<{
   roles: Role[]
   /** Optional footnote */
   footnote?: string
+  /** Size of the illustration (controls max-width) */
+  size?: IllustrationSize
 }>(), {
   subtitle: '',
-  footnote: ''
+  footnote: '',
+  size: 'full'
 })
 
 // =============================================================================
 // COMPUTED VALUES
 // =============================================================================
+
+/** Get the max-width class based on size prop */
+const sizeClass = computed(() => SIZE_CLASSES[props.size])
 
 /** Calculate viewBox dimensions */
 const viewBox = computed(() => {
@@ -274,5 +292,8 @@ function getRoleTransform(index: number): string {
   display: flex;
   justify-content: center;
   padding: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 </style>

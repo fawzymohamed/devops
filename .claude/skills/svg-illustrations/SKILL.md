@@ -49,6 +49,8 @@ interface Props {
   direction?: 'horizontal' | 'vertical'  // Default: horizontal
   showFeedbackLoop?: boolean             // Show return arrow
   feedbackLabel?: string                 // Label for feedback
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'
+  // Default: 'full' for horizontal, 'sm' for vertical
 }
 ```
 
@@ -102,6 +104,7 @@ interface Props {
   }>
   note?: string                           // Optional footnote with 💡
   color?: string                          // Default: emerald
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'  // Default: 2xl
 }
 ```
 
@@ -150,6 +153,7 @@ interface Props {
     responsibilities: string[]            // List of responsibilities
   }>
   footnote?: string                       // Optional footnote
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'  // Default: full
 }
 ```
 
@@ -214,6 +218,7 @@ interface Props {
     icon: string                          // Connector emoji
   }>
   footnote?: string                       // Optional footnote
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'  // Default: full
 }
 ```
 
@@ -239,6 +244,38 @@ footnote: Both emphasize continuous improvement
 ---
 ::
 ```
+
+---
+
+## Size Options
+
+All illustration components support a `size` prop to control the maximum width:
+
+| Size | Max Width | Best For |
+|------|-----------|----------|
+| `sm` | 384px | Vertical flows, simple diagrams |
+| `md` | 448px | Compact horizontal flows |
+| `lg` | 512px | Medium checklists |
+| `xl` | 576px | Standard illustrations |
+| `2xl` | 672px | Checklists with longer text |
+| `3xl` | 768px | Wide comparisons |
+| `full` | 100% | Full-width illustrations (default for most) |
+
+### Default Sizes by Component
+
+| Component | Default Size | Reasoning |
+|-----------|--------------|-----------|
+| `IllustrationLinearFlow` (horizontal) | `full` | Horizontal flows benefit from full width |
+| `IllustrationLinearFlow` (vertical) | `sm` | Vertical flows are naturally narrow |
+| `IllustrationChecklist` | `2xl` | Single-column lists don't need full width |
+| `IllustrationTeamComposition` | `full` | Team cards spread horizontally |
+| `IllustrationComparisonMap` | `full` | Side-by-side comparisons need space |
+
+### When to Override Defaults
+
+- Use `size: sm` for simple 3-4 step vertical processes
+- Use `size: md` or `size: lg` when you want a more compact look
+- Defaults work well for most cases - only override when needed
 
 ---
 

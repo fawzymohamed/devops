@@ -109,11 +109,32 @@ steps:
   - label: Build
     icon: 🔨
     color: blue
+size: md
 ---
 ::
 ```
 
 **Colors:** `violet`, `blue`, `emerald`, `amber`, `rose`, `cyan`, `gray`
+
+**Sizes:** Control max-width with the `size` prop:
+| Size | Max Width | Best For |
+|------|-----------|----------|
+| `sm` | 384px | Vertical flows, simple diagrams |
+| `md` | 448px | Compact horizontal flows |
+| `lg` | 512px | Medium checklists |
+| `xl` | 576px | Standard illustrations |
+| `2xl` | 672px | Checklists with longer text |
+| `3xl` | 768px | Wide comparisons |
+| `full` | 100% | Full-width illustrations (default for most) |
+
+**Default Sizes:**
+| Component | Default |
+|-----------|---------|
+| `IllustrationLinearFlow` (horizontal) | `full` |
+| `IllustrationLinearFlow` (vertical) | `sm` |
+| `IllustrationChecklist` | `2xl` |
+| `IllustrationTeamComposition` | `full` |
+| `IllustrationComparisonMap` | `full` |
 
 **Important:** Components must be in `app/components/content/` for MDC to work.
 

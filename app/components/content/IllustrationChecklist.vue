@@ -29,12 +29,10 @@
 -->
 
 <template>
-  <div class="illustration-checklist">
+  <div :class="['illustration-checklist', sizeClass]">
     <svg
       :viewBox="`0 0 ${viewBox.width} ${viewBox.height}`"
-      :width="viewBox.width"
-      :height="viewBox.height"
-      class="w-full h-auto max-w-md"
+      class="w-full h-auto"
       role="img"
       :aria-label="`Checklist: ${title}`"
     >
@@ -194,6 +192,20 @@ interface ChecklistItem {
   icon?: string
 }
 
+/** Available size options for the illustration */
+type IllustrationSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'
+
+/** Map size prop to Tailwind max-width classes */
+const SIZE_CLASSES: Record<IllustrationSize, string> = {
+  'sm': 'max-w-sm', // 384px
+  'md': 'max-w-md', // 448px
+  'lg': 'max-w-lg', // 512px - default for checklists
+  'xl': 'max-w-xl', // 576px
+  '2xl': 'max-w-2xl', // 672px
+  '3xl': 'max-w-3xl', // 768px
+  'full': 'max-w-full'
+}
+
 // =============================================================================
 // PROPS
 // =============================================================================
@@ -207,14 +219,20 @@ const props = withDefaults(defineProps<{
   note?: string
   /** Color theme */
   color?: string
+  /** Size of the illustration (controls max-width) */
+  size?: IllustrationSize
 }>(), {
   color: 'emerald',
-  note: ''
+  note: '',
+  size: '2xl'
 })
 
 // =============================================================================
 // COMPUTED VALUES
 // =============================================================================
+
+/** Get the max-width class based on size prop */
+const sizeClass = computed(() => SIZE_CLASSES[props.size])
 
 /** Get color values for the theme */
 const colorValues = computed(() => getColor(props.color))
@@ -245,5 +263,8 @@ const noteY = computed(() => {
   display: flex;
   justify-content: center;
   padding: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 </style>
