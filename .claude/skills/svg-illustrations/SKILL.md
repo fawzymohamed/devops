@@ -10,6 +10,10 @@ triggers:
   - IllustrationChecklist
   - IllustrationTeamComposition
   - IllustrationComparisonMap
+  - IllustrationPyramid
+  - pyramid diagram
+  - testing pyramid
+  - hierarchy diagram
 ---
 
 # SVG Illustration System
@@ -256,6 +260,67 @@ footnote: Both emphasize continuous improvement
 
 ---
 
+### 5. IllustrationPyramid
+
+**Purpose:** Pyramid/hierarchy diagrams where size indicates quantity or importance
+
+**Best For:**
+- Testing Pyramid (Unit → Integration → E2E)
+- Priority hierarchies
+- Layered architectures
+- Any bottom-up structure where base is largest
+
+**Props:**
+```typescript
+interface Props {
+  layers: Array<{
+    label: string           // Layer name (displayed inside)
+    description?: string    // Text shown to the right
+    icon?: string           // Emoji shown to the left
+    color: string           // Tailwind color name
+  }>  // Order: top (smallest) to bottom (largest)
+  title?: string            // Optional title above pyramid
+  footnote?: string         // Optional centered footnote below
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'  // Default: xl
+}
+```
+
+**MDC Usage:**
+```md
+::illustration-pyramid
+---
+layers:
+  - label: E2E Tests
+    description: Few - slow, fragile
+    icon: 🌐
+    color: rose
+  - label: Integration
+    description: Some - moderate speed
+    icon: 🔗
+    color: amber
+  - label: Unit Tests
+    description: Many - fast, cheap
+    icon: 🧩
+    color: emerald
+footnote: More tests at the bottom, fewer at the top
+size: xl
+---
+::
+```
+
+**Visual Structure:**
+```
+         /\
+        /  \     ← Top layer (few/small) - rose
+       /____\
+      /      \   ← Middle layer (some/medium) - amber
+     /________\
+    /          \ ← Bottom layer (many/large) - emerald
+   /______________\
+```
+
+---
+
 ## Size Options
 
 All illustration components support a `size` prop to control the maximum width:
@@ -278,6 +343,7 @@ All illustration components support a `size` prop to control the maximum width:
 | `IllustrationChecklist` | `2xl` | Single-column lists don't need full width |
 | `IllustrationTeamComposition` | `full` | Team cards spread horizontally |
 | `IllustrationComparisonMap` | `full` | Side-by-side comparisons need space |
+| `IllustrationPyramid` | `xl` | Pyramid with side descriptions needs moderate width |
 
 ### IllustrationLinearFlow Auto-Sizing
 
@@ -373,6 +439,9 @@ What type of diagram do you need?
 │
 ├── Side-by-side comparison?
 │   └── Use: IllustrationComparisonMap
+│
+├── Pyramid/hierarchy where size shows quantity?
+│   └── Use: IllustrationPyramid
 │
 └── None of the above?
     └── Create custom SVG (see below)
@@ -504,7 +573,8 @@ app/
 │   ├── IllustrationLinearFlow.vue
 │   ├── IllustrationChecklist.vue
 │   ├── IllustrationTeamComposition.vue
-│   └── IllustrationComparisonMap.vue
+│   ├── IllustrationComparisonMap.vue
+│   └── IllustrationPyramid.vue
 └── composables/
     └── useIllustrationDesign.ts
 ```
@@ -533,5 +603,7 @@ When these patterns are needed frequently, new components will be added:
 
 - **IllustrationTimeline** - Events on a timeline
 - **IllustrationCycle** - Circular/cyclic processes
-- **IllustrationHierarchy** - Tree structures
+- **IllustrationHierarchy** - Tree structures (parent-child relationships)
 - **IllustrationPillars** - Supporting pillars diagram
+
+Note: IllustrationPyramid was added to support testing pyramids and layered hierarchies.

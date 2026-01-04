@@ -275,6 +275,15 @@ Include visual diagrams using the reusable illustration components. Reference th
 | `IllustrationChecklist` | Definition of Done, prerequisites, best practices | `2xl` |
 | `IllustrationTeamComposition` | Team roles with responsibilities | `full` |
 | `IllustrationComparisonMap` | Side-by-side concept mapping | `full` |
+| `IllustrationPyramid` | Testing pyramid, priority hierarchies, layered architectures | `xl` |
+
+**IMPORTANT - When No Component Fits:**
+
+If you need a diagram that doesn't fit any existing component (cycle diagrams, timelines, tree hierarchies, etc.):
+1. **DO NOT create ASCII art** - ASCII diagrams look unprofessional and break the visual consistency
+2. **Consult the `svg-illustrations` skill** for guidance on creating a new reusable component
+3. The skill provides design system constants, color palette, and templates for creating custom SVG components
+4. New components should be added to `app/components/content/` to work with MDC syntax
 
 **Size Options:** `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `full` - defaults work well, only override when needed.
 

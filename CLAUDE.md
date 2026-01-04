@@ -112,6 +112,7 @@ Hand-drawn style SVG illustrations for lessons using reusable MDC components:
 | `IllustrationChecklist` | Definition of Done, prerequisites, best practices |
 | `IllustrationTeamComposition` | Team roles with responsibilities |
 | `IllustrationComparisonMap` | Side-by-side concept mapping |
+| `IllustrationPyramid` | Testing pyramid, priority hierarchies, layered architectures |
 
 **MDC Usage in Markdown:**
 ```md
@@ -160,6 +161,7 @@ Override with `direction: horizontal` or `direction: vertical` if needed.
 | `IllustrationChecklist` | `2xl` |
 | `IllustrationTeamComposition` | `full` |
 | `IllustrationComparisonMap` | `full` |
+| `IllustrationPyramid` | `xl` |
 
 **Important:** Components must be in `app/components/content/` for MDC to work.
 
