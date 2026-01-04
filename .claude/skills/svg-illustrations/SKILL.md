@@ -46,13 +46,22 @@ interface Props {
     icon?: string      // Emoji icon
     color: string      // Tailwind color name
   }>
-  direction?: 'horizontal' | 'vertical'  // Default: horizontal
+  direction?: 'horizontal' | 'vertical'  // Auto-determined by step count (optional)
   showFeedbackLoop?: boolean             // Show return arrow
   feedbackLabel?: string                 // Label for feedback
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'
-  // Default: 'full' for horizontal, 'sm' for vertical
 }
 ```
+
+**Auto-Direction (No need to specify direction):**
+
+| Steps | Layout | Behavior |
+|-------|--------|----------|
+| ≤5 | Horizontal | Side-by-side flow, full width |
+| 6-10 | Vertical | Stacked flow, 280px width |
+| >10 | Vertical + Scroll | 600px max-height with scrolling |
+
+You can still override with `direction: horizontal` or `direction: vertical` if needed.
 
 **MDC Usage:**
 ```md
@@ -265,15 +274,21 @@ All illustration components support a `size` prop to control the maximum width:
 
 | Component | Default Size | Reasoning |
 |-----------|--------------|-----------|
-| `IllustrationLinearFlow` (horizontal) | `full` | Horizontal flows benefit from full width |
-| `IllustrationLinearFlow` (vertical) | `sm` | Vertical flows are naturally narrow |
+| `IllustrationLinearFlow` | Auto-sized | Direction and size determined by step count |
 | `IllustrationChecklist` | `2xl` | Single-column lists don't need full width |
 | `IllustrationTeamComposition` | `full` | Team cards spread horizontally |
 | `IllustrationComparisonMap` | `full` | Side-by-side comparisons need space |
 
+### IllustrationLinearFlow Auto-Sizing
+
+The component automatically determines layout and size:
+- **≤5 steps**: Horizontal layout, full width
+- **6-10 steps**: Vertical layout, 280px width
+- **>10 steps**: Vertical layout with 600px max-height scrolling
+
 ### When to Override Defaults
 
-- Use `size: sm` for simple 3-4 step vertical processes
+- Override `direction` only when you specifically need horizontal for >5 items or vertical for ≤5 items
 - Use `size: md` or `size: lg` when you want a more compact look
 - Defaults work well for most cases - only override when needed
 

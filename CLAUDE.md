@@ -124,10 +124,21 @@ steps:
   - label: Build
     icon: 🔨
     color: blue
-size: md
 ---
 ::
 ```
+
+**IllustrationLinearFlow Auto-Direction:**
+
+The component automatically determines layout based on step count:
+
+| Steps | Layout | Behavior |
+|-------|--------|----------|
+| ≤5 | Horizontal | Side-by-side flow, full width |
+| 6-10 | Vertical | Stacked flow, 280px width |
+| >10 | Vertical + Scroll | 600px max-height with scrolling |
+
+Override with `direction: horizontal` or `direction: vertical` if needed.
 
 **Colors:** `violet`, `blue`, `emerald`, `amber`, `rose`, `cyan`, `gray`
 
@@ -145,8 +156,7 @@ size: md
 **Default Sizes:**
 | Component | Default |
 |-----------|---------|
-| `IllustrationLinearFlow` (horizontal) | `full` |
-| `IllustrationLinearFlow` (vertical) | `sm` |
+| `IllustrationLinearFlow` | Auto-sized based on step count |
 | `IllustrationChecklist` | `2xl` |
 | `IllustrationTeamComposition` | `full` |
 | `IllustrationComparisonMap` | `full` |

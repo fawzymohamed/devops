@@ -16,18 +16,24 @@
   └─────────┘     └─────────┘     └─────────┘
         ◄─────────── Feedback Loop ───────────┘
 
+  Auto-Direction Logic:
+  - If >5 steps → vertical layout (stacked)
+  - If ≤5 steps → horizontal layout (side-by-side)
+  - Can be overridden with explicit direction prop
+
   Props:
   - steps: Array of step objects with label, sublabel, icon, color
-  - direction: 'horizontal' | 'vertical'
+  - direction: 'horizontal' | 'vertical' (auto-determined if not set)
   - showFeedbackLoop: Boolean to show return arrow
   - feedbackLabel: Label for feedback arrow
 -->
 
 <template>
-  <div :class="['illustration-linear-flow', sizeClass]">
+  <div :class="['illustration-linear-flow', sizeClass, containerScrollClass]" :style="containerStyle">
     <svg
       :viewBox="`0 0 ${viewBox.width} ${viewBox.height}`"
-      class="w-full h-auto"
+      :class="svgClasses"
+      :style="svgStyle"
       role="img"
       :aria-label="ariaLabel"
     >
@@ -121,7 +127,7 @@
         <!-- Arrow to next step (if not last) -->
         <g v-if="index < steps.length - 1">
           <line
-            v-if="direction === 'horizontal'"
+            v-if="effectiveDirection === 'horizontal'"
             :x1="getArrowStartX(index)"
             :y1="startY + SPACING.boxHeight / 2"
             :x2="getArrowEndX(index)"
@@ -132,14 +138,14 @@
           />
           <!-- Arrowhead -->
           <polygon
-            v-if="direction === 'horizontal'"
+            v-if="effectiveDirection === 'horizontal'"
             :points="getArrowheadPoints(index)"
             :fill="getColor(steps[index + 1]?.color ?? 'gray').light"
           />
 
           <!-- Vertical arrows -->
           <line
-            v-if="direction === 'vertical'"
+            v-if="effectiveDirection === 'vertical'"
             :x1="startX + SPACING.boxWidth / 2"
             :y1="getVerticalArrowStartY(index)"
             :x2="startX + SPACING.boxWidth / 2"
@@ -149,7 +155,7 @@
             :stroke-dasharray="STROKES.arrowDash"
           />
           <polygon
-            v-if="direction === 'vertical'"
+            v-if="effectiveDirection === 'vertical'"
             :points="getVerticalArrowheadPoints(index)"
             :fill="getColor(steps[index + 1]?.color ?? 'gray').light"
           />
@@ -157,7 +163,7 @@
       </g>
 
       <!-- Feedback Loop (if enabled) -->
-      <g v-if="showFeedbackLoop && direction === 'horizontal'">
+      <g v-if="showFeedbackLoop && effectiveDirection === 'horizontal'">
         <!-- Curved feedback arrow -->
         <path
           :d="feedbackPath"
@@ -238,7 +244,7 @@ const SIZE_CLASSES: Record<IllustrationSize, string> = {
 const props = withDefaults(defineProps<{
   /** Array of steps to render */
   steps: Step[]
-  /** Flow direction */
+  /** Flow direction - auto-determined based on step count if not specified (>5 steps = vertical) */
   direction?: 'horizontal' | 'vertical'
   /** Show feedback loop arrow */
   showFeedbackLoop?: boolean
@@ -247,7 +253,7 @@ const props = withDefaults(defineProps<{
   /** Size of the illustration (controls max-width). Defaults to 'full' for horizontal, 'sm' for vertical */
   size?: IllustrationSize
 }>(), {
-  direction: 'horizontal',
+  direction: undefined,
   showFeedbackLoop: false,
   feedbackLabel: ''
 })
@@ -256,19 +262,46 @@ const props = withDefaults(defineProps<{
 // COMPUTED VALUES
 // =============================================================================
 
+/**
+ * Get the effective direction based on step count
+ * - If direction prop is explicitly set, use that
+ * - Otherwise: >5 steps = vertical, ≤5 steps = horizontal
+ */
+const effectiveDirection = computed((): 'horizontal' | 'vertical' => {
+  if (props.direction) return props.direction
+  return props.steps.length > 5 ? 'vertical' : 'horizontal'
+})
+
 /** Get the effective size - uses prop if provided, otherwise defaults based on direction */
 const effectiveSize = computed((): IllustrationSize => {
   if (props.size) return props.size
   // Default: full width for horizontal, small for vertical
-  return props.direction === 'horizontal' ? 'full' : 'sm'
+  return effectiveDirection.value === 'horizontal' ? 'full' : 'sm'
 })
 
 /** Get the max-width class based on effective size */
 const sizeClass = computed(() => SIZE_CLASSES[effectiveSize.value])
 
+/** Add scroll class for vertical layouts with >10 items */
+const containerScrollClass = computed(() => {
+  if (effectiveDirection.value === 'vertical' && props.steps.length > 10) {
+    return 'overflow-y-auto'
+  }
+  return ''
+})
+
+/** Container style - add max-height for scrollable vertical layouts */
+const containerStyle = computed(() => {
+  if (effectiveDirection.value === 'vertical' && props.steps.length > 10) {
+    // Max height roughly equivalent to 10 items (~1200px)
+    return { maxHeight: '600px' }
+  }
+  return {}
+})
+
 /** Calculate viewBox dimensions based on steps */
 const viewBox = computed(() => {
-  return calculateLinearFlowViewBox(props.steps.length, props.direction, props.showFeedbackLoop)
+  return calculateLinearFlowViewBox(props.steps.length, effectiveDirection.value, props.showFeedbackLoop)
 })
 
 /** Starting X position (centered with padding) */
@@ -283,13 +316,30 @@ const ariaLabel = computed(() => {
   return `Flow diagram: ${stepLabels}`
 })
 
+/** SVG classes - horizontal stretches to fill, vertical uses intrinsic size */
+const svgClasses = computed(() => {
+  return effectiveDirection.value === 'horizontal'
+    ? 'w-full h-auto'
+    : 'h-auto'
+})
+
+/** SVG inline style - constrain vertical layout width */
+const svgStyle = computed(() => {
+  if (effectiveDirection.value === 'vertical') {
+    // Scale up viewBox width by 1.4x for better readability
+    const scaledWidth = Math.round(viewBox.value.width * 1.4)
+    return { width: `${scaledWidth}px`, maxWidth: '100%' }
+  }
+  return {}
+})
+
 // =============================================================================
 // POSITION CALCULATIONS - HORIZONTAL
 // =============================================================================
 
 /** Get transform for step box positioning */
 function getStepTransform(index: number): string {
-  if (props.direction === 'horizontal') {
+  if (effectiveDirection.value === 'horizontal') {
     const x = startX.value + index * (SPACING.boxWidth + SPACING.arrowLength)
     return `translate(${x}, ${startY.value})`
   } else {
@@ -368,5 +418,24 @@ const feedbackArrowheadPoints = computed(() => {
   margin-left: auto;
   margin-right: auto;
   width: 100%;
+}
+
+/* Scrollbar styling for vertical layouts with many items */
+.illustration-linear-flow.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #6b7280 transparent;
+}
+
+.illustration-linear-flow.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.illustration-linear-flow.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.illustration-linear-flow.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #6b7280;
+  border-radius: 3px;
 }
 </style>

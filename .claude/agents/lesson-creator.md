@@ -271,12 +271,24 @@ Include visual diagrams using the reusable illustration components. Reference th
 
 | Component | Use For | Default Size |
 |-----------|---------|--------------|
-| `IllustrationLinearFlow` | Sequential processes (CI/CD, SDLC phases, Scrum flow) | `full` (horizontal) / `sm` (vertical) |
+| `IllustrationLinearFlow` | Sequential processes (CI/CD, SDLC phases, Scrum flow) | Auto-sized |
 | `IllustrationChecklist` | Definition of Done, prerequisites, best practices | `2xl` |
 | `IllustrationTeamComposition` | Team roles with responsibilities | `full` |
 | `IllustrationComparisonMap` | Side-by-side concept mapping | `full` |
 
 **Size Options:** `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `full` - defaults work well, only override when needed.
+
+**IllustrationLinearFlow Auto-Direction:**
+
+The component automatically chooses the best layout based on step count:
+
+| Steps | Layout | Behavior |
+|-------|--------|----------|
+| ≤5 | Horizontal | Side-by-side flow |
+| 6-10 | Vertical | Stacked flow |
+| >10 | Vertical + Scroll | 600px max-height with scrolling |
+
+No need to specify `direction` - it's determined automatically. You can still override with `direction: horizontal` or `direction: vertical` if needed.
 
 **When to Add Illustrations:**
 
