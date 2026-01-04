@@ -5,6 +5,8 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "dev:clean": "nuxi cleanup && nuxt dev",
+    "dev:reset": "rimraf .data/content .nuxt && nuxi cleanup && nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -24,6 +26,7 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.12.1",
     "eslint": "^9.39.2",
+    "rimraf": "^6.0.0",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.2.1"
   },

@@ -39,6 +39,47 @@
 import type { LessonFrontmatter } from '~/data/types'
 
 /**
+ * Content Cache Error Detection
+ * -----------------------------
+ * Nuxt Content v3 caches SQLite dumps in localStorage.
+ * During HMR, this cache can become corrupted causing atob errors.
+ *
+ * The content-cache-fix.client.ts plugin handles proactive cache clearing.
+ * This page provides a fallback UI if corruption still occurs.
+ *
+ * @see https://github.com/nuxt/content/issues/3341
+ */
+function isContentCacheError(error: Error | null): boolean {
+  if (!error) return false
+  const message = error.message || ''
+  return message.includes('atob') ||
+         message.includes('base64') ||
+         message.includes('not correctly encoded')
+}
+
+/**
+ * Handle cache error reload
+ * -------------------------
+ * Clears localStorage cache and reloads the page.
+ * The plugin will clear the cache on the next app init.
+ */
+function handleCacheErrorReload(): void {
+  if (typeof window === 'undefined') return
+
+  // Clear all potential Content cache entries
+  const keysToRemove: string[] = []
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (key && (/nuxt|content|sql|_content|db/i.test(key))) {
+      keysToRemove.push(key)
+    }
+  }
+  keysToRemove.forEach(key => localStorage.removeItem(key))
+
+  window.location.reload()
+}
+
+/**
  * Lesson Content Type
  * -------------------
  * Extends frontmatter with Nuxt Content fields
@@ -220,10 +261,62 @@ useSeoMeta({
       <!--
         Error State
         ===========
-        Show error message if lesson fails to load
+        Show error message if lesson fails to load.
+        For content cache errors, provide reload option.
       -->
       <template v-if="error">
-        <UCard class="border-red-500/50 bg-red-500/10">
+        <!-- Cache error - offer reload -->
+        <UCard
+          v-if="isContentCacheError(error)"
+          class="border-amber-500/50 bg-amber-500/10"
+        >
+          <div class="flex items-start gap-4">
+            <UIcon
+              name="i-lucide-database"
+              class="w-6 h-6 text-amber-500 flex-shrink-0"
+            />
+            <div>
+              <h3 class="font-medium text-amber-400">
+                Content cache needs refresh
+              </h3>
+              <p class="text-sm text-gray-400 mt-1">
+                The content cache was corrupted during development. Click reload to fix.
+              </p>
+              <p class="text-xs text-gray-500 mt-2">
+                If reloading doesn't help, run: <code class="text-green-400">pnpm dev:reset</code>
+              </p>
+              <div class="flex gap-2 mt-3">
+                <UButton
+                  size="sm"
+                  color="primary"
+                  class="cursor-pointer"
+                  @click="handleCacheErrorReload"
+                >
+                  <UIcon
+                    name="i-lucide-refresh-cw"
+                    class="w-4 h-4 mr-1"
+                  />
+                  Reload Page
+                </UButton>
+                <UButton
+                  size="sm"
+                  variant="soft"
+                  color="neutral"
+                  class="cursor-pointer"
+                  to="/"
+                >
+                  Back to Roadmap
+                </UButton>
+              </div>
+            </div>
+          </div>
+        </UCard>
+
+        <!-- Other errors - show error message with back button -->
+        <UCard
+          v-else
+          class="border-red-500/50 bg-red-500/10"
+        >
           <div class="flex items-start gap-4">
             <UIcon
               name="i-lucide-alert-triangle"
