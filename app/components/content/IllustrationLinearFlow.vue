@@ -29,7 +29,10 @@
 -->
 
 <template>
-  <div :class="['illustration-linear-flow', sizeClass, containerScrollClass]" :style="containerStyle">
+  <div
+    :class="['illustration-linear-flow', sizeClass, containerScrollClass]"
+    :style="containerStyle"
+  >
     <svg
       :viewBox="`0 0 ${viewBox.width} ${viewBox.height}`"
       :class="svgClasses"

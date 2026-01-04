@@ -52,9 +52,7 @@ import type { LessonFrontmatter } from '~/data/types'
 function isContentCacheError(error: Error | null): boolean {
   if (!error) return false
   const message = error.message || ''
-  return message.includes('atob') ||
-         message.includes('base64') ||
-         message.includes('not correctly encoded')
+  return message.includes('atob') || message.includes('base64') || message.includes('not correctly encoded')
 }
 
 /**
