@@ -36,7 +36,7 @@
 <template>
   <div :class="['illustration-comparison-map', sizeClass]">
     <svg
-      :viewBox="`0 0 ${viewBox.width} ${viewBox.height}`"
+      :viewBox="`0 0 ${dynamicViewBoxWidth} ${viewBoxHeight}`"
       class="w-full h-auto"
       role="img"
       :aria-label="`Comparison: ${leftTitle} and ${rightTitle}`"
@@ -156,8 +156,8 @@
       <!-- Footnote -->
       <text
         v-if="footnote"
-        :x="viewBox.width / 2"
-        :y="viewBox.height - 15"
+        :x="dynamicViewBoxWidth / 2"
+        :y="viewBoxHeight - 15"
         :fill="COLORS.gray.light"
         :font-size="TYPOGRAPHY.smallSize"
         :font-family="TYPOGRAPHY.fontFamily"
@@ -183,7 +183,6 @@ import {
   OPACITY,
   TYPOGRAPHY,
   getColor,
-  calculateComparisonViewBox,
   getHandDrawnRotation
 } from '~/composables/useIllustrationDesign'
 
@@ -248,9 +247,9 @@ const sizeClass = computed(() => SIZE_CLASSES[props.size])
 const leftColorValues = computed(() => getColor(props.leftColor))
 const rightColorValues = computed(() => getColor(props.rightColor))
 
-/** Calculate viewBox dimensions */
-const viewBox = computed(() => {
-  return calculateComparisonViewBox(props.connections.length)
+/** Calculate viewBox height based on connection count */
+const viewBoxHeight = computed(() => {
+  return 80 + props.connections.length * 50 + 40
 })
 
 // =============================================================================
@@ -258,17 +257,42 @@ const viewBox = computed(() => {
 // =============================================================================
 
 /** Item box dimensions */
-const itemWidth = 150
 const itemHeight = 40
 
 /** Row layout */
 const rowHeight = 50
 const rowStartY = 55
 
+/**
+ * Calculate item width based on longest text in connections.
+ * Uses character count × approx pixels per char for Fuzzy Bubbles font at 12px.
+ */
+const itemWidth = computed(() => {
+  // Find the longest text from all left and right items
+  const allTexts = props.connections.flatMap(c => [c.left, c.right])
+  const maxLength = Math.max(...allTexts.map(t => t.length))
+
+  // Fuzzy Bubbles at 12px is roughly 7-8px per character
+  // Add padding for the box (20px each side)
+  const estimatedWidth = maxLength * 7.8 + 40
+
+  // Clamp between min 150px and max 320px
+  return Math.max(150, Math.min(320, estimatedWidth))
+})
+
+/**
+ * Calculate viewBox width dynamically based on item width.
+ * Total width = left margin + itemWidth + gap + connector area + gap + itemWidth + right margin
+ */
+const dynamicViewBoxWidth = computed(() => {
+  // 40px margin on each side, 100px center area for icon and lines
+  return 40 + itemWidth.value + 100 + itemWidth.value + 40
+})
+
 /** Column positions */
 const leftColumnX = 40
-const rightColumnX = computed(() => viewBox.value.width - itemWidth - 40)
-const centerX = computed(() => viewBox.value.width / 2)
+const rightColumnX = computed(() => dynamicViewBoxWidth.value - itemWidth.value - 40)
+const centerX = computed(() => dynamicViewBoxWidth.value / 2)
 </script>
 
 <style scoped>
