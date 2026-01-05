@@ -391,11 +391,35 @@ Write all content using **simple, clear English** accessible to non-native speak
 - **Multiple Choice**: 2-4 correct out of 4-5 options, "Select all that apply"
 - **True/False**: Clear statements, no double negatives
 
+**Dynamic Question Count:**
+
+The number of quiz questions should vary based on lesson length and difficulty. Use this formula:
+
+| Difficulty | Est. Minutes | Question Count |
+|------------|--------------|----------------|
+| beginner | 5-10 min | 3 questions |
+| beginner | 11-15 min | 4 questions |
+| beginner | 16+ min | 5 questions |
+| intermediate | 5-10 min | 4 questions |
+| intermediate | 11-15 min | 5 questions |
+| intermediate | 16+ min | 6 questions |
+| advanced | 5-15 min | 5 questions |
+| advanced | 16-20 min | 6 questions |
+| advanced | 21+ min | 7 questions |
+
+**Randomization:** When the formula gives a range (e.g., a 12-minute intermediate lesson could have 5 questions), feel free to vary ±1 question to create natural variation across lessons. Avoid having all lessons in a topic with identical question counts.
+
+**Question Type Mix:**
+- For 3-4 questions: At least 2 single choice, 1 other type
+- For 5-6 questions: Mix of all three types (2-3 single, 1-2 multiple, 1-2 true/false)
+- For 7+ questions: Balanced mix with emphasis on single and multiple choice
+
 **Quality Checklist:**
 - Tests understanding, not memorization
 - Unambiguous correct answer
 - Explanation teaches why the answer is correct
 - Appropriate difficulty for lesson level
+- Question count matches lesson length and difficulty
 
 ---
 
@@ -436,7 +460,7 @@ After generating content, provide this summary:
 - [x] Frontmatter complete and valid
 - [x] Learning objectives are measurable
 - [x] Content length: 500-1000 words
-- [x] Quiz has 3-5 questions with explanations
+- [x] Quiz count follows difficulty/length formula (3-7 questions)
 - [x] Appropriate difficulty level
 - [x] Illustrations added where appropriate
 - [x] No placeholder text remaining
@@ -516,7 +540,7 @@ For bulk generation:
 - [ ] Learning objectives use measurable verbs
 - [ ] Content length is 500-1000 words
 - [ ] Code examples are accurate
-- [ ] Quiz has 3-5 questions with varied types
+- [ ] Quiz question count matches difficulty/length formula (3-7 questions)
 - [ ] All quiz answers have explanations
 - [ ] Difficulty matches topic complexity
 - [ ] Content connects to DevOps context

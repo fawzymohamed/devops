@@ -486,9 +486,21 @@ function calculateScore(answers: QuizAnswer[], questions: QuizQuestion[]): numbe
 
 ## Quiz Writing Guidelines
 
-1. **3-5 questions per lesson** - Enough to test understanding without overwhelming
+1. **Dynamic question count (3-7 per lesson)** - Based on difficulty and lesson length:
+   | Difficulty | Est. Minutes | Questions |
+   |------------|--------------|-----------|
+   | beginner | 5-10 | 3 |
+   | beginner | 11-15 | 4 |
+   | beginner | 16+ | 5 |
+   | intermediate | 5-10 | 4 |
+   | intermediate | 11-15 | 5 |
+   | intermediate | 16+ | 6 |
+   | advanced | 5-15 | 5 |
+   | advanced | 16-20 | 6 |
+   | advanced | 21+ | 7 |
 2. **Mix question types** - Single choice, multiple choice, true/false
 3. **Test understanding, not memorization** - "Why" questions, not just "What"
 4. **Provide clear explanations** - Help learners understand correct answers
 5. **70% passing score** - Standard threshold
 6. **Avoid trick questions** - Be straightforward and fair
+7. **Natural variation** - Vary ±1 question to avoid identical counts across lessons
