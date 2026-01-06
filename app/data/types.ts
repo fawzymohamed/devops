@@ -348,3 +348,34 @@ export interface LessonNavigation {
     title: string
   } | null
 }
+
+// =============================================================================
+// CHEAT SHEET TYPES
+// =============================================================================
+
+/**
+ * Cheat Sheet Frontmatter Interface
+ * ---------------------------------
+ * Represents the frontmatter structure for cheat sheet markdown files.
+ * Extends LessonFrontmatter with cheat sheet specific fields.
+ */
+export interface CheatSheetFrontmatter extends LessonFrontmatter {
+  /** Flag indicating this is a cheat sheet */
+  isCheatSheet: true
+  /** The topic this cheat sheet belongs to */
+  cheatSheetTopic?: string
+}
+
+/**
+ * Cheat Sheet Content Interface
+ * -----------------------------
+ * Represents the full cheat sheet data returned by @nuxt/content.
+ */
+export interface CheatSheetContent extends CheatSheetFrontmatter {
+  /** Content path (e.g., /phase-1-sdlc/sdlc-models/cheat-sheet) */
+  _path: string
+  /** Original file path */
+  _file: string
+  /** File extension */
+  _extension: string
+}

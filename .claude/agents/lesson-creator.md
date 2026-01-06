@@ -567,3 +567,92 @@ For bulk generation:
 | Terraform AWS Provider | RESEARCH | Provider updates with new resources |
 | DevOps Culture | STABLE | Philosophy is established |
 | Prometheus PromQL | RESEARCH | Functions and features added |
+
+---
+
+## CHEAT SHEET GENERATION
+
+In addition to regular lessons, this agent can generate cheat sheets for topics.
+
+### When to Generate Cheat Sheets
+
+Generate a cheat sheet after completing all lessons in a topic:
+```
+After creating all lessons in: phase-1-sdlc/sdlc-models
+Generate cheat sheet for: phase-1-sdlc/sdlc-models
+```
+
+### Cheat Sheet Classification
+
+**ALL cheat sheets are STABLE** - they synthesize existing lesson content, no research needed.
+
+### Cheat Sheet Frontmatter
+
+```yaml
+---
+title: "{Topic Name} - Quick Reference"
+description: "Key concepts and quick reference for {topic}"
+estimatedMinutes: 5
+difficulty: beginner  # Match topic's average
+learningObjectives:
+  - "Quick reference for {topic} concepts"
+isCheatSheet: true
+cheatSheetTopic: "{Topic Name}"
+---
+```
+
+**Critical Fields:**
+- `isCheatSheet: true` - Triggers cheat sheet layout
+- `cheatSheetTopic` - Topic name for PDF metadata
+- **NO `quiz` field** - Cheat sheets don't have quizzes
+
+### Content Templates
+
+Choose based on topic type:
+
+| Topic Type | Template | Example Topics |
+|------------|----------|----------------|
+| Concept/Methodology | Comparison tables | SDLC Models, DevOps Culture |
+| Tool/Command | Command reference | Git, Docker, Kubernetes |
+| Process/Workflow | Step-by-step | CI/CD, Release Management |
+
+### Cheat Sheet File Naming
+
+- **Path**: `content/{phase}/{topic}/99.cheat-sheet.md`
+- **URL**: `/{phase-slug}/{topic-slug}/cheat-sheet`
+- The `99.` prefix ensures last position in navigation
+
+### Cheat Sheet Quality Checklist
+
+- [ ] `isCheatSheet: true` in frontmatter
+- [ ] `cheatSheetTopic` is set
+- [ ] **NO quiz section**
+- [ ] Content is scannable (tables, bullets)
+- [ ] No paragraphs longer than 2 sentences
+- [ ] 1-3 printed pages max
+- [ ] Synthesizes lessons (not copied text)
+
+### Cheat Sheet Report Format
+
+```markdown
+## Cheat Sheet Creation Report
+
+**Topic:** {Topic name}
+**Type:** CHEAT SHEET (STABLE)
+
+### File Created
+| File | Title | Est. Time |
+|------|-------|-----------|
+| {path} | {title} | 5 min |
+
+### Content Summary
+- **Tables:** {count}
+- **Code Examples:** {count}
+- **Sections:** {list}
+
+### Quality Verification
+- [x] isCheatSheet: true set
+- [x] No quiz section
+- [x] Scannable format
+- [x] Appropriate length
+```

@@ -85,6 +85,10 @@ function handleCacheErrorReload(): void {
 interface LessonDocument extends LessonFrontmatter {
   path: string
   id: string
+  /** Flag indicating if this is a cheat sheet */
+  isCheatSheet?: boolean
+  /** Topic name for cheat sheets */
+  cheatSheetTopic?: string
   body: {
     toc?: {
       links: Array<{
@@ -185,6 +189,15 @@ const { markComplete, isComplete } = useProgress()
  */
 const lessonCompleted = computed(() => {
   return isComplete(phase, topic, subtopic)
+})
+
+/**
+ * Computed: Is Cheat Sheet
+ * ------------------------
+ * Check if this content is a cheat sheet (uses different layout)
+ */
+const isCheatSheet = computed(() => {
+  return lesson.value?.isCheatSheet === true
 })
 
 /**
@@ -376,307 +389,329 @@ useSeoMeta({
       -->
       <template v-else>
         <!--
-          Breadcrumb Navigation
-          =====================
-          Shows path: Home > Phase > Topic > Lesson
-          Uses Nuxt UI v4 items-based API
+          Cheat Sheet Layout
+          ==================
+          Uses dedicated layout for cheat sheet content
         -->
-        <nav
-          class="mb-6"
-          aria-label="Breadcrumb"
-        >
-          <UBreadcrumb
-            :items="[
-              { label: 'Roadmap', icon: 'i-lucide-home', to: '/' },
-              { label: formatPhaseName(phase) },
-              { label: formatTopicName(topic) },
-              { label: lesson.title }
-            ]"
-          />
-        </nav>
+        <CheatSheetLayout
+          v-if="isCheatSheet"
+          :lesson="lesson"
+          :phase="phase"
+          :topic="topic"
+          :subtopic="subtopic"
+          :prev-lesson="prevLesson"
+          :next-lesson="nextLesson"
+        />
 
         <!--
+          Regular Lesson Layout
+          =====================
+          Standard lesson display with objectives, content, quiz
+        -->
+        <template v-else>
+          <!--
+            Breadcrumb Navigation
+            =====================
+            Shows path: Home > Phase > Topic > Lesson
+            Uses Nuxt UI v4 items-based API
+          -->
+          <nav
+            class="mb-6"
+            aria-label="Breadcrumb"
+          >
+            <UBreadcrumb
+              :items="[
+                { label: 'Roadmap', icon: 'i-lucide-home', to: '/' },
+                { label: formatPhaseName(phase) },
+                { label: formatTopicName(topic) },
+                { label: lesson.title }
+              ]"
+            />
+          </nav>
+
+          <!--
           Lesson Header
           =============
           Title, estimated time, and difficulty badge
         -->
-        <header class="mb-8">
-          <h1 class="text-3xl sm:text-4xl font-bold text-gray-50 mb-4">
-            {{ lesson.title }}
-          </h1>
+          <header class="mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-50 mb-4">
+              {{ lesson.title }}
+            </h1>
 
-          <!-- Meta Info Badges -->
-          <div class="flex flex-wrap items-center gap-3">
-            <!-- Estimated Time -->
-            <div class="flex items-center gap-1.5 text-sm text-gray-400">
-              <UIcon
-                name="i-lucide-clock"
-                class="w-4 h-4"
-              />
-              <span>{{ lesson.estimatedMinutes }} min read</span>
+            <!-- Meta Info Badges -->
+            <div class="flex flex-wrap items-center gap-3">
+              <!-- Estimated Time -->
+              <div class="flex items-center gap-1.5 text-sm text-gray-400">
+                <UIcon
+                  name="i-lucide-clock"
+                  class="w-4 h-4"
+                />
+                <span>{{ lesson.estimatedMinutes }} min read</span>
+              </div>
+
+              <!-- Difficulty Badge -->
+              <UBadge
+                :color="difficultyColor"
+                variant="subtle"
+                size="sm"
+              >
+                <UIcon
+                  name="i-lucide-signal"
+                  class="w-3 h-3 mr-1"
+                />
+                {{ lesson.difficulty }}
+              </UBadge>
+
+              <!-- Completed Badge -->
+              <UBadge
+                v-if="lessonCompleted"
+                color="success"
+                variant="subtle"
+                size="sm"
+              >
+                <UIcon
+                  name="i-lucide-check-circle"
+                  class="w-3 h-3 mr-1"
+                />
+                Completed
+              </UBadge>
             </div>
+          </header>
 
-            <!-- Difficulty Badge -->
-            <UBadge
-              :color="difficultyColor"
-              variant="subtle"
-              size="sm"
-            >
-              <UIcon
-                name="i-lucide-signal"
-                class="w-3 h-3 mr-1"
-              />
-              {{ lesson.difficulty }}
-            </UBadge>
-
-            <!-- Completed Badge -->
-            <UBadge
-              v-if="lessonCompleted"
-              color="success"
-              variant="subtle"
-              size="sm"
-            >
-              <UIcon
-                name="i-lucide-check-circle"
-                class="w-3 h-3 mr-1"
-              />
-              Completed
-            </UBadge>
-          </div>
-        </header>
-
-        <!--
+          <!--
           Learning Objectives Card
           ========================
           Display the lesson's learning objectives
         -->
-        <UCard
-          v-if="lesson.learningObjectives?.length"
-          class="mb-8 bg-gray-900/50 ring-1 ring-gray-700"
-        >
-          <template #header>
-            <div class="flex items-center gap-2">
-              <UIcon
-                name="i-lucide-target"
-                class="w-5 h-5 text-green-500"
-              />
-              <h2 class="text-lg font-semibold">
-                Learning Objectives
-              </h2>
-            </div>
-          </template>
+          <UCard
+            v-if="lesson.learningObjectives?.length"
+            class="mb-8 bg-gray-900/50 ring-1 ring-gray-700"
+          >
+            <template #header>
+              <div class="flex items-center gap-2">
+                <UIcon
+                  name="i-lucide-target"
+                  class="w-5 h-5 text-green-500"
+                />
+                <h2 class="text-lg font-semibold">
+                  Learning Objectives
+                </h2>
+              </div>
+            </template>
 
-          <ul class="space-y-3">
-            <li
-              v-for="(objective, idx) in lesson.learningObjectives"
-              :key="idx"
-              class="flex items-start gap-3"
-            >
-              <UIcon
-                name="i-lucide-check"
-                class="w-4 h-4 text-green-500 mt-1 flex-shrink-0"
-              />
-              <span class="text-gray-300">{{ objective }}</span>
-            </li>
-          </ul>
-        </UCard>
+            <ul class="space-y-3">
+              <li
+                v-for="(objective, idx) in lesson.learningObjectives"
+                :key="idx"
+                class="flex items-start gap-3"
+              >
+                <UIcon
+                  name="i-lucide-check"
+                  class="w-4 h-4 text-green-500 mt-1 flex-shrink-0"
+                />
+                <span class="text-gray-300">{{ objective }}</span>
+              </li>
+            </ul>
+          </UCard>
 
-        <!--
+          <!--
           Main Content Grid
           =================
           Content on left, TOC sidebar on right (desktop)
         -->
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <!--
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!--
             Article Content
             ---------------
             Rendered markdown with prose styling
           -->
-          <article class="lg:col-span-3">
-            <div class="prose prose-invert prose-lg max-w-none">
-              <ContentRenderer :value="lesson" />
-            </div>
-          </article>
+            <article class="lg:col-span-3">
+              <div class="prose prose-invert prose-lg max-w-none">
+                <ContentRenderer :value="lesson" />
+              </div>
+            </article>
 
-          <!--
+            <!--
             Table of Contents Sidebar
             -------------------------
             Sticky sidebar showing heading links (desktop only)
           -->
-          <aside class="hidden lg:block">
-            <div class="sticky top-24">
-              <UCard class="bg-gray-900/50 ring-1 ring-gray-700">
-                <template #header>
-                  <h3 class="font-semibold text-sm text-gray-300">
-                    On This Page
-                  </h3>
-                </template>
+            <aside class="hidden lg:block">
+              <div class="sticky top-24">
+                <UCard class="bg-gray-900/50 ring-1 ring-gray-700">
+                  <template #header>
+                    <h3 class="font-semibold text-sm text-gray-300">
+                      On This Page
+                    </h3>
+                  </template>
 
-                <nav
-                  v-if="lesson.body?.toc?.links?.length"
-                  aria-label="Table of contents"
-                >
-                  <ul class="space-y-2 text-sm">
-                    <li
-                      v-for="link in lesson.body.toc.links"
-                      :key="link.id"
-                    >
-                      <a
-                        :href="`#${link.id}`"
-                        class="text-gray-400 hover:text-white transition-colors block py-1"
+                  <nav
+                    v-if="lesson.body?.toc?.links?.length"
+                    aria-label="Table of contents"
+                  >
+                    <ul class="space-y-2 text-sm">
+                      <li
+                        v-for="link in lesson.body.toc.links"
+                        :key="link.id"
                       >
-                        {{ link.text }}
-                      </a>
-
-                      <!-- Nested headings -->
-                      <ul
-                        v-if="link.children?.length"
-                        class="ml-4 mt-1 space-y-1"
-                      >
-                        <li
-                          v-for="child in link.children"
-                          :key="child.id"
+                        <a
+                          :href="`#${link.id}`"
+                          class="text-gray-400 hover:text-white transition-colors block py-1"
                         >
-                          <a
-                            :href="`#${child.id}`"
-                            class="text-gray-500 hover:text-gray-300 transition-colors block py-1 text-xs"
+                          {{ link.text }}
+                        </a>
+
+                        <!-- Nested headings -->
+                        <ul
+                          v-if="link.children?.length"
+                          class="ml-4 mt-1 space-y-1"
+                        >
+                          <li
+                            v-for="child in link.children"
+                            :key="child.id"
                           >
-                            {{ child.text }}
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </nav>
+                            <a
+                              :href="`#${child.id}`"
+                              class="text-gray-500 hover:text-gray-300 transition-colors block py-1 text-xs"
+                            >
+                              {{ child.text }}
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </nav>
 
-                <p
-                  v-else
-                  class="text-sm text-gray-500"
-                >
-                  No headings found
-                </p>
-              </UCard>
-            </div>
-          </aside>
-        </div>
+                  <p
+                    v-else
+                    class="text-sm text-gray-500"
+                  >
+                    No headings found
+                  </p>
+                </UCard>
+              </div>
+            </aside>
+          </div>
 
-        <!--
+          <!--
           Quiz Section
           ============
           Knowledge check quiz from lesson frontmatter
         -->
-        <section
-          v-if="lesson.quiz?.questions?.length"
-          class="mt-12"
-        >
-          <h2 class="text-2xl font-bold text-gray-50 mb-6 flex items-center gap-3">
-            <UIcon
-              name="i-lucide-brain"
-              class="w-7 h-7 text-primary-500"
+          <section
+            v-if="lesson.quiz?.questions?.length"
+            class="mt-12"
+          >
+            <h2 class="text-2xl font-bold text-gray-50 mb-6 flex items-center gap-3">
+              <UIcon
+                name="i-lucide-brain"
+                class="w-7 h-7 text-primary-500"
+              />
+              Test Your Knowledge
+            </h2>
+            <QuizContainer
+              :quiz="lesson.quiz"
+              @complete="(score, passed) => {
+                if (passed && !lessonCompleted) {
+                  handleMarkComplete()
+                }
+              }"
             />
-            Test Your Knowledge
-          </h2>
-          <QuizContainer
-            :quiz="lesson.quiz"
-            @complete="(score, passed) => {
-              if (passed && !lessonCompleted) {
-                handleMarkComplete()
-              }
-            }"
-          />
-        </section>
+          </section>
 
-        <!--
+          <!--
           Mark Complete Section
           =====================
           Button to mark lesson as complete
         -->
-        <div class="mt-12 flex justify-center">
-          <UButton
-            v-if="!lessonCompleted"
-            size="lg"
-            color="primary"
-            class="cursor-pointer"
-            @click="handleMarkComplete"
-          >
-            <UIcon
-              name="i-lucide-check-circle"
-              class="w-5 h-5 mr-2"
-            />
-            Mark as Complete
-          </UButton>
+          <div class="mt-12 flex justify-center">
+            <UButton
+              v-if="!lessonCompleted"
+              size="lg"
+              color="primary"
+              class="cursor-pointer"
+              @click="handleMarkComplete"
+            >
+              <UIcon
+                name="i-lucide-check-circle"
+                class="w-5 h-5 mr-2"
+              />
+              Mark as Complete
+            </UButton>
 
-          <UButton
-            v-else
-            size="lg"
-            color="success"
-            variant="soft"
-            class="cursor-pointer"
-            disabled
-          >
-            <UIcon
-              name="i-lucide-check-circle"
-              class="w-5 h-5 mr-2"
-            />
-            Lesson Completed
-          </UButton>
-        </div>
+            <UButton
+              v-else
+              size="lg"
+              color="success"
+              variant="soft"
+              class="cursor-pointer"
+              disabled
+            >
+              <UIcon
+                name="i-lucide-check-circle"
+                class="w-5 h-5 mr-2"
+              />
+              Lesson Completed
+            </UButton>
+          </div>
 
-        <!--
+          <!--
           Prev/Next Navigation
           ====================
           Links to surrounding lessons
         -->
-        <nav
-          class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4"
-          aria-label="Lesson navigation"
-        >
-          <!-- Previous Lesson -->
-          <NuxtLink
-            v-if="prevLesson"
-            :to="prevLesson.path"
-            class="group"
+          <nav
+            class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4"
+            aria-label="Lesson navigation"
           >
-            <UCard
-              class="h-full cursor-pointer ring-1 ring-gray-700 hover:ring-gray-600 hover:bg-gray-800/50 transition-all"
+            <!-- Previous Lesson -->
+            <NuxtLink
+              v-if="prevLesson"
+              :to="prevLesson.path"
+              class="group"
             >
-              <div class="flex items-center gap-2 text-gray-400 text-sm mb-1">
-                <UIcon
-                  name="i-lucide-arrow-left"
-                  class="w-4 h-4 group-hover:-translate-x-1 transition-transform"
-                />
-                Previous Lesson
-              </div>
-              <div class="font-semibold text-gray-200 group-hover:text-white transition-colors">
-                {{ prevLesson.title }}
-              </div>
-            </UCard>
-          </NuxtLink>
-          <div v-else />
+              <UCard
+                class="h-full cursor-pointer ring-1 ring-gray-700 hover:ring-gray-600 hover:bg-gray-800/50 transition-all"
+              >
+                <div class="flex items-center gap-2 text-gray-400 text-sm mb-1">
+                  <UIcon
+                    name="i-lucide-arrow-left"
+                    class="w-4 h-4 group-hover:-translate-x-1 transition-transform"
+                  />
+                  Previous Lesson
+                </div>
+                <div class="font-semibold text-gray-200 group-hover:text-white transition-colors">
+                  {{ prevLesson.title }}
+                </div>
+              </UCard>
+            </NuxtLink>
+            <div v-else />
 
-          <!-- Next Lesson -->
-          <NuxtLink
-            v-if="nextLesson"
-            :to="nextLesson.path"
-            class="group"
-          >
-            <UCard
-              class="h-full cursor-pointer ring-1 ring-gray-700 hover:ring-gray-600 hover:bg-gray-800/50 transition-all text-right"
+            <!-- Next Lesson -->
+            <NuxtLink
+              v-if="nextLesson"
+              :to="nextLesson.path"
+              class="group"
             >
-              <div class="flex items-center justify-end gap-2 text-gray-400 text-sm mb-1">
-                Next Lesson
-                <UIcon
-                  name="i-lucide-arrow-right"
-                  class="w-4 h-4 group-hover:translate-x-1 transition-transform"
-                />
-              </div>
-              <div class="font-semibold text-gray-200 group-hover:text-white transition-colors">
-                {{ nextLesson.title }}
-              </div>
-            </UCard>
-          </NuxtLink>
-          <div v-else />
-        </nav>
+              <UCard
+                class="h-full cursor-pointer ring-1 ring-gray-700 hover:ring-gray-600 hover:bg-gray-800/50 transition-all text-right"
+              >
+                <div class="flex items-center justify-end gap-2 text-gray-400 text-sm mb-1">
+                  Next Lesson
+                  <UIcon
+                    name="i-lucide-arrow-right"
+                    class="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                  />
+                </div>
+                <div class="font-semibold text-gray-200 group-hover:text-white transition-colors">
+                  {{ nextLesson.title }}
+                </div>
+              </UCard>
+            </NuxtLink>
+            <div v-else />
+          </nav>
+        </template>
       </template>
     </div>
   </div>

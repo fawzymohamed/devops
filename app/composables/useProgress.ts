@@ -27,6 +27,20 @@ import type { UserProgress, SubtopicProgress } from '~/data/types'
 const STORAGE_KEY = 'devops-lms-progress'
 
 // =============================================================================
+// HELPER FUNCTIONS
+// =============================================================================
+
+/**
+ * Check if a path or subtopic ID represents a cheat sheet
+ * Cheat sheets are named "cheat-sheet" and should be excluded from completion tracking
+ * @param pathOrId - Path or subtopic ID to check
+ * @returns Boolean indicating if this is a cheat sheet
+ */
+export function isCheatSheet(pathOrId: string): boolean {
+  return pathOrId === 'cheat-sheet' || pathOrId.endsWith('/cheat-sheet')
+}
+
+// =============================================================================
 // COMPOSABLE
 // =============================================================================
 
@@ -107,11 +121,17 @@ export function useProgress() {
 
   /**
    * Mark a subtopic/lesson as complete
+   * Cheat sheets are automatically excluded from progress tracking
    * @param phaseId - Phase identifier
    * @param topicId - Topic identifier
    * @param subtopicId - Subtopic identifier
    */
   function markComplete(phaseId: string, topicId: string, subtopicId: string): void {
+    // Cheat sheets should not be tracked in progress
+    if (isCheatSheet(subtopicId)) {
+      return
+    }
+
     ensureStructure(phaseId, topicId)
 
     const existing = progress.value.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId]

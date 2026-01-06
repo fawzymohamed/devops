@@ -55,6 +55,7 @@ app/
 │   ├── useProgress.ts       # Track lesson completion
 │   ├── useQuiz.ts           # Quiz state management
 │   ├── useCertificate.ts    # Certificate generation
+│   ├── useCheatSheetPdf.ts  # Cheat sheet PDF export
 │   └── useIllustrationDesign.ts  # SVG illustration design system
 ├── data/
 │   ├── roadmap.ts    # Roadmap data with TypeScript types
@@ -165,6 +166,37 @@ Override with `direction: horizontal` or `direction: vertical` if needed.
 
 **Important:** Components must be in `app/components/content/` for MDC to work.
 
+### Cheat Sheet System
+
+Quick reference sheets at the end of each topic section with PDF export capability.
+
+**Components:**
+| Component | Purpose |
+|-----------|---------|
+| `CheatSheetLayout.vue` | Reference-style content display |
+| `CheatSheetPdfButton.vue` | PDF download button with loading state |
+
+**Composable:** `useCheatSheetPdf.ts`
+- `downloadCheatSheet(title, slug)` - Generate and download PDF
+- `isGenerating` - Loading state
+- `error` - Error message
+
+**Content Structure:**
+- **File naming**: `99.cheat-sheet.md` (in topic folder)
+- **URL pattern**: `/{phase}/{topic}/cheat-sheet`
+- **Required frontmatter**:
+  ```yaml
+  isCheatSheet: true
+  cheatSheetTopic: "Topic Name"
+  ```
+
+**Features:**
+- Distinct layout from regular lessons (reference-style)
+- PDF export via html2canvas + jsPDF
+- Excluded from progress tracking
+- No quiz section
+- Appears last in topic navigation (via `99.` prefix)
+
 ## Deployment
 
 Configured for GitHub Pages with:
@@ -270,6 +302,11 @@ const value = computed(() => data.length) // Inline explanation
   - Previous/Next navigation using `queryCollectionItemSurroundings`
 - [x] Quiz system (QuizContainer component)
 - [x] SVG Illustration System (4 MDC components + design system composable)
+- [x] Cheat Sheet System (topic-level quick reference sheets with PDF export)
+  - CheatSheetLayout and CheatSheetPdfButton components
+  - useCheatSheetPdf composable
+  - Schema extension for `isCheatSheet` frontmatter
+  - Navigation integration in TopicCard
 - [ ] Phase 4: Progress tracking (useProgress composable) - partially implemented
 - [ ] Phase 5: Certificate generation (useCertificate composable)
 - [ ] Phase 6: Navigation and search

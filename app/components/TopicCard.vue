@@ -209,17 +209,44 @@ const priorityTextColor = computed(() => {
       -->
       <div
         v-if="isOpen"
-        class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 overflow-hidden"
+        class="mt-4 overflow-hidden"
         @click.stop
       >
+        <!--
+          Subtopics Grid
+          --------------
+          Responsive grid of lesson links
+        -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          <NuxtLink
+            v-for="(subtopic, idx) in topic.subtopics"
+            :key="idx"
+            :to="getSubtopicUrl(subtopic)"
+            class="bg-gray-800/60 px-3 py-2 rounded-lg text-sm border-l-3 cursor-pointer transition-all hover:bg-gray-700/80 hover:translate-x-1"
+            :style="{ borderLeftColor: phaseColor }"
+          >
+            {{ subtopic }}
+          </NuxtLink>
+        </div>
+
+        <!--
+          Cheat Sheet Link
+          ----------------
+          Quick reference sheet link at the bottom of the topic
+        -->
         <NuxtLink
-          v-for="(subtopic, idx) in topic.subtopics"
-          :key="idx"
-          :to="getSubtopicUrl(subtopic)"
-          class="bg-gray-800/60 px-3 py-2 rounded-lg text-sm border-l-3 cursor-pointer transition-all hover:bg-gray-700/80 hover:translate-x-1"
-          :style="{ borderLeftColor: phaseColor }"
+          :to="`/${phaseSlug}/${topicSlug}/cheat-sheet`"
+          class="flex items-center gap-2 mt-4 pt-3 border-t border-gray-700/50 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
         >
-          {{ subtopic }}
+          <UIcon
+            name="i-lucide-file-text"
+            class="w-4 h-4"
+          />
+          <span>Quick Reference Sheet</span>
+          <UIcon
+            name="i-lucide-arrow-right"
+            class="w-3 h-3 ml-auto"
+          />
         </NuxtLink>
       </div>
     </Transition>

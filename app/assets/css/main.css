@@ -48,3 +48,159 @@
 .font-content {
   font-family: var(--font-content);
 }
+
+/**
+ * CHEAT SHEET STYLES
+ * ==================
+ * Styles for cheat sheet content and PDF export optimization
+ */
+
+/**
+ * Cheat sheet content container
+ * ============================
+ * IMPORTANT: html2canvas doesn't support oklch() colors used by Tailwind v4
+ * All colors must be explicit hex values for PDF export to work
+ */
+.cheat-sheet-content {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  /* Force hex background color for PDF export */
+  background-color: #111827 !important;
+  color: #d1d5db !important;
+}
+
+/* Force all text elements to use hex colors */
+.cheat-sheet-content * {
+  color: inherit;
+}
+
+.cheat-sheet-content p,
+.cheat-sheet-content span,
+.cheat-sheet-content div {
+  color: #d1d5db;
+}
+
+.cheat-sheet-content strong {
+  color: #f3f4f6;
+}
+
+.cheat-sheet-content a {
+  color: #60a5fa;
+}
+
+/**
+ * Cheat sheet content uses the content font like regular lessons
+ * but with tighter spacing for quick reference
+ */
+.cheat-sheet-prose {
+  font-family: var(--font-content);
+}
+
+/**
+ * Cheat Sheet Prose Overrides
+ * ---------------------------
+ * Tighter spacing for reference content
+ */
+.cheat-sheet-prose h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #f3f4f6;
+  border-bottom: 1px solid #374151;
+  padding-bottom: 0.5rem;
+}
+
+.cheat-sheet-prose h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #e5e7eb;
+}
+
+.cheat-sheet-prose table {
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+.cheat-sheet-prose th {
+  background-color: #1f2937;
+  color: #e5e7eb;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+}
+
+.cheat-sheet-prose td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #374151;
+}
+
+.cheat-sheet-prose tr:hover td {
+  background-color: rgba(31, 41, 55, 0.5);
+}
+
+.cheat-sheet-prose code:not(pre code) {
+  background-color: #1f2937;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  color: #34d399;
+}
+
+.cheat-sheet-prose pre {
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-size: 0.875rem;
+  overflow-x: auto;
+}
+
+.cheat-sheet-prose ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cheat-sheet-prose li {
+  color: #d1d5db;
+}
+
+/**
+ * Print/PDF Export Styles
+ * -----------------------
+ * Optimized for clean PDF output via html2canvas + jsPDF
+ */
+@media print {
+  /* Hide navigation elements in print */
+  nav[aria-label="Breadcrumb"],
+  nav[aria-label="Lesson navigation"],
+  button,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Ensure full-width content in print */
+  .cheat-sheet-content {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 1rem !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Prevent page breaks inside elements */
+  .cheat-sheet-prose h2,
+  .cheat-sheet-prose h3,
+  .cheat-sheet-prose table,
+  .cheat-sheet-prose pre {
+    break-inside: avoid;
+  }
+
+  /* Keep headings with following content */
+  .cheat-sheet-prose h2,
+  .cheat-sheet-prose h3 {
+    break-after: avoid;
+  }
+}

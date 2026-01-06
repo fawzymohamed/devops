@@ -36,7 +36,10 @@ export default defineContentConfig({
             correctAnswers: z.array(z.string()).optional(),
             explanation: z.string()
           }))
-        }).optional()
+        }).optional(),
+        // Cheat sheet specific fields
+        isCheatSheet: z.boolean().optional().default(false),
+        cheatSheetTopic: z.string().optional()
       })
     })
   }
