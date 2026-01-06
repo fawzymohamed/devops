@@ -1,7 +1,7 @@
-# Nuxt Content v3 Cache Corruption Fix
+# Nuxt Content v3 Error Handling Fix
 
-**Date:** 2026-01-04
-**Issue:** "Failed to execute 'atob'" error on lesson pages
+**Date:** 2026-01-04 (Updated: 2026-01-06)
+**Issue:** Content loading failures on lesson pages in development
 **Status:** Resolved
 
 ---
@@ -9,18 +9,25 @@
 ## Problem Description
 
 ### Symptoms
-- Lesson pages fail to load with a cryptic error
-- Browser console shows: `Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded`
-- Error occurs randomly, especially after Hot Module Replacement (HMR) during development
-- Restarting the dev server temporarily fixes the issue
+- Lesson pages fail to load with cryptic errors
+- Error messages may include: `Failed to execute 'atob'` or `not correctly encoded`
+- Errors occur during development, especially after Hot Module Replacement (HMR)
 
-### Root Cause
-Nuxt Content v3 uses SQLite (via sql.js) to store and query content. During development:
+### Root Causes (Two Distinct Issues)
 
-1. The SQLite database is serialized and cached in the browser's localStorage
-2. The cache uses base64 encoding for the binary SQLite data
-3. During HMR, the cache can become corrupted or out of sync
-4. When the app tries to decode the corrupted base64 data, `atob()` fails
+Nuxt Content v3 with `ssr: false` loads content via a SQLite database served to the client. This can fail in two different ways:
+
+#### 1. Client Cache Corruption
+- **Cause:** localStorage contains corrupted base64-encoded SQLite data from a previous session
+- **Trigger:** Usually after HMR or abrupt dev server shutdown
+- **Fix:** Clear localStorage and reload
+
+#### 2. Server Content Unavailability
+- **Cause:** The dev server fails to serve `sql_dump.txt` (returns 204 No Content)
+- **Trigger:** Partial `.nuxt` directory deletion, HMR state corruption, server in bad state
+- **Fix:** Restart the dev server with `pnpm dev:reset`
+
+Both issues produce similar `atob` errors, but require different fixes!
 
 ### Reference
 - GitHub Issue: https://github.com/nuxt/content/issues/3341
@@ -29,18 +36,58 @@ Nuxt Content v3 uses SQLite (via sql.js) to store and query content. During deve
 
 ## Solution Architecture
 
-### 1. Proactive Cache Clearing (Plugin)
+### 1. Smart Error Detection
 
-Created a client-side Nuxt plugin that clears Content cache on every app initialization during development.
+The lesson page (`app/pages/[phase]/[topic]/[subtopic].vue`) now distinguishes between error types:
+
+```typescript
+type ContentErrorType = 'cache' | 'server' | 'other'
+
+function getContentErrorType(error: Error | null): ContentErrorType {
+  if (!error) return 'other'
+
+  // Check if it's a content decoding error (atob/base64)
+  if (isContentDecodingError(error)) {
+    // If cache entries exist, it's likely cache corruption
+    // If NO cache entries, it's a server issue (sql_dump.txt not served)
+    return hasContentCacheEntries() ? 'cache' : 'server'
+  }
+
+  return 'other'
+}
+```
+
+**Detection Logic:**
+| Condition | Error Type | Recommended Fix |
+|-----------|------------|-----------------|
+| atob error + cache entries exist | `cache` | Reload page |
+| atob error + no cache entries | `server` | Restart dev server |
+| Other errors | `other` | Check error message |
+
+### 2. Context-Aware Error UI
+
+Different error messages guide users to the correct fix:
+
+**Cache Error (amber):**
+> "Content cache needs refresh"
+> "The browser cache was corrupted during development. Click reload to fix."
+
+**Server Error (orange):**
+> "Content not available"
+> "The dev server isn't serving content properly. This usually happens after HMR issues or partial builds."
+> "Fix: Stop the dev server and run: `pnpm dev:reset`"
+
+### 3. Proactive Cache Clearing (Plugin)
+
+The client-side plugin clears Content cache on app initialization during development.
 
 **File:** `app/plugins/content-cache-fix.client.ts`
 
 ```typescript
 export default defineNuxtPlugin({
   name: 'content-cache-fix',
-  enforce: 'pre', // Run before other plugins
+  enforce: 'pre',
   setup() {
-    // Only run in development mode
     if (import.meta.env.PROD) return
     if (typeof window === 'undefined') return
 
@@ -51,40 +98,11 @@ export default defineNuxtPlugin({
     }
   }
 })
-
-function clearContentCache(): void {
-  const keysToRemove: string[] = []
-
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (key && isContentCacheKey(key)) {
-      keysToRemove.push(key)
-    }
-  }
-
-  if (keysToRemove.length > 0) {
-    keysToRemove.forEach(key => localStorage.removeItem(key))
-    console.info(`[Content Cache Fix] Cleared ${keysToRemove.length} cache entries`)
-  }
-}
-
-function isContentCacheKey(key: string): boolean {
-  const contentPatterns = [
-    /^__nuxt_content/i,
-    /^nuxt[-_]content/i,
-    /^content:/i,
-    /^_content/i,
-    /^sql\.js/i,
-    /sqlite/i,
-    /^db[-_]cache/i
-  ]
-  return contentPatterns.some(pattern => pattern.test(key))
-}
 ```
 
-### 2. NPM Scripts for Manual Reset
+### 4. NPM Scripts for Manual Reset
 
-Added convenience scripts to `package.json` for when automatic fix isn't enough:
+**File:** `package.json`
 
 ```json
 {
@@ -100,111 +118,83 @@ Added convenience scripts to `package.json` for when automatic fix isn't enough:
 | `pnpm dev:clean` | Quick cleanup - clears Nuxt cache and restarts |
 | `pnpm dev:reset` | Full reset - deletes SQLite DB, all caches, and restarts |
 
-### 3. User-Friendly Error UI
-
-Modified `app/pages/[phase]/[topic]/[subtopic].vue` to show a helpful message when cache errors occur:
-
-```vue
-<UCard v-if="isContentCacheError(error)" class="border-amber-500/50 bg-amber-500/10">
-  <div class="flex items-start gap-4">
-    <UIcon name="i-lucide-database" class="w-6 h-6 text-amber-500" />
-    <div>
-      <h3 class="font-medium text-amber-400">Content cache needs refresh</h3>
-      <p class="text-sm text-gray-400 mt-1">
-        The content cache was corrupted during development. Click reload to fix.
-      </p>
-      <p class="text-xs text-gray-500 mt-2">
-        If reloading doesn't help, run: <code class="text-green-400">pnpm dev:reset</code>
-      </p>
-      <div class="flex gap-2 mt-3">
-        <UButton @click="handleCacheErrorReload">Reload Page</UButton>
-        <UButton variant="soft" to="/">Back to Roadmap</UButton>
-      </div>
-    </div>
-  </div>
-</UCard>
-```
-
 ---
 
 ## Files Changed
 
 | File | Change |
 |------|--------|
-| `app/plugins/content-cache-fix.client.ts` | New - Proactive cache clearing plugin |
+| `app/pages/[phase]/[topic]/[subtopic].vue` | Smart error detection and context-aware UI |
+| `app/plugins/content-cache-fix.client.ts` | Proactive cache clearing plugin |
 | `package.json` | Added `dev:clean`, `dev:reset` scripts and `rimraf` dependency |
-| `app/pages/[phase]/[topic]/[subtopic].vue` | Simplified error handling UI |
 
 ---
 
 ## How It Works
 
-### Normal Flow (After Fix)
+### Normal Flow
 ```
 1. User opens the app
-2. Plugin runs (client-side, dev mode only)
-3. All Content-related localStorage entries are cleared
-4. Nuxt Content fetches fresh data from server
-5. Page loads successfully
+2. Plugin clears any stale Content cache (dev mode only)
+3. Client fetches sql_dump.txt from server
+4. SQLite database loads in browser via sql.js
+5. Content queries work normally
 ```
 
-### Error Recovery Flow
+### Cache Error Recovery Flow
 ```
-1. Cache corruption occurs during HMR
-2. Page fails to load with atob error
-3. User sees friendly error message
-4. User clicks "Reload Page"
-5. Page reloads, plugin clears cache
-6. Fresh data loads successfully
+1. User visits lesson page
+2. Error occurs decoding corrupted localStorage cache
+3. Error detection finds cache entries exist → cache error
+4. User sees "Content cache needs refresh" message
+5. User clicks "Reload Page"
+6. localStorage cleared, page reloads
+7. Fresh data loads successfully
 ```
 
-### Manual Recovery (Last Resort)
-```bash
-# If automatic fix doesn't work
-pnpm dev:reset
-
-# This will:
-# 1. Delete .data/content/contents.sqlite
-# 2. Delete .nuxt build cache
-# 3. Run nuxi cleanup
-# 4. Start fresh dev server
+### Server Error Recovery Flow
+```
+1. User visits lesson page
+2. sql_dump.txt returns 204 No Content
+3. Error occurs trying to decode empty response
+4. Error detection finds NO cache entries → server error
+5. User sees "Content not available" message
+6. User stops dev server and runs: pnpm dev:reset
+7. Fresh server starts with rebuilt content
 ```
 
 ---
 
-## Testing
+## Troubleshooting Guide
 
-Tested with Playwright on 2026-01-04:
+### "Content cache needs refresh" (amber)
+1. Click "Reload Page" button
+2. If persists, open DevTools → Application → Local Storage → Clear
+3. If still persists, run `pnpm dev:reset`
 
-1. Navigated to home page - Loaded successfully
-2. Navigated to Scrum Framework lesson - Loaded successfully
-3. All illustrations rendered correctly:
-   - Team Composition (IllustrationTeamComposition)
-   - Sprint Flow (IllustrationLinearFlow - horizontal, 5 items)
-   - Timeboxing Benefits (IllustrationChecklist)
-   - Definition of Done (IllustrationChecklist)
-   - Scrum vs DevOps (IllustrationComparisonMap)
+### "Content not available" (orange)
+1. Stop the dev server (Ctrl+C)
+2. Run `pnpm dev:reset`
+3. Wait for server to fully start
+4. Refresh the page
+
+### Generic errors (red)
+1. Check the error message for clues
+2. Check browser console for more details
+3. Try `pnpm dev:reset` as a last resort
 
 ---
 
 ## Prevention Tips
 
 1. **Avoid rapid file saves** during development - can trigger multiple HMR cycles
-2. **Use `pnpm dev:clean`** if you notice strange behavior
-3. **Clear browser localStorage** if issues persist
-4. **Don't kill the dev server abruptly** - let it shut down gracefully
+2. **Let the dev server shut down gracefully** - don't kill the terminal abruptly
+3. **Use `pnpm dev:clean`** if you notice strange behavior before it escalates
+4. **Don't delete `.nuxt` while server is running** - causes server state corruption
 
 ---
 
-## Related Issues
-
-- This is a known issue with Nuxt Content v3's client-side caching mechanism
-- The issue is more common on Windows due to file locking behavior
-- Future versions of Nuxt Content may address this at the framework level
-
----
-
-## Dependencies Added
+## Dependencies
 
 ```json
 {
@@ -215,3 +205,12 @@ Tested with Playwright on 2026-01-04:
 ```
 
 `rimraf` provides cross-platform `rm -rf` functionality for the cleanup scripts.
+
+---
+
+## Technical Notes
+
+- This is a known limitation of Nuxt Content v3's client-side SQLite approach
+- The issue is more common on Windows due to file locking behavior
+- Production builds are not affected (static generation)
+- Future versions of Nuxt Content may address this at the framework level

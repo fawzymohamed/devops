@@ -39,27 +39,88 @@
 import type { LessonFrontmatter } from '~/data/types'
 
 /**
- * Content Cache Error Detection
- * -----------------------------
- * Nuxt Content v3 caches SQLite dumps in localStorage.
- * During HMR, this cache can become corrupted causing atob errors.
+ * Content Error Types
+ * -------------------
+ * Nuxt Content v3 with ssr:false can fail in two distinct ways:
  *
- * The content-cache-fix.client.ts plugin handles proactive cache clearing.
- * This page provides a fallback UI if corruption still occurs.
+ * 1. CLIENT CACHE ERROR: localStorage has corrupted base64 SQLite data
+ *    - Symptom: atob() fails when decoding cached data
+ *    - Fix: Clear localStorage and reload
+ *
+ * 2. SERVER CONTENT ERROR: sql_dump.txt returns empty (204 No Content)
+ *    - Symptom: atob() fails on empty/invalid server response
+ *    - Fix: Restart the dev server (server-side issue)
+ *
+ * Both produce similar atob errors, but require different fixes.
+ * We detect which by checking if Content-related localStorage entries exist.
  *
  * @see https://github.com/nuxt/content/issues/3341
  */
-function isContentCacheError(error: Error | null): boolean {
+
+/**
+ * Check if localStorage has Content cache entries
+ * -----------------------------------------------
+ * If cache entries exist and we have an atob error, it's likely cache corruption.
+ * If NO cache entries exist and we have an atob error, it's a server issue.
+ */
+function hasContentCacheEntries(): boolean {
+  if (typeof window === 'undefined') return false
+
+  const contentPatterns = [
+    /^__nuxt_content/i,
+    /^nuxt[-_]content/i,
+    /^content:/i,
+    /^_content/i,
+    /^sql\.js/i,
+    /sqlite/i,
+    /^db[-_]cache/i
+  ]
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (key && contentPatterns.some(pattern => pattern.test(key))) {
+      return true
+    }
+  }
+  return false
+}
+
+/**
+ * Detect if error is related to content loading/decoding
+ * ------------------------------------------------------
+ * These errors occur when atob() fails on SQLite data (cached or from server)
+ */
+function isContentDecodingError(error: Error | null): boolean {
   if (!error) return false
   const message = error.message || ''
   return message.includes('atob') || message.includes('base64') || message.includes('not correctly encoded')
 }
 
 /**
+ * Error Type Classification
+ * -------------------------
+ * Returns the type of content error for appropriate UI handling
+ */
+type ContentErrorType = 'cache' | 'server' | 'other'
+
+function getContentErrorType(error: Error | null): ContentErrorType {
+  if (!error) return 'other'
+
+  // Check if it's a content decoding error (atob/base64)
+  if (isContentDecodingError(error)) {
+    // If cache entries exist, it's likely cache corruption
+    // If NO cache entries, it's a server issue (sql_dump.txt not served)
+    return hasContentCacheEntries() ? 'cache' : 'server'
+  }
+
+  return 'other'
+}
+
+/**
  * Handle cache error reload
  * -------------------------
  * Clears localStorage cache and reloads the page.
- * The plugin will clear the cache on the next app init.
+ * Only effective for actual cache corruption issues.
  */
 function handleCacheErrorReload(): void {
   if (typeof window === 'undefined') return
@@ -75,6 +136,24 @@ function handleCacheErrorReload(): void {
   keysToRemove.forEach(key => localStorage.removeItem(key))
 
   window.location.reload()
+}
+
+/**
+ * Computed: Error type for template
+ * ---------------------------------
+ * Classifies the error for appropriate UI display
+ */
+const contentErrorType = computed(() => getContentErrorType(error.value ?? null))
+
+/**
+ * Handle simple page reload
+ * -------------------------
+ * Reloads the page without clearing cache (for server errors)
+ */
+function handleSimpleReload(): void {
+  if (typeof window !== 'undefined') {
+    window.location.reload()
+  }
 }
 
 /**
@@ -273,12 +352,17 @@ useSeoMeta({
         Error State
         ===========
         Show error message if lesson fails to load.
-        For content cache errors, provide reload option.
+        Different UI for cache errors vs server errors vs other errors.
       -->
       <template v-if="error">
-        <!-- Cache error - offer reload -->
+        <!--
+          Cache Corruption Error
+          ======================
+          localStorage has corrupted Content cache data.
+          Fix: Clear cache and reload.
+        -->
         <UCard
-          v-if="isContentCacheError(error)"
+          v-if="contentErrorType === 'cache'"
           class="border-amber-500/50 bg-amber-500/10"
         >
           <div class="flex items-start gap-4">
@@ -291,7 +375,7 @@ useSeoMeta({
                 Content cache needs refresh
               </h3>
               <p class="text-sm text-gray-400 mt-1">
-                The content cache was corrupted during development. Click reload to fix.
+                The browser cache was corrupted during development. Click reload to fix.
               </p>
               <p class="text-xs text-gray-500 mt-2">
                 If reloading doesn't help, run: <code class="text-green-400">pnpm dev:reset</code>
@@ -323,7 +407,63 @@ useSeoMeta({
           </div>
         </UCard>
 
-        <!-- Other errors - show error message with back button -->
+        <!--
+          Server Content Error
+          ====================
+          The dev server isn't providing sql_dump.txt properly.
+          Fix: Restart the dev server.
+        -->
+        <UCard
+          v-else-if="contentErrorType === 'server'"
+          class="border-orange-500/50 bg-orange-500/10"
+        >
+          <div class="flex items-start gap-4">
+            <UIcon
+              name="i-lucide-server-off"
+              class="w-6 h-6 text-orange-500 flex-shrink-0"
+            />
+            <div>
+              <h3 class="font-medium text-orange-400">
+                Content not available
+              </h3>
+              <p class="text-sm text-gray-400 mt-1">
+                The dev server isn't serving content properly. This usually happens after HMR issues or partial builds.
+              </p>
+              <p class="text-xs text-gray-500 mt-2">
+                Fix: Stop the dev server and run: <code class="text-green-400">pnpm dev:reset</code>
+              </p>
+              <div class="flex gap-2 mt-3">
+                <UButton
+                  size="sm"
+                  color="primary"
+                  class="cursor-pointer"
+                  @click="handleSimpleReload"
+                >
+                  <UIcon
+                    name="i-lucide-refresh-cw"
+                    class="w-4 h-4 mr-1"
+                  />
+                  Try Again
+                </UButton>
+                <UButton
+                  size="sm"
+                  variant="soft"
+                  color="neutral"
+                  class="cursor-pointer"
+                  to="/"
+                >
+                  Back to Roadmap
+                </UButton>
+              </div>
+            </div>
+          </div>
+        </UCard>
+
+        <!--
+          Other Errors
+          ============
+          Generic error handling for non-content-related issues.
+        -->
         <UCard
           v-else
           class="border-red-500/50 bg-red-500/10"
