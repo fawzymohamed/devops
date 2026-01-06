@@ -314,7 +314,7 @@ const value = computed(() => data.length) // Inline explanation
 
 ### Lesson Content Progress
 
-**Total: 16/527 lessons created**
+**Total: 21/527 lessons created**
 
 #### Phase 1: Software Development Lifecycle (SDLC)
 <details>
@@ -348,6 +348,17 @@ const value = computed(() => data.length) // Inline explanation
 - [x] Pull Requests
 - [x] Release Management
 - [x] Hotfix Procedures
+
+</details>
+
+<details>
+<summary>Project Management Basics (5/5) ✓</summary>
+
+- [x] User Stories
+- [x] Sprint Planning
+- [x] Backlog Management
+- [x] Velocity & Estimation
+- [x] Retrospectives
 
 </details>
 
