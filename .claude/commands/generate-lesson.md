@@ -99,6 +99,7 @@ ls -la
 - [ ] Title matches roadmap.ts
 - [ ] 3-5 learning objectives (measurable verbs)
 - [ ] 3-5 quiz questions (mix of types)
+- [ ] **CRITICAL: Quiz questions ONLY test concepts explicitly covered in the lesson content**
 - [ ] Difficulty matches topic complexity
 - [ ] Estimated time is realistic (100-150 words/min reading)
 - [ ] Code examples are accurate

@@ -387,6 +387,13 @@ Write all content using **simple, clear English** accessible to non-native speak
 
 ### Quiz Question Guidelines
 
+**CRITICAL - Content Alignment:**
+Quiz questions MUST only test concepts that are explicitly covered in the lesson content. Before writing any quiz question:
+1. Verify the concept is mentioned in the lesson text
+2. Never assume prior knowledge of topics not covered
+3. If a concept would make a good question but isn't in the lesson, add it to the lesson first
+
+**Question Type Rules:**
 - **Single Choice**: One clear correct answer, plausible distractors
 - **Multiple Choice**: 2-4 correct out of 4-5 options, "Select all that apply"
 - **True/False**: Clear statements, no double negatives
@@ -415,6 +422,7 @@ The number of quiz questions should vary based on lesson length and difficulty. 
 - For 7+ questions: Balanced mix with emphasis on single and multiple choice
 
 **Quality Checklist:**
+- **Quiz tests ONLY concepts covered in the lesson content** (CRITICAL)
 - Tests understanding, not memorization
 - Unambiguous correct answer
 - Explanation teaches why the answer is correct
@@ -461,6 +469,7 @@ After generating content, provide this summary:
 - [x] Learning objectives are measurable
 - [x] Content length: 500-1000 words
 - [x] Quiz count follows difficulty/length formula (3-7 questions)
+- [x] **Quiz questions test ONLY concepts covered in lesson content**
 - [x] Appropriate difficulty level
 - [x] Illustrations added where appropriate
 - [x] No placeholder text remaining
@@ -541,6 +550,7 @@ For bulk generation:
 - [ ] Content length is 500-1000 words
 - [ ] Code examples are accurate
 - [ ] Quiz question count matches difficulty/length formula (3-7 questions)
+- [ ] **QUIZ CONTENT ALIGNMENT: Every quiz question tests a concept explicitly mentioned in the lesson** (CRITICAL)
 - [ ] All quiz answers have explanations
 - [ ] Difficulty matches topic complexity
 - [ ] Content connects to DevOps context
