@@ -93,6 +93,7 @@ const isComplete = computed(() => phaseCompletion.value === 100)
  */
 function toSlug(name: string): string {
   return name
+    .replace(/\s*\([^)]*\)\s*/g, '') // Remove parenthetical content like "(cd, ls, pwd)"
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')

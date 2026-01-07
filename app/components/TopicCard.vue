@@ -69,10 +69,13 @@ const emit = defineEmits<{
  * -------------
  * Converts a name to a URL-friendly slug.
  * Used for subtopics that don't have explicit slugs.
+ * Strips parenthetical content before generating the slug to match file names.
  * Example: "Waterfall Model" -> "waterfall-model"
+ * Example: "Navigation Commands (cd, ls, pwd)" -> "navigation-commands"
  */
 function toSlug(name: string): string {
   return name
+    .replace(/\s*\([^)]*\)\s*/g, '') // Remove parenthetical content like "(cd, ls, pwd)"
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
