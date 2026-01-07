@@ -259,7 +259,7 @@ const nextLesson = computed(() => surround.value?.[1] ?? null)
  * -----------------
  * Use the progress composable for completion tracking
  */
-const { markComplete, isComplete } = useProgress()
+const { markComplete, isComplete, recordQuizScore } = useProgress()
 
 /**
  * Computed: Is Lesson Completed
@@ -282,10 +282,10 @@ const isCheatSheet = computed(() => {
 /**
  * Handle Mark Complete
  * --------------------
- * Mark the current lesson as complete
+ * Mark the current lesson as complete with time tracking
  */
 function handleMarkComplete() {
-  markComplete(phase, topic, subtopic)
+  markComplete(phase, topic, subtopic, lesson.value?.estimatedMinutes)
 }
 
 /**
@@ -753,6 +753,9 @@ useSeoMeta({
             <QuizContainer
               :quiz="lesson.quiz"
               @complete="(score, passed) => {
+                // Always record the quiz score (keeps best score)
+                recordQuizScore(phase, topic, subtopic, score)
+                // Auto-complete lesson if quiz passed
                 if (passed && !lessonCompleted) {
                   handleMarkComplete()
                 }

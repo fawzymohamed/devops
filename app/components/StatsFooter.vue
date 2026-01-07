@@ -41,6 +41,42 @@
  */
 import { roadmapData, totalDuration } from '~/data/roadmap'
 
+// =============================================================================
+// PROGRESS TRACKING
+// =============================================================================
+
+const {
+  getCompletedCount,
+  getTotalLessonCount,
+  getCertificateProgress,
+  getResumeLearningData
+} = useProgress()
+
+/**
+ * Number of completed lessons
+ */
+const completedLessons = computed(() => getCompletedCount())
+
+/**
+ * Total number of lessons from roadmap
+ */
+const totalLessons = computed(() => getTotalLessonCount())
+
+/**
+ * Overall completion percentage
+ */
+const completionPercentage = computed(() => getCertificateProgress())
+
+/**
+ * Resume learning data (last accessed lesson)
+ */
+const resumeData = computed(() => getResumeLearningData())
+
+/**
+ * Whether user has any progress
+ */
+const hasProgress = computed(() => completedLessons.value > 0)
+
 /**
  * Statistics Computed Property
  * ----------------------------
@@ -88,6 +124,59 @@ const stats = computed(() => {
 
 <template>
   <div class="mt-10">
+    <!--
+      Your Progress Section
+      =====================
+      Shows user's learning progress with bar and resume button.
+      Only displayed when user has started learning.
+    -->
+    <div
+      v-if="hasProgress"
+      class="mb-6 rounded-2xl p-6 bg-gray-800/50 border border-gray-700/50"
+    >
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <!-- Progress info -->
+        <div class="flex-1">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-gray-400 font-medium">Your Progress</span>
+            <span class="text-lg font-bold text-green-500">{{ completionPercentage }}%</span>
+          </div>
+          <UProgress
+            :model-value="completionPercentage"
+            color="success"
+            class="h-2"
+          />
+          <div class="flex justify-between mt-2 text-sm text-gray-500">
+            <span>{{ completedLessons }} of {{ totalLessons }} lessons completed</span>
+            <NuxtLink
+              to="/progress"
+              class="text-primary-500 hover:text-primary-400 cursor-pointer"
+            >
+              View Details &rarr;
+            </NuxtLink>
+          </div>
+        </div>
+
+        <!-- Resume learning button -->
+        <NuxtLink
+          v-if="resumeData"
+          :to="resumeData.path"
+        >
+          <UButton
+            color="primary"
+            size="lg"
+            class="cursor-pointer whitespace-nowrap"
+          >
+            <UIcon
+              name="i-lucide-play-circle"
+              class="w-5 h-5 mr-2"
+            />
+            Resume Learning
+          </UButton>
+        </NuxtLink>
+      </div>
+    </div>
+
     <!--
       Statistics Grid
       ===============

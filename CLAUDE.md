@@ -46,13 +46,18 @@ app/
 │   ├── StatsFooter.vue      # Summary statistics
 │   ├── RoadmapTimeline.vue  # Timeline view mode
 │   ├── RoadmapGrid.vue      # Grid view mode
-│   └── content/             # MDC components for markdown
-│       ├── IllustrationLinearFlow.vue
-│       ├── IllustrationChecklist.vue
-│       ├── IllustrationTeamComposition.vue
-│       └── IllustrationComparisonMap.vue
+│   ├── content/             # MDC components for markdown
+│   │   ├── IllustrationLinearFlow.vue
+│   │   ├── IllustrationChecklist.vue
+│   │   ├── IllustrationTeamComposition.vue
+│   │   └── IllustrationComparisonMap.vue
+│   └── progress/            # Progress tracking components
+│       ├── Ring.vue         # Circular progress indicator (SVG)
+│       ├── Bar.vue          # Linear progress bar
+│       ├── PhaseProgress.vue    # Phase-level progress card
+│       └── OverallProgress.vue  # Hero stats component
 ├── composables/      # Reusable composition functions
-│   ├── useProgress.ts       # Track lesson completion
+│   ├── useProgress.ts       # Track lesson completion & progress
 │   ├── useQuiz.ts           # Quiz state management
 │   ├── useCertificate.ts    # Certificate generation
 │   ├── useCheatSheetPdf.ts  # Cheat sheet PDF export
@@ -62,7 +67,8 @@ app/
 │   └── types.ts      # Shared TypeScript interfaces
 ├── layouts/          # Page layouts
 ├── pages/            # Route pages
-│   └── index.vue     # Main roadmap page
+│   ├── index.vue     # Main roadmap page
+│   └── progress.vue  # Progress dashboard page
 └── app.vue           # Root layout
 
 content/              # Markdown lesson files (527+ files)
@@ -197,6 +203,71 @@ Quick reference sheets at the end of each topic section with PDF export capabili
 - No quiz section
 - Appears last in topic navigation (via `99.` prefix)
 
+### Progress Tracking System
+
+Comprehensive progress tracking with localStorage persistence and visual indicators.
+
+**Components:**
+| Component | Purpose |
+|-----------|---------|
+| `progress/Ring.vue` | SVG circular progress indicator with customizable size/color |
+| `progress/Bar.vue` | Linear progress bar (wraps Nuxt UI UProgress) |
+| `progress/PhaseProgress.vue` | Expandable phase card showing topic-level progress |
+| `progress/OverallProgress.vue` | Hero component with stats, progress ring, Resume Learning |
+
+**Composable:** `useProgress.ts`
+
+Key functions:
+```typescript
+// Core tracking
+markComplete(phaseId, topicId, subtopicId, estimatedMinutes?)
+isComplete(phaseId, topicId?, subtopicId?)
+recordQuizScore(phaseId, topicId, subtopicId, score)
+
+// Counting
+getCompletedCount()
+getTotalLessonCount()
+getCompletedCountForPhase(phaseId)
+getCompletedCountForTopic(phaseId, topicId)
+
+// Percentages
+getCertificateProgress()  // Overall %
+getPhaseCompletionPercentage(phaseId)
+getTopicCompletionPercentage(phaseId, topicId)
+
+// Time tracking
+getTotalTimeSpentHours()
+getTotalTimeSpentMinutes()
+
+// Resume & Certificate
+getResumeLearningData()  // Returns { path, phaseId, topicId, subtopicId }
+canGenerateCertificate() // True when 100% complete
+
+// Data management
+exportProgress()
+importProgress(jsonString)
+resetProgress()
+```
+
+**Storage:**
+- Key: `devops-lms-progress`
+- Structure: `{ startedAt, totalTimeSpent, lastAccessed, phases: { [phaseId]: { topics: { [topicId]: { subtopics: { [subtopicId]: SubtopicProgress } } } } } }`
+
+**UI Integration:**
+- **Homepage**: Enhanced progress card with gradient, stats grid, Resume Learning button
+- **PhaseCard**: Progress ring showing phase completion %
+- **TopicCard**: Checkmarks on completed lessons, completion count badge (e.g., "3/5")
+- **StatsFooter**: Progress bar with completion % and Resume Learning button
+- **Progress Page** (`/progress`): Full dashboard with phase breakdown and data management
+
+**Features:**
+- SSR-safe with client-side localStorage
+- Time tracking (accumulated from lesson `estimatedMinutes`)
+- Quiz score recording (keeps best score)
+- Resume Learning from last accessed lesson
+- Export/import progress data as JSON
+- Reset progress with confirmation
+
 ## Deployment
 
 Configured for GitHub Pages with:
@@ -307,7 +378,13 @@ const value = computed(() => data.length) // Inline explanation
   - useCheatSheetPdf composable
   - Schema extension for `isCheatSheet` frontmatter
   - Navigation integration in TopicCard
-- [ ] Phase 4: Progress tracking (useProgress composable) - partially implemented
+- [x] Phase 4: Progress tracking system
+  - Enhanced useProgress composable with 15+ functions
+  - Progress components: Ring, Bar, PhaseProgress, OverallProgress
+  - Progress dashboard page (`/progress`)
+  - UI integrations: PhaseCard rings, TopicCard badges, StatsFooter bar
+  - Homepage enhanced progress card with gradient design
+  - Time tracking, quiz scores, resume learning, export/import
 - [ ] Phase 5: Certificate generation (useCertificate composable)
 - [ ] Phase 6: Navigation and search
 - [ ] Phase 7: Final polish and deployment

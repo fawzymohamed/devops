@@ -7,17 +7,29 @@
  * Features:
  * - Track lesson completion status
  * - Record quiz scores
- * - Calculate completion percentages
+ * - Calculate completion percentages (overall, per-phase, per-topic)
+ * - Time tracking (accumulated from estimatedMinutes)
+ * - Certificate eligibility checking
+ * - Resume learning from last accessed lesson
  * - Export/import progress data
  * - SSR-safe with client-side storage
  *
  * Usage:
  * ```typescript
- * const { progress, markComplete, isComplete, getCompletedCount } = useProgress()
+ * const {
+ *   progress,
+ *   markComplete,
+ *   isComplete,
+ *   getCompletedCount,
+ *   getPhaseCompletionPercentage,
+ *   canGenerateCertificate,
+ *   getResumeLearningData
+ * } = useProgress()
  * ```
  */
 
 import type { UserProgress, SubtopicProgress } from '~/data/types'
+import { roadmapData } from '~/data/roadmap'
 
 // =============================================================================
 // CONSTANTS
@@ -38,6 +50,59 @@ const STORAGE_KEY = 'devops-lms-progress'
  */
 export function isCheatSheet(pathOrId: string): boolean {
   return pathOrId === 'cheat-sheet' || pathOrId.endsWith('/cheat-sheet')
+}
+
+/**
+ * Convert a name to URL-friendly slug
+ * @param name - Name to convert (e.g., "Waterfall Model")
+ * @returns Slug (e.g., "waterfall-model")
+ */
+function toSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+// =============================================================================
+// ROADMAP DATA HELPERS
+// =============================================================================
+
+/**
+ * Get total lesson count from roadmap data
+ * Excludes cheat sheets from the count
+ * @returns Total number of lessons across all phases
+ */
+export function getTotalLessonCount(): number {
+  return roadmapData.reduce((acc, phase) => {
+    return acc + phase.topics.reduce((topicAcc, topic) => {
+      return topicAcc + topic.subtopics.length
+    }, 0)
+  }, 0)
+}
+
+/**
+ * Get total subtopic count for a specific phase
+ * @param phaseSlug - Phase slug (e.g., "phase-1-sdlc")
+ * @returns Number of subtopics in the phase
+ */
+export function getPhaseSubtopicCount(phaseSlug: string): number {
+  const phase = roadmapData.find(p => p.slug === phaseSlug)
+  if (!phase) return 0
+  return phase.topics.reduce((acc, topic) => acc + topic.subtopics.length, 0)
+}
+
+/**
+ * Get total subtopic count for a specific topic
+ * @param phaseSlug - Phase slug
+ * @param topicSlug - Topic slug
+ * @returns Number of subtopics in the topic
+ */
+export function getTopicSubtopicCount(phaseSlug: string, topicSlug: string): number {
+  const phase = roadmapData.find(p => p.slug === phaseSlug)
+  if (!phase) return 0
+  const topic = phase.topics.find(t => t.slug === topicSlug || toSlug(t.name) === topicSlug)
+  return topic?.subtopics.length ?? 0
 }
 
 // =============================================================================
@@ -120,13 +185,19 @@ export function useProgress() {
   // ---------------------------------------------------------------------------
 
   /**
-   * Mark a subtopic/lesson as complete
+   * Mark a subtopic/lesson as complete with optional time tracking
    * Cheat sheets are automatically excluded from progress tracking
    * @param phaseId - Phase identifier
    * @param topicId - Topic identifier
    * @param subtopicId - Subtopic identifier
+   * @param estimatedMinutes - Optional: estimated time for the lesson (from frontmatter)
    */
-  function markComplete(phaseId: string, topicId: string, subtopicId: string): void {
+  function markComplete(
+    phaseId: string,
+    topicId: string,
+    subtopicId: string,
+    estimatedMinutes?: number
+  ): void {
     // Cheat sheets should not be tracked in progress
     if (isCheatSheet(subtopicId)) {
       return
@@ -135,6 +206,11 @@ export function useProgress() {
     ensureStructure(phaseId, topicId)
 
     const existing = progress.value.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId]
+
+    // Only add time if marking complete for the first time
+    if (!existing?.completed && estimatedMinutes && estimatedMinutes > 0) {
+      progress.value.totalTimeSpent = (progress.value.totalTimeSpent ?? 0) + estimatedMinutes
+    }
 
     progress.value.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId] = {
       completed: true,
@@ -208,24 +284,31 @@ export function useProgress() {
 
   /**
    * Check if a specific item is complete
-   * @param phaseId - Phase identifier
-   * @param topicId - Optional topic identifier
-   * @param subtopicId - Optional subtopic identifier
+   * Now properly calculates phase/topic completion based on roadmap data
+   * @param phaseId - Phase identifier (slug)
+   * @param topicId - Optional topic identifier (slug)
+   * @param subtopicId - Optional subtopic identifier (slug)
    * @returns Boolean indicating completion status
    */
   function isComplete(phaseId: string, topicId?: string, subtopicId?: string): boolean {
-    if (!topicId) {
-      // Check if entire phase is complete (would need roadmap data)
-      return false
-    }
-
-    if (!subtopicId) {
-      // Check if entire topic is complete (would need roadmap data)
-      return false
-    }
-
     // Check specific subtopic
-    return !!progress.value.phases[phaseId]?.topics[topicId]?.subtopics[subtopicId]?.completed
+    if (subtopicId && topicId) {
+      return !!progress.value.phases[phaseId]?.topics[topicId]?.subtopics[subtopicId]?.completed
+    }
+
+    // Check if entire topic is complete
+    if (topicId) {
+      const total = getTopicSubtopicCount(phaseId, topicId)
+      if (total === 0) return false
+      const completed = getCompletedCountForTopic(phaseId, topicId)
+      return completed >= total
+    }
+
+    // Check if entire phase is complete
+    const total = getPhaseSubtopicCount(phaseId)
+    if (total === 0) return false
+    const completed = getCompletedCountForPhase(phaseId)
+    return completed >= total
   }
 
   /**
@@ -294,6 +377,147 @@ export function useProgress() {
   }
 
   // ---------------------------------------------------------------------------
+  // Phase/Topic Progress Helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get completed count for a specific phase
+   * @param phaseId - Phase identifier (slug)
+   * @returns Number of completed subtopics in the phase
+   */
+  function getCompletedCountForPhase(phaseId: string): number {
+    const phaseProgress = progress.value.phases[phaseId]
+    if (!phaseProgress) return 0
+
+    let count = 0
+    for (const topic of Object.values(phaseProgress.topics)) {
+      for (const subtopic of Object.values(topic.subtopics)) {
+        if (subtopic.completed) count++
+      }
+    }
+    return count
+  }
+
+  /**
+   * Get completed count for a specific topic
+   * @param phaseId - Phase identifier
+   * @param topicId - Topic identifier
+   * @returns Number of completed subtopics in the topic
+   */
+  function getCompletedCountForTopic(phaseId: string, topicId: string): number {
+    const topicProgress = progress.value.phases[phaseId]?.topics[topicId]
+    if (!topicProgress) return 0
+
+    let count = 0
+    for (const subtopic of Object.values(topicProgress.subtopics)) {
+      if (subtopic.completed) count++
+    }
+    return count
+  }
+
+  /**
+   * Get completion percentage for a phase
+   * @param phaseId - Phase identifier (slug)
+   * @returns Percentage (0-100)
+   */
+  function getPhaseCompletionPercentage(phaseId: string): number {
+    const total = getPhaseSubtopicCount(phaseId)
+    if (total === 0) return 0
+    return Math.round((getCompletedCountForPhase(phaseId) / total) * 100)
+  }
+
+  /**
+   * Get completion percentage for a topic
+   * @param phaseId - Phase identifier
+   * @param topicId - Topic identifier
+   * @returns Percentage (0-100)
+   */
+  function getTopicCompletionPercentage(phaseId: string, topicId: string): number {
+    const total = getTopicSubtopicCount(phaseId, topicId)
+    if (total === 0) return 0
+    return Math.round((getCompletedCountForTopic(phaseId, topicId) / total) * 100)
+  }
+
+  // ---------------------------------------------------------------------------
+  // Time Tracking
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get total time spent in hours
+   * Converts accumulated minutes to hours (rounded to 1 decimal)
+   * @returns Hours spent learning
+   */
+  function getTotalTimeSpentHours(): number {
+    const minutes = progress.value.totalTimeSpent ?? 0
+    return Math.round((minutes / 60) * 10) / 10
+  }
+
+  /**
+   * Get total time spent in minutes
+   * @returns Minutes spent learning
+   */
+  function getTotalTimeSpentMinutes(): number {
+    return progress.value.totalTimeSpent ?? 0
+  }
+
+  // ---------------------------------------------------------------------------
+  // Certificate Eligibility
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Check if user can generate a certificate
+   * Requires 100% completion of all lessons
+   * @returns Boolean indicating certificate eligibility
+   */
+  function canGenerateCertificate(): boolean {
+    const total = getTotalLessonCount()
+    const completed = getCompletedCount()
+    return total > 0 && completed >= total
+  }
+
+  /**
+   * Get certificate readiness percentage
+   * Shows progress toward certificate eligibility
+   * @returns Percentage (0-100)
+   */
+  function getCertificateProgress(): number {
+    const total = getTotalLessonCount()
+    if (total === 0) return 0
+    return Math.round((getCompletedCount() / total) * 100)
+  }
+
+  // ---------------------------------------------------------------------------
+  // Resume Learning
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get resume learning data from lastAccessed
+   * Parses the stored path into component parts for navigation
+   * @returns Object with path info or null if no last accessed
+   */
+  function getResumeLearningData(): {
+    path: string
+    phaseId: string
+    topicId: string
+    subtopicId: string
+  } | null {
+    if (!progress.value.lastAccessed) return null
+
+    const parts = progress.value.lastAccessed.split('/')
+    if (parts.length !== 3) return null
+
+    const [phaseId, topicId, subtopicId] = parts
+    if (!phaseId || !topicId || !subtopicId) return null
+
+    return {
+      path: `/${progress.value.lastAccessed}`,
+      phaseId,
+      topicId,
+      subtopicId
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Data Management
   // ---------------------------------------------------------------------------
 
@@ -353,12 +577,36 @@ export function useProgress() {
     markIncomplete,
     recordQuizScore,
 
-    // Queries
+    // Queries - Subtopic level
     isComplete,
     getSubtopicProgress,
+
+    // Queries - Aggregated counts
     getCompletedCount,
+    getCompletedCountForPhase,
+    getCompletedCountForTopic,
+
+    // Queries - Percentages
     getCompletionPercentage,
+    getPhaseCompletionPercentage,
+    getTopicCompletionPercentage,
     getAverageQuizScore,
+
+    // Roadmap data helpers
+    getTotalLessonCount,
+    getPhaseSubtopicCount,
+    getTopicSubtopicCount,
+
+    // Time tracking
+    getTotalTimeSpentHours,
+    getTotalTimeSpentMinutes,
+
+    // Certificate eligibility
+    canGenerateCertificate,
+    getCertificateProgress,
+
+    // Resume learning
+    getResumeLearningData,
 
     // Data management
     exportProgress,

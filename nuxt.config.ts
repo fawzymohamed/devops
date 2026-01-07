@@ -100,6 +100,12 @@ export default defineNuxtConfig({
     '/': { prerender: true }
   },
 
+  // Dev server configuration - hardcoded to port 5000
+  devServer: {
+    port: 5000,
+    host: 'localhost'
+  },
+
   /**
    * Compatibility Date
    * ------------------

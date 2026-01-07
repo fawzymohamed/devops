@@ -43,7 +43,7 @@ import type { Phase } from '~/data/roadmap'
  * @prop phase - The phase data object containing all phase information
  * @prop isActive - Whether this phase is currently selected/active
  */
-defineProps<{
+const props = defineProps<{
   phase: Phase
   isActive: boolean
 }>()
@@ -56,6 +56,25 @@ defineProps<{
 const emit = defineEmits<{
   select: []
 }>()
+
+// =============================================================================
+// PROGRESS TRACKING
+// =============================================================================
+
+const { getPhaseCompletionPercentage } = useProgress()
+
+/**
+ * Phase completion percentage (0-100)
+ * Used to display progress ring on the card
+ */
+const phaseCompletion = computed(() => {
+  return getPhaseCompletionPercentage(props.phase.slug)
+})
+
+/**
+ * Check if phase is 100% complete
+ */
+const isPhaseComplete = computed(() => phaseCompletion.value === 100)
 </script>
 
 <template>
@@ -86,28 +105,42 @@ const emit = defineEmits<{
     <!--
       Card Header
       -----------
-      Contains the phase icon and phase number/title.
+      Contains the phase icon, phase number/title, and progress ring.
       Icon is displayed at 3xl size for visual prominence.
     -->
-    <div class="flex items-center gap-3 mb-2">
-      <!-- Large emoji icon representing the phase theme -->
-      <span class="text-3xl">{{ phase.icon }}</span>
-      <div>
-        <!-- Phase number label with phase-colored text -->
-        <div
-          class="text-xs font-semibold uppercase tracking-wider"
-          :style="{ color: phase.color }"
-        >
-          Phase {{ phase.phase }}
-        </div>
-        <!--
-          Phase title (without "Phase N:" prefix)
-          Uses string replacement to show only the descriptive part
-        -->
-        <div class="text-base font-semibold text-gray-100">
-          {{ phase.title.replace(`Phase ${phase.phase}: `, '') }}
+    <div class="flex items-center justify-between gap-3 mb-2">
+      <!-- Left side: Icon and title -->
+      <div class="flex items-center gap-3">
+        <!-- Large emoji icon representing the phase theme -->
+        <span class="text-3xl">{{ phase.icon }}</span>
+        <div>
+          <!-- Phase number label with phase-colored text -->
+          <div
+            class="text-xs font-semibold uppercase tracking-wider"
+            :style="{ color: phase.color }"
+          >
+            Phase {{ phase.phase }}
+          </div>
+          <!--
+            Phase title (without "Phase N:" prefix)
+            Uses string replacement to show only the descriptive part
+          -->
+          <div class="text-base font-semibold text-gray-100">
+            {{ phase.title.replace(`Phase ${phase.phase}: `, '') }}
+          </div>
         </div>
       </div>
+
+      <!-- Right side: Progress ring (only shown when progress > 0) -->
+      <ProgressRing
+        v-if="phaseCompletion > 0"
+        :value="phaseCompletion"
+        :size="40"
+        :stroke-width="3"
+        :color="phase.color"
+        show-label
+        class="flex-shrink-0"
+      />
     </div>
 
     <!--
@@ -121,17 +154,33 @@ const emit = defineEmits<{
     </div>
 
     <!--
-      Duration Badge
-      --------------
-      Shows the estimated time to complete this phase.
-      Badge uses the phase's color for consistent theming.
+      Footer: Duration Badge and Completion Status
+      ---------------------------------------------
+      Shows duration and completion badge when phase is complete.
     -->
-    <UBadge
-      :style="{ backgroundColor: phase.color }"
-      class="text-white"
-      size="sm"
-    >
-      ⏱️ {{ phase.duration }}
-    </UBadge>
+    <div class="flex items-center gap-2">
+      <!-- Duration badge -->
+      <UBadge
+        :style="{ backgroundColor: phase.color }"
+        class="text-white"
+        size="sm"
+      >
+        ⏱️ {{ phase.duration }}
+      </UBadge>
+
+      <!-- Completion badge (shown when phase is 100% complete) -->
+      <UBadge
+        v-if="isPhaseComplete"
+        color="success"
+        variant="subtle"
+        size="sm"
+      >
+        <UIcon
+          name="i-lucide-check"
+          class="w-3 h-3 mr-1"
+        />
+        Complete
+      </UBadge>
+    </div>
   </div>
 </template>

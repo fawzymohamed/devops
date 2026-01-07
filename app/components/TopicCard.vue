@@ -134,6 +134,43 @@ const priorityBgColor = computed(() => {
 const priorityTextColor = computed(() => {
   return props.topic.priority === 'important' ? '#000' : '#fff'
 })
+
+// =============================================================================
+// PROGRESS TRACKING
+// =============================================================================
+
+const {
+  isComplete,
+  getCompletedCountForTopic
+} = useProgress()
+
+/**
+ * Check if a specific subtopic is complete
+ * @param subtopic - Subtopic name
+ * @returns Boolean indicating completion status
+ */
+function isSubtopicComplete(subtopic: string): boolean {
+  return isComplete(props.phaseSlug, topicSlug.value, toSlug(subtopic))
+}
+
+/**
+ * Number of completed subtopics in this topic
+ */
+const completedCount = computed(() => {
+  return getCompletedCountForTopic(props.phaseSlug, topicSlug.value)
+})
+
+/**
+ * Total number of subtopics in this topic
+ */
+const totalCount = computed(() => props.topic.subtopics.length)
+
+/**
+ * Whether the entire topic is complete
+ */
+const isTopicComplete = computed(() => {
+  return completedCount.value > 0 && completedCount.value >= totalCount.value
+})
 </script>
 
 <template>
@@ -171,6 +208,21 @@ const priorityTextColor = computed(() => {
         >
           {{ priorityLabel }}
         </span>
+
+        <!-- Completion count badge (only shown when progress exists) -->
+        <UBadge
+          v-if="completedCount > 0"
+          :color="isTopicComplete ? 'success' : 'neutral'"
+          variant="subtle"
+          size="sm"
+        >
+          <UIcon
+            v-if="isTopicComplete"
+            name="i-lucide-check"
+            class="w-3 h-3 mr-1"
+          />
+          {{ completedCount }}/{{ totalCount }}
+        </UBadge>
       </div>
 
       <!-- Chevron icon that rotates 180° when expanded -->
@@ -222,10 +274,19 @@ const priorityTextColor = computed(() => {
             v-for="(subtopic, idx) in topic.subtopics"
             :key="idx"
             :to="getSubtopicUrl(subtopic)"
-            class="bg-gray-800/60 px-3 py-2 rounded-lg text-sm border-l-3 cursor-pointer transition-all hover:bg-gray-700/80 hover:translate-x-1"
+            class="flex items-center gap-2 bg-gray-800/60 px-3 py-2 rounded-lg text-sm border-l-3 cursor-pointer transition-all hover:bg-gray-700/80 hover:translate-x-1"
             :style="{ borderLeftColor: phaseColor }"
           >
-            {{ subtopic }}
+            <!-- Completion checkmark (shown when subtopic is complete) -->
+            <UIcon
+              v-if="isSubtopicComplete(subtopic)"
+              name="i-lucide-check-circle"
+              class="w-4 h-4 text-green-500 flex-shrink-0"
+            />
+            <!-- Subtopic name with muted style if complete -->
+            <span :class="{ 'text-gray-500': isSubtopicComplete(subtopic) }">
+              {{ subtopic }}
+            </span>
           </NuxtLink>
         </div>
 
