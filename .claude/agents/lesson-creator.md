@@ -151,14 +151,21 @@ find content -name "*.md" 2>/dev/null | head -20
 content/
 ├── 1.phase-1-sdlc/
 │   ├── 1.sdlc-models/
-│   │   ├── 1.waterfall-model.md
-│   │   └── 2.agile-methodology.md
+│   │   ├── 01.waterfall-model.md
+│   │   ├── 02.agile-methodology.md
+│   │   ├── ...
+│   │   ├── 10.some-lesson.md
+│   │   └── 99.cheat-sheet.md
 │   └── 2.sdlc-phases/
 ├── 2.phase-2-foundations/
 └── ...
 ```
 
-**Naming:** Numeric prefixes control order, use kebab-case for slugs.
+**Naming Rules:**
+- Use **zero-padded numbers** for proper sorting: `01.`, `02.`, ... `09.`, `10.`, `11.`
+- This prevents "10" sorting before "2" (string sorting issue)
+- Use kebab-case for slugs: `01.file-system-hierarchy.md`
+- Cheat sheets always use `99.cheat-sheet.md` (no zero-padding needed)
 
 ### Frontmatter Template
 

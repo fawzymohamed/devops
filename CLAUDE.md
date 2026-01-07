@@ -391,7 +391,7 @@ const value = computed(() => data.length) // Inline explanation
 
 ### Lesson Content Progress
 
-**Total: 21/527 lessons created**
+**Total: 31/527 lessons created**
 
 #### Phase 1: Software Development Lifecycle (SDLC)
 <details>
@@ -441,16 +441,18 @@ const value = computed(() => data.length) // Inline explanation
 
 #### Phase 2: Linux & Networking Foundations
 <details>
-<summary>Linux Fundamentals (0/8)</summary>
+<summary>Linux Fundamentals (10/10) ✓</summary>
 
-- [ ] Linux Basics
-- [ ] File System Navigation
-- [ ] File Permissions
-- [ ] Process Management
-- [ ] Package Management
-- [ ] Shell Scripting Basics
-- [ ] Text Processing (grep, sed, awk)
-- [ ] System Monitoring
+- [x] File System Hierarchy
+- [x] Navigation Commands (cd, ls, pwd)
+- [x] File Operations (cp, mv, rm, mkdir)
+- [x] File Permissions (chmod, chown)
+- [x] Users & Groups
+- [x] Process Management (ps, top, kill)
+- [x] Package Managers (apt, yum, dnf)
+- [x] System Services (systemd, systemctl)
+- [x] Cron Jobs & Scheduling
+- [x] Log Files & Journalctl
 
 </details>
 
