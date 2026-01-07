@@ -324,6 +324,54 @@ function handleMarkComplete() {
 
 ---
 
+## Storage & Persistence
+
+Progress data is stored in the browser's **localStorage**.
+
+| Property | Value |
+|----------|-------|
+| **Storage Key** | `devops-lms-progress` |
+| **Location** | Browser localStorage (on disk) |
+| **Limit** | ~5-10MB per domain (progress data is typically a few KB) |
+
+### Persistence Behavior
+
+| Scenario | Data Lost? |
+|----------|------------|
+| Hard refresh (Ctrl+F5) | No |
+| Close browser | No |
+| Restart computer | No |
+| Clear cache only | No |
+| **Clear browsing data** (cookies/site data) | **Yes** |
+| **Clear site data** in DevTools | **Yes** |
+| Incognito/Private mode (on window close) | **Yes** |
+| Different browser | Yes (separate storage) |
+| User calls `resetProgress()` | **Yes** |
+
+### Why It Survives Hard Refresh
+
+localStorage is stored **on disk** by the browser, not in memory. A hard refresh (Ctrl+F5) only clears cached assets (JS, CSS, images) — it doesn't touch localStorage.
+
+### When Data Is Lost
+
+Data persists indefinitely until:
+1. User clears browser data (cookies/site data)
+2. User clears site data via DevTools → Application → Storage
+3. User is in Incognito/Private mode and closes the window
+4. User explicitly calls `resetProgress()` in the app
+5. User switches to a different browser (each browser has its own localStorage)
+
+### View in DevTools
+
+To inspect stored progress data:
+1. Open DevTools (F12)
+2. Go to **Application** tab
+3. Expand **Local Storage** in sidebar
+4. Click on your domain (e.g., `localhost:3000`)
+5. Find key: `devops-lms-progress`
+
+---
+
 ## Notes
 
 - All buttons must have `cursor-pointer` class
