@@ -87,6 +87,54 @@ const {
 } = useQuiz(props.quiz)
 
 // =============================================================================
+// OPTION SHUFFLING
+// =============================================================================
+
+/**
+ * Fisher-Yates shuffle algorithm for randomizing array order
+ * Creates a new shuffled array without mutating the original
+ * @param array - Array to shuffle
+ * @returns New shuffled array
+ */
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const temp = shuffled[i]
+    shuffled[i] = shuffled[j] as T
+    shuffled[j] = temp as T
+  }
+  return shuffled
+}
+
+/**
+ * Store shuffled options for each question index
+ * This ensures options stay in the same order when navigating back to a question
+ */
+const shuffledOptionsMap = ref<Map<number, string[]>>(new Map())
+
+/**
+ * Get shuffled options for the current question
+ * Options are shuffled once per question and cached
+ */
+const shuffledOptions = computed(() => {
+  if (!currentQuestion.value?.options) return []
+
+  const index = currentIndex.value
+
+  // Return cached shuffled options if available
+  if (shuffledOptionsMap.value.has(index)) {
+    return shuffledOptionsMap.value.get(index)!
+  }
+
+  // Shuffle and cache the options
+  const shuffled = shuffleArray(currentQuestion.value.options)
+  shuffledOptionsMap.value.set(index, shuffled)
+
+  return shuffled
+})
+
+// =============================================================================
 // LOCAL STATE
 // =============================================================================
 
@@ -162,6 +210,8 @@ function handlePrevious() {
 function handleRetry() {
   reset()
   selectedAnswer.value = null
+  // Clear shuffled options to re-shuffle on retry
+  shuffledOptionsMap.value.clear()
 }
 
 /**
@@ -264,7 +314,7 @@ function formatAnswer(answer: string | readonly string[] | boolean | undefined):
           class="space-y-3"
         >
           <div
-            v-for="option in currentQuestion.options"
+            v-for="option in shuffledOptions"
             :key="option"
             class="flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all"
             :class="[
@@ -296,7 +346,7 @@ function formatAnswer(answer: string | readonly string[] | boolean | undefined):
             Select all that apply
           </p>
           <div
-            v-for="option in currentQuestion.options"
+            v-for="option in shuffledOptions"
             :key="option"
             class="flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all"
             :class="[
