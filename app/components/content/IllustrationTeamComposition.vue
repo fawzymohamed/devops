@@ -101,7 +101,7 @@
             :transform="`rotate(${getHandDrawnRotation(index + 1)}, ${SPACING.largeBoxWidth / 2}, ${roleCardHeight / 2})`"
           />
 
-          <!-- Role icon -->
+          <!-- Role icon - using foreignObject for better emoji rendering -->
           <circle
             :cx="SPACING.largeBoxWidth / 2"
             cy="30"
@@ -109,13 +109,14 @@
             :fill="getColor(role.color).main"
             :fill-opacity="OPACITY.iconCircleFill"
           />
-          <text
-            :x="SPACING.largeBoxWidth / 2"
-            y="35"
-            :font-size="TYPOGRAPHY.iconSize"
-            text-anchor="middle"
-            dominant-baseline="middle"
-          >{{ role.icon }}</text>
+          <foreignObject
+            :x="SPACING.largeBoxWidth / 2 - 14"
+            y="16"
+            width="28"
+            height="28"
+          >
+            <span class="flex items-center justify-center w-full h-full text-lg">{{ role.icon }}</span>
+          </foreignObject>
 
           <!-- Role name -->
           <text

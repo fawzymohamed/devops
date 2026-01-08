@@ -109,7 +109,7 @@
             :stroke-dasharray="STROKES.arrowDash"
           />
 
-          <!-- Connection icon -->
+          <!-- Connection icon - using foreignObject for better emoji rendering -->
           <circle
             :cx="centerX"
             :cy="itemHeight / 2"
@@ -117,13 +117,14 @@
             :fill="COLORS.gray.main"
             :fill-opacity="OPACITY.iconCircleFill"
           />
-          <text
-            :x="centerX"
-            :y="itemHeight / 2 + 1"
-            :font-size="TYPOGRAPHY.labelSize"
-            text-anchor="middle"
-            dominant-baseline="middle"
-          >{{ connection.icon }}</text>
+          <foreignObject
+            :x="centerX - 12"
+            :y="itemHeight / 2 - 12"
+            width="24"
+            height="24"
+          >
+            <span class="flex items-center justify-center w-full h-full text-sm">{{ connection.icon }}</span>
+          </foreignObject>
 
           <!-- Right item box -->
           <rect

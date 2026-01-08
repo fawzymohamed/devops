@@ -64,15 +64,16 @@
             :transform="`rotate(${getHandDrawnRotation(index)}, 0, ${getLayerCenterY(layers.length - 1 - index)})`"
           />
 
-          <!-- Layer icon (if provided) -->
-          <text
+          <!-- Layer icon (if provided) - using foreignObject for better emoji rendering -->
+          <foreignObject
             v-if="layer.icon"
-            :x="-pyramidWidth / 2 - 35"
-            :y="getLayerCenterY(layers.length - 1 - index)"
-            :font-size="TYPOGRAPHY.iconSize"
-            text-anchor="middle"
-            dominant-baseline="middle"
-          >{{ layer.icon }}</text>
+            :x="-pyramidWidth / 2 - 50"
+            :y="getLayerCenterY(layers.length - 1 - index) - 14"
+            width="28"
+            height="28"
+          >
+            <span class="flex items-center justify-center w-full h-full text-lg">{{ layer.icon }}</span>
+          </foreignObject>
 
           <!-- Layer label -->
           <text

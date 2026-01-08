@@ -85,7 +85,7 @@
             :transform="`rotate(${getHandDrawnRotation(index)}, ${SPACING.boxWidth / 2}, ${SPACING.boxHeight / 2})`"
           />
 
-          <!-- Icon circle (if icon provided) -->
+          <!-- Icon circle (if icon provided) - using foreignObject for better emoji rendering -->
           <g v-if="step.icon">
             <circle
               :cx="SPACING.boxWidth / 2"
@@ -94,13 +94,14 @@
               :fill="getColor(step.color).main"
               :fill-opacity="OPACITY.iconCircleFill"
             />
-            <text
-              :x="SPACING.boxWidth / 2"
-              :y="22"
-              :font-size="TYPOGRAPHY.iconSize - 4"
-              text-anchor="middle"
-              dominant-baseline="middle"
-            >{{ step.icon }}</text>
+            <foreignObject
+              :x="SPACING.boxWidth / 2 - 12"
+              y="6"
+              width="24"
+              height="24"
+            >
+              <span class="flex items-center justify-center w-full h-full text-sm">{{ step.icon }}</span>
+            </foreignObject>
           </g>
 
           <!-- Label -->

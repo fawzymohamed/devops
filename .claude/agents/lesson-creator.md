@@ -313,6 +313,7 @@ No need to specify `direction` - it's determined automatically. You can still ov
 - **Recommended** for comparisons (tool A vs B, before/after)
 - **Recommended** for checklists with 4+ items
 - **Optional** for simple lists (use bullet points instead)
+- **NEVER** for cheat sheets (see Cheat Sheet Generation section)
 
 **MDC Syntax Example:**
 
@@ -603,6 +604,11 @@ Generate cheat sheet for: phase-1-sdlc/sdlc-models
 
 **ALL cheat sheets are STABLE** - they synthesize existing lesson content, no research needed.
 
+### Critical Cheat Sheet Rules
+
+1. **NO Illustrations** - Cheat sheets must NEVER contain MDC illustration components (`IllustrationLinearFlow`, `IllustrationChecklist`, `IllustrationPyramid`, etc.). Use tables, numbered lists, and blockquotes instead.
+2. **NO Quiz** - Cheat sheets don't have quiz sections.
+
 ### Cheat Sheet Frontmatter
 
 ```yaml
@@ -644,6 +650,7 @@ Choose based on topic type:
 - [ ] `isCheatSheet: true` in frontmatter
 - [ ] `cheatSheetTopic` is set
 - [ ] **NO quiz section**
+- [ ] **NO illustrations** (no MDC illustration components - use tables/lists instead)
 - [ ] Content is scannable (tables, bullets)
 - [ ] No paragraphs longer than 2 sentences
 - [ ] 1-3 printed pages max

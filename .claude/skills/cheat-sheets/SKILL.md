@@ -108,20 +108,7 @@ command2 --flag
 ```markdown
 ## Process Overview
 
-::illustration-linear-flow
----
-steps:
-  - label: Step 1
-    icon: 1️⃣
-    color: violet
-  - label: Step 2
-    icon: 2️⃣
-    color: blue
-  - label: Step 3
-    icon: 3️⃣
-    color: emerald
----
-::
+> **Quick Summary:** Brief 1-sentence description of the overall process flow.
 
 ## Step-by-Step Quick Reference
 
@@ -141,6 +128,24 @@ steps:
 - [ ] Practice 2
 - [ ] Practice 3
 ```
+
+## Critical Rules
+
+### No Illustrations in Cheat Sheets
+
+**IMPORTANT:** Cheat sheets must NEVER contain illustrations (MDC components like `IllustrationLinearFlow`, `IllustrationChecklist`, `IllustrationPyramid`, etc.).
+
+**Why:**
+- Cheat sheets are designed for **quick scanning and reference**
+- Illustrations add visual complexity that slows down lookup
+- PDF export is optimized for text and tables, not complex SVGs
+- Keep cheat sheets pure text/tables for maximum portability
+
+**Instead of illustrations, use:**
+- Tables for comparisons and structured data
+- Numbered lists for sequential steps
+- Blockquotes for process summaries
+- Code blocks for command sequences
 
 ## Writing Guidelines
 
@@ -214,6 +219,7 @@ Before finalizing a cheat sheet:
 
 - [ ] `isCheatSheet: true` in frontmatter
 - [ ] `cheatSheetTopic` matches topic name
+- [ ] **No illustrations** (no MDC illustration components)
 - [ ] Scannable in under 30 seconds
 - [ ] Tables used for comparisons
 - [ ] No paragraphs longer than 2 sentences

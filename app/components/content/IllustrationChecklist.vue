@@ -90,7 +90,7 @@
         v-for="(item, index) in normalizedItems"
         :key="index"
       >
-        <g :transform="`translate(40, ${75 + index * SPACING.itemGap})`">
+        <g :transform="`translate(40, ${95 + index * SPACING.itemGap})`">
           <!-- Checkbox -->
           <rect
             x="0"
@@ -115,18 +115,20 @@
             stroke-linejoin="round"
           />
 
-          <!-- Item icon (if provided) -->
-          <text
+          <!-- Item icon (if provided) - using foreignObject for better emoji rendering -->
+          <foreignObject
             v-if="item.icon"
-            x="28"
-            y="2"
-            :font-size="TYPOGRAPHY.labelSize + 2"
-            dominant-baseline="middle"
-          >{{ item.icon }}</text>
+            x="24"
+            y="-10"
+            width="24"
+            height="24"
+          >
+            <span class="flex items-center justify-center w-full h-full text-sm">{{ item.icon }}</span>
+          </foreignObject>
 
           <!-- Item text -->
           <text
-            :x="item.icon ? 48 : 28"
+            :x="item.icon ? 52 : 28"
             y="2"
             :fill="colorValues.text"
             :font-size="TYPOGRAPHY.labelSize"
@@ -254,7 +256,7 @@ const viewBox = computed(() => {
 
 /** Y position for note */
 const noteY = computed(() => {
-  return 75 + props.items.length * SPACING.itemGap + 15
+  return 95 + props.items.length * SPACING.itemGap + 15
 })
 </script>
 

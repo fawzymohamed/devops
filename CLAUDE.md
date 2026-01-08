@@ -201,6 +201,7 @@ Quick reference sheets at the end of each topic section with PDF export capabili
 - PDF export via html2canvas + jsPDF
 - Excluded from progress tracking
 - No quiz section
+- **No illustrations** (use tables/lists instead of MDC illustration components)
 - Appears last in topic navigation (via `99.` prefix)
 
 ### Progress Tracking System

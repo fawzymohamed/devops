@@ -87,7 +87,7 @@ code
 ### For Workflow Topics
 ```markdown
 ## Process Overview
-[Illustration if appropriate]
+> **Quick Summary:** Brief 1-sentence description of the overall process flow.
 
 ## Step-by-Step
 ### Step 1
@@ -97,9 +97,14 @@ code
 - [ ] Practice 1
 ```
 
+## Critical Rules
+
+**No Illustrations:** Cheat sheets must NEVER contain illustration components (`IllustrationLinearFlow`, `IllustrationChecklist`, etc.). Use tables, numbered lists, and blockquotes instead.
+
 ## Quality Checklist
 
 - [ ] Frontmatter includes `isCheatSheet: true`
+- [ ] **No illustrations** (no MDC illustration components)
 - [ ] Content is scannable (tables, bullets)
 - [ ] No paragraphs longer than 2 sentences
 - [ ] Synthesizes content (not just copied)

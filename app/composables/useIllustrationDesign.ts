@@ -169,7 +169,8 @@ export function calculateLinearFlowViewBox(
  * @param hasNote - Whether there's a note at the bottom
  */
 export function calculateChecklistViewBox(itemCount: number, hasNote = false) {
-  const baseHeight = 90 + itemCount * SPACING.itemGap
+  // Base height accounts for title (45) + underline (20) + spacing to first item (30) = 95
+  const baseHeight = 110 + itemCount * SPACING.itemGap
   const height = hasNote ? baseHeight + 50 : baseHeight
   return { width: 450, height }
 }
