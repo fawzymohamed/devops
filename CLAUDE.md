@@ -392,55 +392,12 @@ const value = computed(() => data.length) // Inline explanation
 
 ### Lesson Content Progress
 
-**Total: 31/527 lessons created**
+**Total: 41/527 lessons created**
 
-#### Phase 1: Software Development Lifecycle (SDLC)
-<details>
-<summary>SDLC Models (5/5) ✓</summary>
+#### Phase 1: Software Development Lifecycle (SDLC) ✓
+21/21 lessons complete (4 topics)
 
-- [x] Waterfall Model
-- [x] Agile Methodology
-- [x] Scrum Framework
-- [x] Kanban Method
-- [x] DevOps as SDLC Evolution
-
-</details>
-
-<details>
-<summary>SDLC Phases (6/6) ✓</summary>
-
-- [x] Requirements Gathering
-- [x] Design & Architecture
-- [x] Development/Coding
-- [x] Testing & QA
-- [x] Deployment
-- [x] Maintenance & Operations
-
-</details>
-
-<details>
-<summary>Development Workflows (5/5) ✓</summary>
-
-- [x] Feature Branching
-- [x] Code Reviews
-- [x] Pull Requests
-- [x] Release Management
-- [x] Hotfix Procedures
-
-</details>
-
-<details>
-<summary>Project Management Basics (5/5) ✓</summary>
-
-- [x] User Stories
-- [x] Sprint Planning
-- [x] Backlog Management
-- [x] Velocity & Estimation
-- [x] Retrospectives
-
-</details>
-
-#### Phase 2: Linux & Networking Foundations
+#### Phase 2: Foundations
 <details>
 <summary>Linux Fundamentals (10/10) ✓</summary>
 
@@ -458,25 +415,113 @@ const value = computed(() => data.length) // Inline explanation
 </details>
 
 <details>
-<summary>Networking Basics (0/6)</summary>
+<summary>Bash Scripting (0/10)</summary>
 
-- [ ] OSI Model
-- [ ] TCP/IP Fundamentals
-- [ ] DNS & Domain Management
-- [ ] HTTP/HTTPS Protocols
-- [ ] Firewalls & Security Groups
-- [ ] Load Balancing Concepts
+- [ ] Variables & Data Types
+- [ ] Conditionals (if/else)
+- [ ] Loops (for, while)
+- [ ] Functions
+- [ ] Input/Output Redirection
+- [ ] Pipes & Filters
+- [ ] Text Processing (grep, sed, awk)
+- [ ] Script Arguments
+- [ ] Exit Codes
+- [ ] Error Handling
 
 </details>
 
 <details>
-<summary>Version Control (0/5)</summary>
+<summary>Networking Fundamentals (0/11)</summary>
 
-- [ ] Git Fundamentals
-- [ ] Branching Strategies
-- [ ] Merge vs Rebase
-- [ ] Git Hooks
-- [ ] Git Best Practices
+- [ ] OSI Model (7 Layers)
+- [ ] TCP/IP Model
+- [ ] IP Addressing & Subnetting
+- [ ] DNS (Domain Name System)
+- [ ] DHCP
+- [ ] HTTP/HTTPS Protocols
+- [ ] SSL/TLS Basics
+- [ ] Firewalls & Ports
+- [ ] Load Balancers
+- [ ] VPNs
+- [ ] Network Troubleshooting (ping, traceroute, netstat, ss, curl)
+
+</details>
+
+<details>
+<summary>Git Version Control (10/10) ✓</summary>
+
+- [x] Git Basics (init, clone, add, commit)
+- [x] Branching & Merging
+- [x] Remote Repositories
+- [x] Git Flow Workflow
+- [x] Rebasing vs Merging
+- [x] Cherry Picking
+- [x] Stashing Changes
+- [x] Resolving Conflicts
+- [x] Git Hooks
+- [x] Tags & Releases
+
+</details>
+
+<details>
+<summary>Python for Automation (0/10)</summary>
+
+- [ ] Python Syntax & Basics
+- [ ] Data Types & Structures
+- [ ] Control Flow
+- [ ] Functions & Modules
+- [ ] File Operations
+- [ ] Error Handling (try/except)
+- [ ] Working with APIs (requests)
+- [ ] JSON/YAML Parsing
+- [ ] Regular Expressions
+- [ ] Virtual Environments (venv, pip)
+
+</details>
+
+<details>
+<summary>JavaScript Fundamentals (0/12)</summary>
+
+- [ ] Variables (let, const, var)
+- [ ] Data Types & Operators
+- [ ] Functions & Arrow Functions
+- [ ] Arrays & Objects
+- [ ] OOP: Classes & Constructors
+- [ ] OOP: Inheritance & Prototypes
+- [ ] OOP: Encapsulation & Modules
+- [ ] Async/Await & Promises
+- [ ] Fetch API
+- [ ] ES6+ Features
+- [ ] Node.js Basics
+- [ ] npm Package Manager
+
+</details>
+
+<details>
+<summary>TypeScript Essentials (0/9)</summary>
+
+- [ ] Type Annotations
+- [ ] Interfaces & Types
+- [ ] Generics
+- [ ] Enums
+- [ ] Union & Intersection Types
+- [ ] Type Guards
+- [ ] tsconfig.json
+- [ ] Compiling TypeScript
+- [ ] TypeScript with Node.js
+
+</details>
+
+<details>
+<summary>YAML & JSON (0/7)</summary>
+
+- [ ] YAML Syntax
+- [ ] JSON Syntax
+- [ ] Data Structures
+- [ ] Nested Objects
+- [ ] Arrays/Lists
+- [ ] Configuration Files
+- [ ] Validation
 
 </details>
 
