@@ -185,7 +185,7 @@ export const roadmapData: Phase[] = [
       },
       {
         name: 'Git Version Control',
-        slug: 'git-version-control',
+        slug: 'version-control',
         subtopics: ['Git Basics (init, clone, add, commit)', 'Branching & Merging', 'Remote Repositories', 'Git Flow Workflow', 'Rebasing vs Merging', 'Cherry Picking', 'Stashing Changes', 'Resolving Conflicts', 'Git Hooks', 'Tags & Releases'],
         priority: 'essential'
       },
