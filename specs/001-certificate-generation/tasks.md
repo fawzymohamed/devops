@@ -82,7 +82,7 @@
 
 > Dependencies: Phase 1 (T007 - UserProgress extension)
 
-- [ ] [T016] [P2] [US3] Create `app/components/certificate/NameInputModal.vue`
+- [X] [T016] [P2] [US3] Create `app/components/certificate/NameInputModal.vue`
   - Modal component for name entry/edit
   - Input validation (non-empty, trimmed)
   - Save button with loading state
@@ -90,14 +90,14 @@
   - Uses Nuxt UI `UModal`, `UInput`, `UButton`
   - Apply `cursor-pointer` to all buttons
 
-- [ ] [T017] [P2] [US3] Add `setUserName(name: string)` to `app/composables/useProgress.ts`
+- [X] [T017] [P2] [US3] Add `setUserName(name: string)` to `app/composables/useProgress.ts`
   - Saves userName to localStorage progress data
   - Validates non-empty string
 
-- [ ] [T018] [P2] [US3] Add `getUserName()` to `app/composables/useProgress.ts`
+- [X] [T018] [P2] [US3] Add `getUserName()` to `app/composables/useProgress.ts`
   - Returns saved userName or undefined if not set
 
-- [ ] [T019] [P2] [US3] Add `hasUserName()` to `app/composables/useProgress.ts`
+- [X] [T019] [P2] [US3] Add `hasUserName()` to `app/composables/useProgress.ts`
   - Returns boolean for quick check
 
 ---
@@ -131,7 +131,7 @@
 
 > Dependencies: Phase 4
 
-- [ ] [T023] [P1] [US2] Create `app/components/certificate/CertificateDownloadButton.vue`
+- [X] [T023] [P1] [US2] Create `app/components/certificate/CertificateDownloadButton.vue`
   - Props: `certificateRef: HTMLElement`, `filename: string`, `disabled: boolean`
   - Emits: `download:start`, `download:complete`, `download:error`
   - Loading state during PDF generation
@@ -139,7 +139,7 @@
   - Error display with retry capability
   - Apply `cursor-pointer` class
 
-- [ ] [T024] [P1] [US2] Integrate with useCertificate composable
+- [X] [T024] [P1] [US2] Integrate with useCertificate composable
   - Call generatePDF and downloadCertificate functions
   - Handle error states
 
@@ -149,7 +149,7 @@
 
 > Dependencies: Phase 2 (T010)
 
-- [ ] [T025] [P2] [US4] Create `app/components/certificate/CertificateCard.vue`
+- [X] [T025] [P2] [US4] Create `app/components/certificate/CertificateCard.vue`
   - Props: `status: PhaseCertificateStatus`
   - Visual distinction for locked vs unlocked states
   - Locked: Progress bar, percentage, lessons remaining
@@ -158,7 +158,7 @@
   - Hover states for interactivity
   - Apply `cursor-pointer` to interactive elements
 
-- [ ] [T026] [P2] [US4] Add "Resume Learning" link for locked phases
+- [X] [T026] [P2] [US4] Add "Resume Learning" link for locked phases
   - Links to first incomplete lesson in phase
   - Uses getResumeLearningData from useProgress
 
@@ -168,29 +168,29 @@
 
 > Dependencies: Phase 3, Phase 4, Phase 5, Phase 6
 
-- [ ] [T027] [P1] [US4] Create `app/pages/certificate.vue`
+- [X] [T027] [P1] [US4] Create `app/pages/certificate.vue`
   - Route: `/certificate`
   - Page title and breadcrumb
   - Grid layout for 10 phase certificate cards
   - Responsive: 1 col mobile, 2 col tablet, 3 col desktop
 
-- [ ] [T028] [P2] [US4] Add overall progress summary section
+- [X] [T028] [P2] [US4] Add overall progress summary section
   - Total phases completed / 10
   - Total lessons completed / 527
   - Visual progress ring
 
-- [ ] [T029] [P2] [US3] Integrate name entry modal
+- [X] [T029] [P2] [US3] Integrate name entry modal
   - Prompt on first certificate view if no name set
   - "Edit Name" option accessible from page
   - Name displayed in header area
 
-- [ ] [T030] [P1] [US1] Implement certificate preview modal/view
+- [X] [T030] [P1] [US1] Implement certificate preview modal/view
   - Opens when "View Certificate" clicked
   - Shows CertificatePreview component
   - Download button below preview
   - Close/dismiss option
 
-- [ ] [T031] [P3] [US5] Add Course Completion Certificate section
+- [X] [T031] [P3] [US5] Add Course Completion Certificate section
   - Prominent display at top when unlocked
   - Locked state shows phases remaining
   - "Complete all phases to unlock" message
@@ -201,11 +201,11 @@
 
 > Dependencies: Phase 7
 
-- [ ] [T032] [P2] Add certificate page link to main navigation
+- [X] [T032] [P2] Add certificate page link to main navigation
   - Add to header navigation menu
   - Icon: certificate/award icon from Lucide
 
-- [ ] [T033] [P2] Add certificate prompt on phase completion
+- [X] [T033] [P2] Add certificate prompt on phase completion
   - Show toast/notification when phase completed
   - Link to certificate page
 
@@ -215,20 +215,20 @@
 
 > Dependencies: All previous phases
 
-- [ ] [T034] [P2] [US2] Add loading states to all async operations
+- [X] [T034] [P2] [US2] Add loading states to all async operations
   - PDF generation loading indicator
   - Dashboard loading skeleton
 
-- [ ] [T035] [P2] [US2] Implement error handling for PDF generation
+- [X] [T035] [P2] [US2] Implement error handling for PDF generation
   - Error message display
   - Retry button
   - Console error logging
 
-- [ ] [T036] [P3] Add empty state for new users
+- [X] [T036] [P3] Add empty state for new users
   - Encouraging message when no certificates earned
   - Link to start learning
 
-- [ ] [T037] [P3] Add certificate count badge to navigation
+- [X] [T037] [P3] Add certificate count badge to navigation
   - Shows number of earned certificates
   - Updates dynamically
 

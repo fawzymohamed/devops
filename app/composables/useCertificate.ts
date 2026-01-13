@@ -142,11 +142,29 @@ export function useCertificate() {
   // ---------------------------------------------------------------------------
 
   /**
-   * Generate PDF from certificate preview element
+   * Generate PDF from certificate preview element (legacy version)
    * @param data - Certificate data for metadata
    * @returns Blob of generated PDF or null on failure
    */
-  async function generatePDF(data: CertificateData): Promise<Blob | null> {
+  async function generatePDF(data: CertificateData | HTMLElement): Promise<Blob | null> {
+    // Handle both HTMLElement and CertificateData inputs
+    let element: HTMLElement | null = null
+    let userName = 'DevOps Learner'
+
+    if (data instanceof HTMLElement) {
+      // Direct element reference
+      element = data
+    } else {
+      // Legacy: Find element by ID
+      if (typeof window === 'undefined') return null
+      element = document.getElementById('certificate-preview')
+      userName = data.userName
+    }
+
+    if (!element) {
+      throw new Error('Certificate preview element not found')
+    }
+
     // Only run on client
     if (typeof window === 'undefined') return null
 
@@ -159,12 +177,6 @@ export function useCertificate() {
         import('html2canvas'),
         import('jspdf')
       ])
-
-      // Find certificate element
-      const element = document.getElementById('certificate-preview')
-      if (!element) {
-        throw new Error('Certificate preview element not found')
-      }
 
       // Render to canvas with high quality
       const canvas = await html2canvas(element, {
@@ -195,7 +207,7 @@ export function useCertificate() {
 
       // Add metadata
       pdf.setProperties({
-        title: `DevOps LMS Certificate - ${data.userName}`,
+        title: `DevOps LMS Certificate - ${userName}`,
         subject: 'Course Completion Certificate',
         author: 'DevOps LMS',
         keywords: 'devops, certificate, completion',
@@ -210,6 +222,27 @@ export function useCertificate() {
     } finally {
       isGenerating.value = false
     }
+  }
+
+  /**
+   * Download a PDF blob with a given filename
+   * @param blob - PDF blob to download
+   * @param filename - Filename for the download
+   */
+  function downloadPDF(blob: Blob, filename: string): void {
+    // Create download link
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+
+    // Trigger download
+    document.body.appendChild(link)
+    link.click()
+
+    // Cleanup
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   }
 
   /**
@@ -550,6 +583,7 @@ export function useCertificate() {
 
     // PDF generation
     generatePDF,
+    downloadPDF,
     downloadCertificate,
 
     // Data builders

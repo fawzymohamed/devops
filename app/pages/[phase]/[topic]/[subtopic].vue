@@ -283,9 +283,39 @@ const isCheatSheet = computed(() => {
  * Handle Mark Complete
  * --------------------
  * Mark the current lesson as complete with time tracking
+ * Shows notification when phase is completed
  */
 function handleMarkComplete() {
+  // Get phase completion status before marking complete
+  const wasPhaseComplete = isComplete(phase)
+
+  // Mark the lesson as complete
   markComplete(phase, topic, subtopic, lesson.value?.estimatedMinutes)
+
+  // Check if phase just became complete
+  const isPhaseCompleteNow = isComplete(phase)
+
+  // Show phase completion notification if phase was just completed
+  if (!wasPhaseComplete && isPhaseCompleteNow) {
+    // Get toast instance
+    const toast = useToast()
+
+    // Show congratulations toast with link to certificates
+    toast.add({
+      title: 'Phase Complete! 🎉',
+      description: 'Congratulations! You\'ve completed this phase. View your certificate now!',
+      icon: 'i-lucide-award',
+      color: 'success',
+      actions: [
+        {
+          label: 'View Certificate',
+          onClick: () => {
+            navigateTo('/certificate')
+          }
+        }
+      ]
+    })
+  }
 }
 
 /**

@@ -292,7 +292,7 @@ const phaseCompletionDates = computed(() => {
       <!-- Signature Area (decorative) -->
       <div class="mt-6 flex items-center justify-center gap-12">
         <div class="flex-1 space-y-2">
-          <div class="mx-auto h-px w-48 bg-gray-700"></div>
+          <div class="mx-auto h-px w-48 bg-gray-700" />
           <div class="text-xs uppercase tracking-wider text-gray-600">
             DevOps LMS Platform
           </div>
@@ -310,7 +310,7 @@ const phaseCompletionDates = computed(() => {
         'border-amber-500': isCourse,
         'border-gray-600': isPhase
       }"
-    ></div>
+    />
     <!-- Top-right corner -->
     <div
       class="absolute right-4 top-4 h-16 w-16 border-r-2 border-t-2"
@@ -318,7 +318,7 @@ const phaseCompletionDates = computed(() => {
         'border-amber-500': isCourse,
         'border-gray-600': isPhase
       }"
-    ></div>
+    />
     <!-- Bottom-left corner -->
     <div
       class="absolute bottom-4 left-4 h-16 w-16 border-b-2 border-l-2"
@@ -326,7 +326,7 @@ const phaseCompletionDates = computed(() => {
         'border-amber-500': isCourse,
         'border-gray-600': isPhase
       }"
-    ></div>
+    />
     <!-- Bottom-right corner -->
     <div
       class="absolute bottom-4 right-4 h-16 w-16 border-b-2 border-r-2"
@@ -334,6 +334,6 @@ const phaseCompletionDates = computed(() => {
         'border-amber-500': isCourse,
         'border-gray-600': isPhase
       }"
-    ></div>
+    />
   </div>
 </template>
