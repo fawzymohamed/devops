@@ -1,19 +1,41 @@
 /**
  * useCertificate Composable
  * =========================
- * Handles certificate generation and PDF download.
+ * Handles certificate generation and PDF download for phase-level and course-level certificates.
  * Uses html2canvas and jsPDF for client-side PDF generation.
  *
  * Features:
- * - Generate unique certificate IDs
- * - Calculate total learning hours
+ * - Generate unique certificate IDs (legacy, phase-specific, course completion)
+ * - Build phase certificate data for completed phases
+ * - Build course certificate data for full course completion
+ * - Get certificate statuses for all 10 phases
+ * - Check certificate unlock eligibility (phase and course)
+ * - Calculate phase-specific quiz averages and hours spent
  * - Render certificate to PDF
- * - Download generated certificate
+ * - Download certificates with type-specific filenames
  *
  * Usage:
  * ```typescript
- * const { generateCertificateId, downloadCertificate, isGenerating } = useCertificate()
- * await downloadCertificate(certificateData)
+ * const {
+ *   // State
+ *   isGenerating,
+ *   error,
+ *   // Phase certificates
+ *   buildPhaseCertificateData,
+ *   canUnlockPhaseCertificate,
+ *   getPhaseCertificateStatuses,
+ *   getPhaseQuizAverage,
+ *   getPhaseHoursSpent,
+ *   // Course certificate
+ *   buildCourseCertificateData,
+ *   canUnlockCourseCertificate,
+ *   // PDF generation
+ *   downloadCertificate
+ * } = useCertificate()
+ *
+ * // Download a phase certificate
+ * const phaseData = buildPhaseCertificateData('phase-1-sdlc')
+ * if (phaseData) await downloadCertificate(phaseData, 'phase')
  * ```
  */
 
@@ -399,7 +421,7 @@ export function useCertificate() {
       progress
     } = useProgress()
 
-    return roadmapData.map(phase => {
+    return roadmapData.map((phase) => {
       const completedLessons = getCompletedCountForPhase(phase.slug)
       const totalLessons = getPhaseSubtopicCount(phase.slug)
       const completionPercentage = getPhaseCompletionPercentage(phase.slug)
