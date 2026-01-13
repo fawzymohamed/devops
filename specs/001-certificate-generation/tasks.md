@@ -106,7 +106,7 @@
 
 > Dependencies: Phase 1, Phase 2
 
-- [ ] [T020] [P1] [US1] Create `app/components/certificate/CertificatePreview.vue`
+- [X] [T020] [P1] [US1] Create `app/components/certificate/CertificatePreview.vue`
   - Visual certificate design component
   - Props: `certificateData: PhaseCertificateData | CourseCertificateData`, `type: 'phase' | 'course'`
   - Dark mode design with gold/amber accent
@@ -114,12 +114,12 @@
   - A4 landscape aspect ratio (297:210)
   - Ref exposed for PDF capture (`certificateRef`)
 
-- [ ] [T021] [P1] [US1] Implement phase certificate variant in CertificatePreview
+- [X] [T021] [P1] [US1] Implement phase certificate variant in CertificatePreview
   - Phase number badge
   - Phase-specific title (e.g., "Phase 1: Software Development Lifecycle")
   - Lessons completed / total display
 
-- [ ] [T022] [P1] [US5] Implement course certificate variant in CertificatePreview
+- [X] [T022] [P1] [US5] Implement course certificate variant in CertificatePreview
   - "DevOps Master Certificate" title
   - Gold border for prestige
   - Aggregate statistics display
