@@ -519,6 +519,41 @@ export function useProgress() {
   }
 
   // ---------------------------------------------------------------------------
+  // Name Management
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Set the user's name for certificates
+   * Validates non-empty string and trims whitespace
+   * @param name - User's full name
+   * @returns Boolean indicating success (false if empty/invalid)
+   */
+  function setUserName(name: string): boolean {
+    const trimmed = name.trim()
+    if (!trimmed) return false
+
+    progress.value.userName = trimmed
+    saveToStorage()
+    return true
+  }
+
+  /**
+   * Get the user's saved name
+   * @returns User's name or undefined if not set
+   */
+  function getUserName(): string | undefined {
+    return progress.value.userName
+  }
+
+  /**
+   * Check if user has set their name
+   * @returns Boolean indicating if name is set
+   */
+  function hasUserName(): boolean {
+    return !!progress.value.userName && progress.value.userName.trim().length > 0
+  }
+
+  // ---------------------------------------------------------------------------
   // Data Management
   // ---------------------------------------------------------------------------
 
@@ -608,6 +643,11 @@ export function useProgress() {
 
     // Resume learning
     getResumeLearningData,
+
+    // Name management
+    setUserName,
+    getUserName,
+    hasUserName,
 
     // Data management
     exportProgress,
