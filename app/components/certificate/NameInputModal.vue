@@ -155,38 +155,16 @@ function handleKeyPress(event: KeyboardEvent) {
     Uses Nuxt UI UModal component for consistent modal behavior
   -->
   <UModal
-    :model-value="open"
-    @update:model-value="emit('update:open', $event)"
+    :open="open"
+    :title="initialName ? 'Edit Your Name' : 'Enter Your Name'"
+    @update:open="emit('update:open', $event)"
   >
     <!--
-      Modal Content
-      =============
-      Card layout with header, body, and footer sections
+      Modal Body
+      ==========
+      Name input field with validation error display
     -->
-    <UCard>
-      <!-- Modal Header -->
-      <template #header>
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-gray-100">
-            {{ initialName ? 'Edit Your Name' : 'Enter Your Name' }}
-          </h3>
-          <UButton
-            icon="i-lucide-x"
-            color="neutral"
-            variant="ghost"
-            size="sm"
-            class="cursor-pointer"
-            :disabled="isLoading"
-            @click="handleClose"
-          />
-        </div>
-      </template>
-
-      <!--
-        Modal Body
-        ==========
-        Name input field with validation error display
-      -->
+    <template #body>
       <div class="space-y-4">
         <!-- Instruction text -->
         <p class="text-sm text-gray-400">
@@ -213,35 +191,35 @@ function handleKeyPress(event: KeyboardEvent) {
           </p>
         </div>
       </div>
+    </template>
 
-      <!--
-        Modal Footer
-        ============
-        Action buttons (Cancel and Save)
-      -->
-      <template #footer>
-        <div class="flex items-center justify-end gap-3">
-          <!-- Cancel button -->
-          <UButton
-            label="Cancel"
-            color="neutral"
-            variant="ghost"
-            class="cursor-pointer"
-            :disabled="isLoading"
-            @click="handleClose"
-          />
+    <!--
+      Modal Footer
+      ============
+      Action buttons (Cancel and Save)
+    -->
+    <template #footer>
+      <div class="flex items-center justify-end gap-3">
+        <!-- Cancel button -->
+        <UButton
+          label="Cancel"
+          color="neutral"
+          variant="outline"
+          class="cursor-pointer"
+          :disabled="isLoading"
+          @click="handleClose"
+        />
 
-          <!-- Save button -->
-          <UButton
-            label="Save"
-            color="primary"
-            class="cursor-pointer"
-            :loading="isLoading"
-            :disabled="isLoading"
-            @click="handleSave"
-          />
-        </div>
-      </template>
-    </UCard>
+        <!-- Save button -->
+        <UButton
+          label="Save"
+          color="primary"
+          class="cursor-pointer"
+          :loading="isLoading"
+          :disabled="isLoading"
+          @click="handleSave"
+        />
+      </div>
+    </template>
   </UModal>
 </template>

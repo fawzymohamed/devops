@@ -36,6 +36,9 @@
 
 <script setup lang="ts">
 import type { PhaseCertificateData, CourseCertificateData } from '~/data/types'
+import NameInputModal from '~/components/certificate/NameInputModal.vue'
+import CertificateCard from '~/components/certificate/CertificateCard.vue'
+import CertificateDownloadButton from '~/components/certificate/CertificateDownloadButton.vue'
 
 // =============================================================================
 // META & SEO
@@ -534,27 +537,12 @@ function handleEditName() {
         Modal displaying certificate preview with download button
       -->
       <UModal
-        v-model="isCertificateModalOpen"
+        v-model:open="isCertificateModalOpen"
+        title="Certificate Preview"
         class="max-w-4xl"
       >
-        <UCard>
-          <template #header>
-            <div class="flex items-center justify-between">
-              <h3 class="text-lg font-semibold text-gray-100">
-                Certificate Preview
-              </h3>
-              <UButton
-                icon="i-lucide-x"
-                color="neutral"
-                variant="ghost"
-                size="sm"
-                class="cursor-pointer"
-                @click="isCertificateModalOpen = false"
-              />
-            </div>
-          </template>
-
-          <!-- Certificate preview component would go here -->
+        <template #body>
+          <!-- Certificate preview content -->
           <div
             ref="certificatePreviewRef"
             class="bg-gray-900 rounded-lg p-8 text-center"
@@ -563,7 +551,7 @@ function handleEditName() {
               v-if="viewingCertificate"
               class="space-y-4"
             >
-              <!-- Placeholder - actual CertificatePreview component integration -->
+              <!-- Certificate preview display -->
               <div class="text-4xl font-bold text-amber-400 mb-4">
                 <UIcon
                   name="i-lucide-award"
@@ -583,15 +571,24 @@ function handleEditName() {
               </div>
             </div>
           </div>
+        </template>
 
-          <template #footer>
+        <template #footer>
+          <div class="flex justify-end gap-3">
+            <UButton
+              label="Close"
+              color="neutral"
+              variant="outline"
+              class="cursor-pointer"
+              @click="isCertificateModalOpen = false"
+            />
             <CertificateDownloadButton
               :certificate-ref="certificatePreviewRef"
               :filename="pdfFilename"
               @download:complete="isCertificateModalOpen = false"
             />
-          </template>
-        </UCard>
+          </div>
+        </template>
       </UModal>
 
       <!--
