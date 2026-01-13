@@ -37,7 +37,7 @@ function handleChange() {
     <span class="text-xs text-gray-400 hidden sm:inline">Roadmap</span>
     <select
       v-model="selected"
-      class="bg-gray-900 text-gray-100 text-sm rounded-md border border-gray-700 px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+      class="cursor-pointer bg-gray-900 text-gray-100 text-sm rounded-md border border-gray-700 px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
       @change="handleChange"
     >
       <option

@@ -1,8 +1,78 @@
 /**
  * useProgress Composable
  * ======================
- * Manages user progress tracking throughout the LMS.
+ * Manages user progress tracking throughout the LMS with multi-roadmap support.
  * Persists data to localStorage for offline support.
+ *
+ * Features:
+ * ---------
+ * - Multi-roadmap progress tracking (DevOps, Full Stack, etc.)
+ * - Lesson completion marking with timestamps
+ * - Quiz score recording (keeps best score per lesson)
+ * - Phase and topic completion percentage calculations
+ * - Time tracking (accumulated from lesson estimatedMinutes)
+ * - Resume Learning from last accessed lesson
+ * - Certificate eligibility checking (100% completion required)
+ * - User name management for certificates
+ * - Export/import progress data as JSON
+ * - Reset progress (all or per-roadmap)
+ * - Automatic migration from legacy single-roadmap format
+ *
+ * Data Structure:
+ * ---------------
+ * localStorage key: 'devops-lms-progress'
+ * {
+ *   version: 2,
+ *   roadmaps: {
+ *     [roadmapId]: {
+ *       startedAt: ISO timestamp,
+ *       lastAccessed: "phaseId/topicId/subtopicId",
+ *       totalTimeSpent: minutes,
+ *       phases: {
+ *         [phaseId]: {
+ *           topics: {
+ *             [topicId]: {
+ *               subtopics: {
+ *                 [subtopicId]: {
+ *                   completed: boolean,
+ *                   completedAt: ISO timestamp | null,
+ *                   quizScore: number | null,
+ *                   quizCompletedAt: ISO timestamp | null
+ *                 }
+ *               }
+ *             }
+ *           }
+ *         }
+ *       }
+ *     }
+ *   },
+ *   globalSettings: { userName?: string }
+ * }
+ *
+ * Usage:
+ * ------
+ * ```typescript
+ * const {
+ *   markComplete,
+ *   isComplete,
+ *   getCompletedCount,
+ *   getCertificateProgress,
+ *   getResumeLearningData
+ * } = useProgress()
+ *
+ * // Mark a lesson complete
+ * markComplete('devops', 'phase-1-sdlc', 'sdlc-models', 'waterfall-model', 15)
+ *
+ * // Check completion status
+ * const done = isComplete('devops', 'phase-1-sdlc', 'sdlc-models', 'waterfall-model')
+ *
+ * // Get overall progress percentage
+ * const progress = getCertificateProgress('devops') // 0-100
+ *
+ * // Get resume point for a roadmap
+ * const resume = getResumeLearningData('devops')
+ * // { path: '/phase-1-sdlc/...', phaseId, topicId, subtopicId } | null
+ * ```
  */
 
 import type {

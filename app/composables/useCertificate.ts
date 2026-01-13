@@ -2,6 +2,64 @@
  * useCertificate Composable
  * =========================
  * Handles certificate generation and PDF download for phase and course certificates.
+ * Supports multi-roadmap certificate generation with unique certificate IDs.
+ *
+ * Features:
+ * ---------
+ * - Phase certificates (unlocked when a phase is 100% complete)
+ * - Course/Master certificates (unlocked when entire roadmap is complete)
+ * - Unique certificate ID generation with roadmap prefix
+ * - PDF generation using html2canvas + jsPDF
+ * - Certificate data building with progress integration
+ * - Certificate status tracking (locked/unlocked/downloaded)
+ * - Quiz score averaging per phase
+ * - Hours spent calculation per phase
+ * - Date formatting for certificate display
+ *
+ * Certificate Types:
+ * ------------------
+ * 1. Phase Certificate - Awarded for completing a single phase
+ *    - ID format: {ROADMAP}-P{number}-{timestamp}-{random}
+ *    - Example: DEVOPS-P1-LXYZ123-ABC456
+ *
+ * 2. Course Certificate - Awarded for completing entire roadmap
+ *    - ID format: {ROADMAP}-MASTER-{timestamp}-{random}
+ *    - Example: DEVOPS-MASTER-LXYZ123-ABC456
+ *
+ * Data Flow:
+ * ----------
+ * 1. Check completion status via useProgress
+ * 2. Build certificate data with user name, dates, scores
+ * 3. Generate PDF from certificate preview element
+ * 4. Download PDF with formatted filename
+ *
+ * Usage:
+ * ------
+ * ```typescript
+ * const {
+ *   buildPhaseCertificateData,
+ *   buildCourseCertificateData,
+ *   downloadCertificate,
+ *   getPhaseCertificateStatuses,
+ *   isGenerating,
+ *   error
+ * } = useCertificate()
+ *
+ * // Get status of all phase certificates
+ * const statuses = getPhaseCertificateStatuses('devops')
+ * // [{ phaseNumber: 1, status: 'unlocked', completionPercentage: 100, ... }, ...]
+ *
+ * // Build phase certificate data (returns null if not complete)
+ * const phaseData = buildPhaseCertificateData('devops', 'phase-1-sdlc')
+ *
+ * // Build course certificate data (returns null if not complete)
+ * const courseData = buildCourseCertificateData('devops')
+ *
+ * // Download certificate as PDF
+ * if (phaseData) {
+ *   await downloadCertificate('devops', phaseData, 'phase')
+ * }
+ * ```
  */
 
 import type {

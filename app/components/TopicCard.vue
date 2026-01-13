@@ -40,6 +40,10 @@
 import type { Topic } from '~/data/roadmap'
 import { priorityConfig } from '~/data/roadmap'
 
+// TypeScript workaround: queryContent is auto-imported but TS doesn't recognize it
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const queryContent: any
+
 /**
  * Component Props
  * ---------------
@@ -105,7 +109,84 @@ function getSubtopicUrl(subtopic: string): string {
   )
 }
 
-const { getRoutePath } = useRoadmap()
+const { getRoutePath, getContentPath } = useRoadmap()
+
+// =============================================================================
+// CONTENT AVAILABILITY CHECK
+// =============================================================================
+
+/**
+ * Available Subtopics
+ * -------------------
+ * Stores the list of available subtopic slugs for this topic.
+ * Populated by querying @nuxt/content for existing lesson files.
+ */
+const availableSubtopics = ref<Set<string>>(new Set())
+
+/**
+ * Fetch Available Content
+ * -----------------------
+ * Queries the content directory to find which lessons actually exist.
+ * This prevents showing links to non-existent lessons.
+ */
+async function fetchAvailableContent() {
+  try {
+    const roadmapSlug = props.roadmapId ?? 'devops'
+    const contentPath = getContentPath(roadmapSlug)
+    const basePath = contentPath ? `${contentPath}/${props.phaseSlug}/${topicSlug.value}` : `${props.phaseSlug}/${topicSlug.value}`
+
+    const lessons = await queryContent(basePath)
+      .where({ _extension: 'md' })
+      .only(['_path'])
+      .find()
+
+    const slugs = new Set<string>()
+    for (const lesson of lessons) {
+      if (lesson._path) {
+        // Extract the subtopic slug from the path (last segment)
+        const segments = lesson._path.split('/')
+        const lastSegment = segments[segments.length - 1]
+        if (lastSegment) {
+          slugs.add(lastSegment)
+        }
+      }
+    }
+    availableSubtopics.value = slugs
+  } catch {
+    // If content query fails, fall back to showing all lessons as available
+    // This ensures the UI degrades gracefully
+    availableSubtopics.value = new Set()
+  }
+}
+
+// Fetch content availability when component mounts
+onMounted(() => {
+  fetchAvailableContent()
+})
+
+// Re-fetch if roadmapId changes
+watch(() => props.roadmapId, () => {
+  fetchAvailableContent()
+})
+
+/**
+ * Check if a specific subtopic lesson is available
+ * ------------------------------------------------
+ * @param subtopic - The subtopic name to check
+ * @returns Boolean indicating if the lesson content exists
+ */
+function isLessonAvailable(subtopic: string): boolean {
+  // If we haven't loaded content yet, assume available (will show loading state)
+  if (availableSubtopics.value.size === 0) {
+    // For fullstack, content doesn't exist yet - show "Coming Soon"
+    if ((props.roadmapId ?? 'devops') !== 'devops') {
+      return false
+    }
+    // For devops, if we haven't fetched yet, optimistically return true
+    return true
+  }
+  return availableSubtopics.value.has(toSlug(subtopic))
+}
 
 /**
  * Priority Label Computed
@@ -145,10 +226,6 @@ const priorityBgColor = computed(() => {
 const priorityTextColor = computed(() => {
   return props.topic.priority === 'important' ? '#000' : '#fff'
 })
-
-function isLessonAvailable(): boolean {
-  return (props.roadmapId ?? 'devops') === 'devops'
-}
 
 // =============================================================================
 // PROGRESS TRACKING
@@ -303,7 +380,7 @@ const isTopicComplete = computed(() => {
               {{ subtopic }}
             </span>
             <UBadge
-              v-if="!isLessonAvailable()"
+              v-if="!isLessonAvailable(subtopic)"
               size="xs"
               color="warning"
               variant="soft"
