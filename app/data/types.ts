@@ -230,6 +230,8 @@ export interface UserProgress {
   lastAccessed?: string
   /** Optional: Total time spent in minutes */
   totalTimeSpent?: number
+  /** Optional: Learner's full name for certificates */
+  userName?: string
 }
 
 // =============================================================================
@@ -256,6 +258,89 @@ export interface CertificateData {
   averageQuizScore: number
   /** Total hours spent on the course */
   totalHours: number
+}
+
+/**
+ * Phase Certificate Data Interface
+ * ---------------------------------
+ * Contains information for a phase-level completion certificate.
+ * Extends the base certificate concept with phase-specific fields.
+ */
+export interface PhaseCertificateData {
+  /** Unique certificate identifier (format: DEVOPS-P{num}-{timestamp}-{random}) */
+  certificateId: string
+  /** Learner's full name */
+  userName: string
+  /** Phase completion date (ISO string) */
+  completionDate: string
+  /** Phase number (1-10) */
+  phaseNumber: number
+  /** Phase display name (e.g., "Software Development Lifecycle") */
+  phaseName: string
+  /** Phase slug for navigation (e.g., "phase-1-sdlc") */
+  phaseSlug: string
+  /** Number of lessons completed in this phase */
+  lessonsCompleted: number
+  /** Total lessons in this phase */
+  totalLessons: number
+  /** Average quiz score for this phase (0-100) */
+  averageQuizScore: number
+  /** Hours spent on this phase */
+  hoursSpent: number
+}
+
+/**
+ * Course Completion Certificate Data Interface
+ * --------------------------------------------
+ * Contains information for the "DevOps Master Certificate".
+ * Awarded when all 10 phases are completed.
+ */
+export interface CourseCertificateData {
+  /** Unique certificate identifier (format: DEVOPS-MASTER-{timestamp}-{random}) */
+  certificateId: string
+  /** Learner's full name */
+  userName: string
+  /** Course completion date (ISO string) */
+  completionDate: string
+  /** Total lessons completed (should be 527) */
+  totalLessonsCompleted: number
+  /** Total hours spent on entire course */
+  totalHoursSpent: number
+  /** Overall average quiz score (0-100) */
+  overallQuizScore: number
+  /** Array of phase completion dates (10 entries) */
+  phaseCompletionDates: string[]
+}
+
+/**
+ * Certificate Status Type
+ * -----------------------
+ * Represents the current state of a certificate in the dashboard.
+ */
+export type CertificateStatus = 'locked' | 'unlocked' | 'downloaded'
+
+/**
+ * Phase Certificate Status Interface
+ * -----------------------------------
+ * Tracks certificate status for dashboard display.
+ */
+export interface PhaseCertificateStatus {
+  /** Phase number (1-10) */
+  phaseNumber: number
+  /** Phase display name */
+  phaseName: string
+  /** Phase slug */
+  phaseSlug: string
+  /** Current certificate status */
+  status: CertificateStatus
+  /** Completion percentage (0-100) */
+  completionPercentage: number
+  /** Lessons completed */
+  lessonsCompleted: number
+  /** Total lessons in phase */
+  totalLessons: number
+  /** Completion date if unlocked (ISO string) */
+  completedAt?: string
 }
 
 // =============================================================================

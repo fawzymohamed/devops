@@ -13,8 +13,8 @@
 
 ## Phase 0: Setup & Infrastructure
 
-- [ ] [T001] [P1] Create feature branch `001-certificate-generation` if not exists
-- [ ] [T002] [P1] Create `app/components/certificate/` directory structure
+- [X] [T001] [P1] Create feature branch `001-certificate-generation` if not exists
+- [X] [T002] [P1] Create `app/components/certificate/` directory structure
 
 ---
 
@@ -22,21 +22,21 @@
 
 > Dependencies: None. Required by all other phases.
 
-- [ ] [T003] [P1] [US1,US5] Add `PhaseCertificateData` interface to `app/data/types.ts`
+- [X] [T003] [P1] [US1,US5] Add `PhaseCertificateData` interface to `app/data/types.ts`
   - Fields: certificateId, userName, completionDate, phaseNumber, phaseName, phaseSlug, lessonsCompleted, totalLessons, averageQuizScore, hoursSpent
   - Include JSDoc documentation per constitution
 
-- [ ] [T004] [P1] [US5] Add `CourseCertificateData` interface to `app/data/types.ts`
+- [X] [T004] [P1] [US5] Add `CourseCertificateData` interface to `app/data/types.ts`
   - Fields: certificateId, userName, completionDate, totalLessonsCompleted, totalHoursSpent, overallQuizScore, phaseCompletionDates[]
   - Include JSDoc documentation
 
-- [ ] [T005] [P1] [US4] Add `CertificateStatus` type to `app/data/types.ts`
+- [X] [T005] [P1] [US4] Add `CertificateStatus` type to `app/data/types.ts`
   - Type: `'locked' | 'unlocked' | 'downloaded'`
 
-- [ ] [T006] [P1] [US4] Add `PhaseCertificateStatus` interface to `app/data/types.ts`
+- [X] [T006] [P1] [US4] Add `PhaseCertificateStatus` interface to `app/data/types.ts`
   - Fields: phaseNumber, phaseName, phaseSlug, status, completionPercentage, lessonsCompleted, totalLessons, completedAt?
 
-- [ ] [T007] [P1] [US3] Extend `UserProgress` interface in `app/data/types.ts`
+- [X] [T007] [P1] [US3] Extend `UserProgress` interface in `app/data/types.ts`
   - Add optional `userName?: string` field
   - Backward compatible (no migration needed)
 
