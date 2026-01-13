@@ -31,6 +31,7 @@
 // =============================================================================
 
 const { getPhaseCertificateStatuses } = useCertificate()
+const { getRoadmapFromRoute } = useRoadmap()
 
 // =============================================================================
 // STATE
@@ -40,8 +41,11 @@ const { getPhaseCertificateStatuses } = useCertificate()
  * Count of earned certificates (unlocked phases)
  * Computed reactively from certificate statuses
  */
+const currentRoadmap = computed(() => getRoadmapFromRoute())
+
 const earnedCertificatesCount = computed(() => {
-  const statuses = getPhaseCertificateStatuses()
+  const roadmapId = currentRoadmap.value?.id ?? 'devops'
+  const statuses = getPhaseCertificateStatuses(roadmapId)
   return statuses.filter(s => s.status === 'unlocked').length
 })
 
@@ -99,13 +103,16 @@ useSeoMeta({
         >
           <span class="text-2xl">🚀</span>
           <!-- Title hidden on mobile (sm:inline) for cleaner mobile header -->
-          <span class="font-semibold text-lg hidden sm:inline">DevOps Roadmap</span>
+          <span class="font-semibold text-lg hidden sm:inline">
+            {{ currentRoadmap?.title ?? 'Roadmap' }}
+          </span>
         </NuxtLink>
       </template>
 
       <!-- Right slot: Navigation links -->
       <template #right>
         <nav class="flex items-center gap-4">
+          <RoadmapSwitcher />
           <!-- Progress page link -->
           <NuxtLink
             to="/progress"

@@ -5,6 +5,8 @@
 .nitro
 .cache
 dist
+build
+coverage
 
 # Node dependencies
 node_modules
@@ -17,6 +19,10 @@ logs
 .DS_Store
 .fleet
 .idea
+.vscode
+Thumbs.db
+*.tmp
+*.swp
 
 # Local env files
 .env

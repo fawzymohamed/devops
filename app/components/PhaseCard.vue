@@ -46,6 +46,7 @@ import type { Phase } from '~/data/roadmap'
 const props = defineProps<{
   phase: Phase
   isActive: boolean
+  roadmapId?: string
 }>()
 
 /**
@@ -68,7 +69,7 @@ const { getPhaseCompletionPercentage } = useProgress()
  * Used to display progress ring on the card
  */
 const phaseCompletion = computed(() => {
-  return getPhaseCompletionPercentage(props.phase.slug)
+  return getPhaseCompletionPercentage(props.roadmapId ?? 'devops', props.phase.slug)
 })
 
 /**

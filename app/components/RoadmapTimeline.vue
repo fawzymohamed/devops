@@ -45,7 +45,16 @@
  * Imports the complete roadmap data array containing all phases,
  * topics, and subtopics for the learning journey.
  */
-import { roadmapData } from '~/data/roadmap'
+import type { Phase } from '~/data/roadmap'
+import { devopsPhases } from '~/data/roadmap'
+
+const props = withDefaults(defineProps<{
+  phases?: Phase[]
+  roadmapId?: string
+}>(), {
+  phases: () => devopsPhases,
+  roadmapId: 'devops'
+})
 
 /**
  * Reactive State
@@ -62,7 +71,7 @@ const openTopicIndex = ref<number | null>(null)
  * Returns the full phase object for the currently selected phase.
  * This includes all topics, duration, color, and other phase metadata.
  */
-const activeData = computed(() => roadmapData[activePhase.value]!)
+const activeData = computed(() => props.phases[activePhase.value]!)
 
 /**
  * Active Phase Slug
@@ -107,10 +116,11 @@ watch(activePhase, () => {
     -->
     <div class="flex gap-4 overflow-x-auto pb-4 mb-8 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
       <PhaseCard
-        v-for="(phase, idx) in roadmapData"
+        v-for="(phase, idx) in props.phases"
         :key="idx"
         :phase="phase"
         :is-active="activePhase === idx"
+        :roadmap-id="props.roadmapId"
         @select="activePhase = idx"
       />
     </div>
@@ -202,6 +212,7 @@ watch(activePhase, () => {
           :phase-color="activeData.color"
           :phase-slug="activePhaseSlug"
           :is-open="openTopicIndex === idx"
+          :roadmap-id="props.roadmapId"
           @toggle="toggleTopic(idx)"
         />
       </div>

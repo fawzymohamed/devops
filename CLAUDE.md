@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Converting a single-page DevOps roadmap into a **full Learning Management System (LMS)**.
+Multi-roadmap LMS with a DevOps roadmap and a Full Stack Interview Mastery roadmap.
 
 - **Framework**: Nuxt 4 with @nuxt/content
 - **UI Library**: Nuxt UI v4
 - **Styling**: Tailwind CSS (dark mode only)
 - **Deployment**: GitHub Pages (static generation)
-- **Data**: 10 phases, 69 topics, 527 subtopics
+- **Data**: DevOps (10 phases, 69 topics, 527 subtopics) + Full Stack (13 phases, 79 topics, 450+ subtopics)
 
 ## Tech Stack
 
@@ -34,7 +34,7 @@ npm run lint      # Run ESLint
 npm run typecheck # Run TypeScript checks
 ```
 
-**Dev Server URL**: `http://localhost:5000/devops/` - Port 5000 is the ONLY valid development port. Do NOT use any other ports.
+**Dev Server URL**: `http://localhost:3000/devops/` (Nuxt default)
 
 ## Architecture
 
@@ -42,53 +42,60 @@ npm run typecheck # Run TypeScript checks
 
 ```
 app/
-├── components/       # Vue components (organized by feature)
-│   ├── TopicCard.vue        # Expandable topic with subtopics
-│   ├── PhaseCard.vue        # Phase navigation cards
-│   ├── StatsFooter.vue      # Summary statistics
-│   ├── RoadmapTimeline.vue  # Timeline view mode
-│   ├── RoadmapGrid.vue      # Grid view mode
-│   ├── content/             # MDC components for markdown
-│   │   ├── IllustrationLinearFlow.vue
-│   │   ├── IllustrationChecklist.vue
-│   │   ├── IllustrationTeamComposition.vue
-│   │   └── IllustrationComparisonMap.vue
-│   └── progress/            # Progress tracking components
-│       ├── Ring.vue         # Circular progress indicator (SVG)
-│       ├── Bar.vue          # Linear progress bar
-│       ├── PhaseProgress.vue    # Phase-level progress card
-│       └── OverallProgress.vue  # Hero stats component
-├── composables/      # Reusable composition functions
-│   ├── useProgress.ts       # Track lesson completion & progress
-│   ├── useQuiz.ts           # Quiz state management
-│   ├── useCertificate.ts    # Certificate generation
-│   ├── useCheatSheetPdf.ts  # Cheat sheet PDF export
-│   └── useIllustrationDesign.ts  # SVG illustration design system
-├── data/
-│   ├── roadmap.ts    # Roadmap data with TypeScript types
-│   └── types.ts      # Shared TypeScript interfaces
-├── layouts/          # Page layouts
-├── pages/            # Route pages
-│   ├── index.vue     # Main roadmap page
-│   └── progress.vue  # Progress dashboard page
-└── app.vue           # Root layout
+|-- components/          # Vue components (organized by feature)
+|   |-- RoadmapCard.vue       # Landing page roadmap selection card
+|   |-- RoadmapSwitcher.vue   # Header roadmap switcher
+|   |-- TopicCard.vue         # Expandable topic with subtopics
+|   |-- PhaseCard.vue         # Phase navigation cards
+|   |-- StatsFooter.vue       # Summary statistics
+|   |-- RoadmapTimeline.vue   # Timeline view mode
+|   |-- RoadmapGrid.vue       # Grid view mode
+|   |-- content/              # MDC components for markdown
+|   |   |-- IllustrationLinearFlow.vue
+|   |   |-- IllustrationChecklist.vue
+|   |   |-- IllustrationTeamComposition.vue
+|   |   `-- IllustrationComparisonMap.vue
+|   `-- progress/             # Progress tracking components
+|       |-- Ring.vue          # Circular progress indicator (SVG)
+|       |-- Bar.vue           # Linear progress bar
+|       |-- PhaseProgress.vue     # Phase-level progress card
+|       `-- OverallProgress.vue   # Hero stats component
+|-- composables/          # Reusable composition functions
+|   |-- useRoadmap.ts         # Roadmap registry + context
+|   |-- useProgress.ts        # Track lesson completion & progress
+|   |-- useQuiz.ts            # Quiz state management
+|   |-- useCertificate.ts     # Certificate generation
+|   |-- useCheatSheetPdf.ts   # Cheat sheet PDF export
+|   `-- useIllustrationDesign.ts  # SVG illustration design system
+|-- data/
+|   |-- roadmap.ts            # DevOps roadmap data
+|   |-- fullstack-roadmap.ts  # Full Stack roadmap data
+|   |-- roadmaps.ts           # Roadmap registry
+|   `-- types.ts              # Shared TypeScript interfaces
+|-- layouts/              # Page layouts
+|-- pages/                # Route pages
+|   |-- index.vue              # Roadmap selection + DevOps overview
+|   |-- progress.vue           # Progress dashboard page
+|   |-- certificate.vue        # Certificate page (roadmap-aware)
+|   |-- [phase]/[topic]/[subtopic].vue  # DevOps lesson pages
+|   `-- fullstack/
+|       |-- index.vue           # Full Stack roadmap page
+|       `-- [phase]/[topic]/[subtopic].vue  # Full Stack lesson pages
+`-- app.vue               # Root layout
 
-content/              # Markdown lesson files (527+ files)
-├── 1.phase-1-sdlc/
-│   ├── 1.sdlc-models/
-│   │   ├── waterfall-model.md
-│   │   └── agile-methodology.md
-│   └── 2.devops-culture/
-│       └── devops-principles.md
-└── ...
-
-scripts/              # Build/generation scripts
+content/                  # Markdown lesson files
+|-- 1.phase-1-sdlc/           # DevOps content at root (backward compatible)
+|-- ...
+`-- fullstack/                # Full Stack content (prefixed routes)
+    `-- 1.phase-1-web-fundamentals/
 ```
 
 ### Data Layer
 
-- `app/data/roadmap.ts` - Contains all roadmap phases, topics, and subtopics with TypeScript interfaces (`Phase`, `Topic`, `Priority`)
-- `app/data/types.ts` - Shared TypeScript interfaces exported for use across the project
+- `app/data/roadmap.ts` - DevOps phases/topics
+- `app/data/fullstack-roadmap.ts` - Full Stack phases/topics
+- `app/data/roadmaps.ts` - Roadmap registry with computed stats
+- `app/data/types.ts` - Shared interfaces (`Roadmap`, `Phase`, `Topic`, `Priority`, `MultiRoadmapProgress`)
 - Priority system: `essential` (red), `important` (amber), `recommended` (blue)
 
 ### UI Components
@@ -218,43 +225,43 @@ Comprehensive progress tracking with localStorage persistence and visual indicat
 | `progress/PhaseProgress.vue` | Expandable phase card showing topic-level progress |
 | `progress/OverallProgress.vue` | Hero component with stats, progress ring, Resume Learning |
 
-**Composable:** `useProgress.ts`
+**Composable:** `useProgress.ts` (roadmap-aware)
 
 Key functions:
 ```typescript
 // Core tracking
-markComplete(phaseId, topicId, subtopicId, estimatedMinutes?)
-isComplete(phaseId, topicId?, subtopicId?)
-recordQuizScore(phaseId, topicId, subtopicId, score)
+markComplete(roadmapId, phaseId, topicId, subtopicId, estimatedMinutes?)
+isComplete(roadmapId, phaseId, topicId?, subtopicId?)
+recordQuizScore(roadmapId, phaseId, topicId, subtopicId, score)
 
 // Counting
-getCompletedCount()
-getTotalLessonCount()
-getCompletedCountForPhase(phaseId)
-getCompletedCountForTopic(phaseId, topicId)
+getCompletedCount(roadmapId)
+getTotalLessonCount(roadmapId)
+getCompletedCountForPhase(roadmapId, phaseId)
+getCompletedCountForTopic(roadmapId, phaseId, topicId)
 
 // Percentages
-getCertificateProgress()  // Overall %
-getPhaseCompletionPercentage(phaseId)
-getTopicCompletionPercentage(phaseId, topicId)
+getCertificateProgress(roadmapId)  // Overall %
+getPhaseCompletionPercentage(roadmapId, phaseId)
+getTopicCompletionPercentage(roadmapId, phaseId, topicId)
 
 // Time tracking
-getTotalTimeSpentHours()
-getTotalTimeSpentMinutes()
+getTotalTimeSpentHours(roadmapId)
+getTotalTimeSpentMinutes(roadmapId)
 
 // Resume & Certificate
-getResumeLearningData()  // Returns { path, phaseId, topicId, subtopicId }
-canGenerateCertificate() // True when 100% complete
+getResumeLearningData(roadmapId)  // Returns { path, phaseId, topicId, subtopicId }
+canGenerateCertificate(roadmapId) // True when 100% complete
 
 // Data management
 exportProgress()
 importProgress(jsonString)
-resetProgress()
+resetProgress(roadmapId)
 ```
 
 **Storage:**
 - Key: `devops-lms-progress`
-- Structure: `{ startedAt, totalTimeSpent, lastAccessed, phases: { [phaseId]: { topics: { [topicId]: { subtopics: { [subtopicId]: SubtopicProgress } } } } } }`
+- Structure: `{ version: 2, roadmaps: { [roadmapId]: { startedAt, totalTimeSpent, lastAccessed, phases: { ... } } }, globalSettings }`
 
 **UI Integration:**
 - **Homepage**: Enhanced progress card with gradient, stats grid, Resume Learning button
@@ -363,34 +370,12 @@ const value = computed(() => data.length) // Inline explanation
 ## Current Implementation Status
 
 ### Infrastructure
-- [x] Phase 1: Foundation Setup (Nuxt 4, Nuxt UI v4, Tailwind)
-- [x] Roadmap data structure (10 phases, 69 topics, 527 subtopics)
-- [x] Basic UI components (TopicCard, PhaseCard, StatsFooter, Timeline, Grid)
-- [x] Phase 2: Content Structure (@nuxt/content setup)
-  - Created `content.config.ts` with lesson schema
-  - Content directory structure: `content/1.phase-X/1.topic-name/lesson-name.md`
-- [x] Phase 3: Lesson pages and routing
-  - Dynamic route: `app/pages/[phase]/[topic]/[subtopic].vue`
-  - Lesson page with breadcrumbs, metadata, learning objectives, content, TOC sidebar
-  - Mark Complete button with progress tracking
-  - Previous/Next navigation using `queryCollectionItemSurroundings`
-- [x] Quiz system (QuizContainer component)
-- [x] SVG Illustration System (4 MDC components + design system composable)
-- [x] Cheat Sheet System (topic-level quick reference sheets with PDF export)
-  - CheatSheetLayout and CheatSheetPdfButton components
-  - useCheatSheetPdf composable
-  - Schema extension for `isCheatSheet` frontmatter
-  - Navigation integration in TopicCard
-- [x] Phase 4: Progress tracking system
-  - Enhanced useProgress composable with 15+ functions
-  - Progress components: Ring, Bar, PhaseProgress, OverallProgress
-  - Progress dashboard page (`/progress`)
-  - UI integrations: PhaseCard rings, TopicCard badges, StatsFooter bar
-  - Homepage enhanced progress card with gradient design
-  - Time tracking, quiz scores, resume learning, export/import
-- [ ] Phase 5: Certificate generation (useCertificate composable)
-- [ ] Phase 6: Navigation and search
-- [ ] Phase 7: Final polish and deployment
+- [x] Multi-roadmap data layer (DevOps + Full Stack + registry)
+- [x] Roadmap-aware routing (DevOps root + /fullstack prefix)
+- [x] Roadmap context (useRoadmap) and per-roadmap progress tracking
+- [x] Multi-roadmap UI (landing selection, switcher, progress dashboard)
+- [x] Roadmap-specific certificates
+- [ ] Phase 9 polish: remaining manual verification tasks (URLs, migration, walkthrough)
 
 ### Lesson Content Progress
 

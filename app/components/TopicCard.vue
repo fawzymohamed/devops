@@ -53,6 +53,7 @@ const props = defineProps<{
   phaseColor: string
   phaseSlug: string
   isOpen: boolean
+  roadmapId?: string
 }>()
 
 /**
@@ -96,8 +97,15 @@ const topicSlug = computed(() => props.topic.slug || toSlug(props.topic.name))
  * Pattern: /phase-slug/topic-slug/subtopic-slug
  */
 function getSubtopicUrl(subtopic: string): string {
-  return `/${props.phaseSlug}/${topicSlug.value}/${toSlug(subtopic)}`
+  return getRoutePath(
+    props.roadmapId ?? 'devops',
+    props.phaseSlug,
+    topicSlug.value,
+    toSlug(subtopic)
+  )
 }
+
+const { getRoutePath } = useRoadmap()
 
 /**
  * Priority Label Computed
@@ -138,6 +146,10 @@ const priorityTextColor = computed(() => {
   return props.topic.priority === 'important' ? '#000' : '#fff'
 })
 
+function isLessonAvailable(): boolean {
+  return (props.roadmapId ?? 'devops') === 'devops'
+}
+
 // =============================================================================
 // PROGRESS TRACKING
 // =============================================================================
@@ -153,14 +165,14 @@ const {
  * @returns Boolean indicating completion status
  */
 function isSubtopicComplete(subtopic: string): boolean {
-  return isComplete(props.phaseSlug, topicSlug.value, toSlug(subtopic))
+  return isComplete(props.roadmapId ?? 'devops', props.phaseSlug, topicSlug.value, toSlug(subtopic))
 }
 
 /**
  * Number of completed subtopics in this topic
  */
 const completedCount = computed(() => {
-  return getCompletedCountForTopic(props.phaseSlug, topicSlug.value)
+  return getCompletedCountForTopic(props.roadmapId ?? 'devops', props.phaseSlug, topicSlug.value)
 })
 
 /**
@@ -290,6 +302,15 @@ const isTopicComplete = computed(() => {
             <span :class="{ 'text-gray-500': isSubtopicComplete(subtopic) }">
               {{ subtopic }}
             </span>
+            <UBadge
+              v-if="!isLessonAvailable()"
+              size="xs"
+              color="warning"
+              variant="soft"
+              class="ml-auto"
+            >
+              Coming Soon
+            </UBadge>
           </NuxtLink>
         </div>
 
@@ -299,7 +320,7 @@ const isTopicComplete = computed(() => {
           Quick reference sheet link at the bottom of the topic
         -->
         <NuxtLink
-          :to="`/${phaseSlug}/${topicSlug}/cheat-sheet`"
+          :to="getRoutePath(props.roadmapId ?? 'devops', phaseSlug, topicSlug, 'cheat-sheet')"
           class="flex items-center gap-2 mt-4 pt-3 border-t border-gray-700/50 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
         >
           <UIcon

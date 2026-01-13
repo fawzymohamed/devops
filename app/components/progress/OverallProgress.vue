@@ -42,10 +42,13 @@
 interface Props {
   /** Use compact layout for smaller displays */
   compact?: boolean
+  /** Roadmap to display progress for */
+  roadmapId?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  compact: false
+  compact: false,
+  roadmapId: 'devops'
 })
 
 // =============================================================================
@@ -62,6 +65,8 @@ const {
   getResumeLearningData
 } = useProgress()
 
+const { getRoutePath } = useRoadmap()
+
 // =============================================================================
 // COMPUTED PROPERTIES
 // =============================================================================
@@ -69,37 +74,46 @@ const {
 /**
  * Total lessons from roadmap
  */
-const totalLessons = computed(() => getTotalLessonCount())
+const totalLessons = computed(() => getTotalLessonCount(props.roadmapId))
 
 /**
  * Number of completed lessons
  */
-const completedLessons = computed(() => getCompletedCount())
+const completedLessons = computed(() => getCompletedCount(props.roadmapId))
 
 /**
  * Overall completion percentage
  */
-const completionPercentage = computed(() => getCertificateProgress())
+const completionPercentage = computed(() => getCertificateProgress(props.roadmapId))
 
 /**
  * Average quiz score across all completed quizzes
  */
-const avgQuizScore = computed(() => getAverageQuizScore())
+const avgQuizScore = computed(() => getAverageQuizScore(props.roadmapId))
 
 /**
  * Total time spent in hours
  */
-const timeSpent = computed(() => getTotalTimeSpentHours())
+const timeSpent = computed(() => getTotalTimeSpentHours(props.roadmapId))
 
 /**
  * Resume learning data (last accessed lesson)
  */
-const resumeData = computed(() => getResumeLearningData())
+const resumeData = computed(() => getResumeLearningData(props.roadmapId))
 
 /**
  * Certificate eligibility status
  */
-const certificateReady = computed(() => canGenerateCertificate())
+const certificateReady = computed(() => canGenerateCertificate(props.roadmapId))
+const resumePath = computed(() => {
+  if (!resumeData.value) return null
+  return getRoutePath(
+    props.roadmapId,
+    resumeData.value.phaseId,
+    resumeData.value.topicId,
+    resumeData.value.subtopicId
+  )
+})
 
 /**
  * Progress ring size based on compact mode
@@ -207,8 +221,8 @@ const progressColor = computed(() => {
           <div class="flex flex-wrap gap-3 pt-2">
             <!-- Resume Learning -->
             <NuxtLink
-              v-if="resumeData"
-              :to="resumeData.path"
+              v-if="resumePath"
+              :to="resumePath"
             >
               <UButton
                 color="primary"
@@ -226,7 +240,7 @@ const progressColor = computed(() => {
             <!-- Certificate Button (when ready) -->
             <NuxtLink
               v-if="certificateReady"
-              to="/certificate"
+              :to="`/certificate?roadmap=${props.roadmapId}`"
             >
               <UButton
                 color="success"
@@ -291,8 +305,8 @@ const progressColor = computed(() => {
 
       <!-- Compact resume button -->
       <NuxtLink
-        v-if="resumeData"
-        :to="resumeData.path"
+        v-if="resumePath"
+        :to="resumePath"
         class="block"
       >
         <UButton

@@ -99,6 +99,75 @@ export interface Phase {
   topics: Topic[]
 }
 
+/**
+ * Roadmap Topic Interface
+ * -----------------------
+ * Lightweight topic shape used by roadmap data files.
+ */
+export interface RoadmapTopic {
+  name: string
+  slug?: string
+  subtopics: string[]
+  priority: Priority
+}
+
+/**
+ * Roadmap Phase Interface
+ * -----------------------
+ * Lightweight phase shape used by roadmap data files.
+ */
+export interface RoadmapPhase {
+  phase: number
+  title: string
+  slug: string
+  duration: string
+  color: string
+  icon: string
+  description: string
+  topics: RoadmapTopic[]
+}
+
+/**
+ * Roadmap Interface
+ * -----------------
+ * Represents a complete learning roadmap with metadata and phases.
+ */
+export interface Roadmap {
+  /** Unique identifier (e.g., "devops", "fullstack") */
+  id: string
+  /** URL-friendly slug (e.g., "devops", "fullstack") */
+  slug: string
+  /** Display title for UI */
+  title: string
+  /** Short description for landing cards */
+  description: string
+  /** Full description for roadmap home pages */
+  fullDescription: string
+  /** Emoji icon for visual identification */
+  icon: string
+  /** Certificate title when completed */
+  certificateTitle: string
+  /** Content directory path (empty string for root) */
+  contentPath: string
+  /** URL prefix for routes (empty string for root) */
+  routePrefix: string
+  /** Per-roadmap priority labels */
+  priorityLabels: {
+    essential: string
+    important: string
+    recommended: string
+  }
+  /** Phase data array */
+  phases: RoadmapPhase[]
+  /** Computed statistics */
+  stats: {
+    phaseCount: number
+    topicCount: number
+    subtopicCount: number
+    totalWeeks: number
+  }
+}
+
 // =============================================================================
 // QUIZ TYPES
 // =============================================================================
@@ -234,6 +303,48 @@ export interface UserProgress {
   userName?: string
 }
 
+/**
+ * Roadmap Progress Interface
+ * --------------------------
+ * Progress data for a single roadmap.
+ */
+export interface RoadmapProgress {
+  /** ISO timestamp when user started this roadmap */
+  startedAt: string
+  /** Map of phase ID to progress data */
+  phases: Record<string, PhaseProgress>
+  /** Optional: Last accessed lesson path */
+  lastAccessed?: string
+  /** Optional: Total time spent in minutes */
+  totalTimeSpent?: number
+}
+
+/**
+ * Global Settings Interface
+ * -------------------------
+ * Settings shared across all roadmaps.
+ */
+export interface GlobalSettings {
+  /** Learner's full name for certificates */
+  userName?: string
+  /** Preferred theme (reserved for future use) */
+  theme?: 'dark'
+}
+
+/**
+ * Multi-Roadmap Progress Interface
+ * ---------------------------------
+ * Root interface for tracking progress across all roadmaps.
+ */
+export interface MultiRoadmapProgress {
+  /** Schema version for migration support */
+  version: 2
+  /** Progress data per roadmap, keyed by roadmap ID */
+  roadmaps: Record<string, RoadmapProgress>
+  /** Global settings shared across roadmaps */
+  globalSettings?: GlobalSettings
+}
+
 // =============================================================================
 // CERTIFICATE TYPES
 // =============================================================================
@@ -302,6 +413,8 @@ export interface CourseCertificateData {
   userName: string
   /** Course completion date (ISO string) */
   completionDate: string
+  /** Roadmap-specific certificate title */
+  courseName?: string
   /** Total lessons completed (should be 527) */
   totalLessonsCompleted: number
   /** Total hours spent on entire course */

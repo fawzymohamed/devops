@@ -3,33 +3,15 @@
  * ======================
  * Manages user progress tracking throughout the LMS.
  * Persists data to localStorage for offline support.
- *
- * Features:
- * - Track lesson completion status
- * - Record quiz scores
- * - Calculate completion percentages (overall, per-phase, per-topic)
- * - Time tracking (accumulated from estimatedMinutes)
- * - Certificate eligibility checking
- * - Resume learning from last accessed lesson
- * - Export/import progress data
- * - SSR-safe with client-side storage
- *
- * Usage:
- * ```typescript
- * const {
- *   progress,
- *   markComplete,
- *   isComplete,
- *   getCompletedCount,
- *   getPhaseCompletionPercentage,
- *   canGenerateCertificate,
- *   getResumeLearningData
- * } = useProgress()
- * ```
  */
 
-import type { UserProgress, SubtopicProgress } from '~/data/types'
-import { roadmapData } from '~/data/roadmap'
+import type {
+  MultiRoadmapProgress,
+  RoadmapProgress,
+  SubtopicProgress,
+  UserProgress
+} from '~/data/types'
+import { getRoadmapById } from '~/data/roadmaps'
 
 // =============================================================================
 // CONSTANTS
@@ -59,51 +41,70 @@ export function isCheatSheet(pathOrId: string): boolean {
  */
 function toSlug(name: string): string {
   return name
-    .replace(/\s*\([^)]*\)\s*/g, '') // Remove parenthetical content like "(cd, ls, pwd)"
+    .replace(/\s*\([^)]*\)\s*/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
 }
 
-// =============================================================================
-// ROADMAP DATA HELPERS
-// =============================================================================
-
-/**
- * Get total lesson count from roadmap data
- * Excludes cheat sheets from the count
- * @returns Total number of lessons across all phases
- */
-export function getTotalLessonCount(): number {
-  return roadmapData.reduce((acc, phase) => {
-    return acc + phase.topics.reduce((topicAcc, topic) => {
-      return topicAcc + topic.subtopics.length
-    }, 0)
-  }, 0)
+function createDefaultRoadmapProgress(): RoadmapProgress {
+  return {
+    startedAt: new Date().toISOString(),
+    phases: {}
+  }
 }
 
-/**
- * Get total subtopic count for a specific phase
- * @param phaseSlug - Phase slug (e.g., "phase-1-sdlc")
- * @returns Number of subtopics in the phase
- */
-export function getPhaseSubtopicCount(phaseSlug: string): number {
-  const phase = roadmapData.find(p => p.slug === phaseSlug)
-  if (!phase) return 0
-  return phase.topics.reduce((acc, topic) => acc + topic.subtopics.length, 0)
+function createDefaultMultiProgress(): MultiRoadmapProgress {
+  return {
+    version: 2,
+    roadmaps: {},
+    globalSettings: {}
+  }
 }
 
-/**
- * Get total subtopic count for a specific topic
- * @param phaseSlug - Phase slug
- * @param topicSlug - Topic slug
- * @returns Number of subtopics in the topic
- */
-export function getTopicSubtopicCount(phaseSlug: string, topicSlug: string): number {
-  const phase = roadmapData.find(p => p.slug === phaseSlug)
-  if (!phase) return 0
-  const topic = phase.topics.find(t => t.slug === topicSlug || toSlug(t.name) === topicSlug)
-  return topic?.subtopics.length ?? 0
+function isMultiRoadmapProgress(value: unknown): value is MultiRoadmapProgress {
+  if (!value || typeof value !== 'object') return false
+  const candidate = value as MultiRoadmapProgress
+  return candidate.version === 2 && typeof candidate.roadmaps === 'object'
+}
+
+function isLegacyProgress(value: unknown): value is UserProgress {
+  if (!value || typeof value !== 'object') return false
+  const candidate = value as UserProgress
+  return typeof candidate.startedAt === 'string' && typeof candidate.phases === 'object'
+}
+
+function migrateProgressData(stored: unknown): MultiRoadmapProgress {
+  if (isMultiRoadmapProgress(stored)) {
+    return stored
+  }
+
+  if (isLegacyProgress(stored)) {
+    return {
+      version: 2,
+      roadmaps: {
+        devops: {
+          startedAt: stored.startedAt,
+          phases: stored.phases,
+          lastAccessed: stored.lastAccessed,
+          totalTimeSpent: stored.totalTimeSpent
+        }
+      },
+      globalSettings: {
+        userName: stored.userName
+      }
+    }
+  }
+
+  return createDefaultMultiProgress()
+}
+
+function getRoadmapPhases(roadmapId: string) {
+  return getRoadmapById(roadmapId)?.phases ?? []
+}
+
+function countSubtopics(subtopics: string[]): number {
+  return subtopics.filter(subtopic => !isCheatSheet(toSlug(subtopic))).length
 }
 
 // =============================================================================
@@ -111,48 +112,30 @@ export function getTopicSubtopicCount(phaseSlug: string, topicSlug: string): num
 // =============================================================================
 
 export function useProgress() {
-  // ---------------------------------------------------------------------------
-  // State - Uses useState for SSR-safe cross-component reactivity
-  // ---------------------------------------------------------------------------
-
-  const progress = useState<UserProgress>('user-progress', () => {
-    return loadFromStorage() ?? createDefaultProgress()
+  const progress = useState<MultiRoadmapProgress>('user-progress', () => {
+    return loadFromStorage() ?? createDefaultMultiProgress()
   })
 
   // ---------------------------------------------------------------------------
   // Storage Functions
   // ---------------------------------------------------------------------------
 
-  /**
-   * Load progress from localStorage
-   * @returns UserProgress or null if not found/invalid
-   */
-  function loadFromStorage(): UserProgress | null {
+  function loadFromStorage(): MultiRoadmapProgress | null {
     if (typeof window === 'undefined') return null
 
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
-      return stored ? JSON.parse(stored) : null
+      if (!stored) return null
+      const parsed = JSON.parse(stored) as unknown
+      const migrated = migrateProgressData(parsed)
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated))
+      return migrated
     } catch (e) {
       console.warn('Failed to load progress from localStorage', e)
       return null
     }
   }
 
-  /**
-   * Create default progress structure for new users
-   * @returns Empty UserProgress object
-   */
-  function createDefaultProgress(): UserProgress {
-    return {
-      startedAt: new Date().toISOString(),
-      phases: {}
-    }
-  }
-
-  /**
-   * Save current progress to localStorage
-   */
   function saveToStorage(): void {
     if (typeof window === 'undefined') return
 
@@ -167,75 +150,94 @@ export function useProgress() {
   // Structure Helpers
   // ---------------------------------------------------------------------------
 
-  /**
-   * Ensure nested progress structure exists for a given path
-   * @param phaseId - Phase identifier
-   * @param topicId - Topic identifier
-   */
-  function ensureStructure(phaseId: string, topicId: string): void {
-    if (!progress.value.phases[phaseId]) {
-      progress.value.phases[phaseId] = { topics: {} }
+  function ensureRoadmapProgress(roadmapId: string): RoadmapProgress {
+    if (!progress.value.roadmaps[roadmapId]) {
+      progress.value.roadmaps[roadmapId] = createDefaultRoadmapProgress()
     }
-    if (!progress.value.phases[phaseId].topics[topicId]) {
-      progress.value.phases[phaseId].topics[topicId] = { subtopics: {} }
+    return progress.value.roadmaps[roadmapId]!
+  }
+
+  function ensureStructure(roadmapId: string, phaseId: string, topicId: string): void {
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
+    if (!roadmapProgress.phases[phaseId]) {
+      roadmapProgress.phases[phaseId] = { topics: {} }
     }
+    if (!roadmapProgress.phases[phaseId].topics[topicId]) {
+      roadmapProgress.phases[phaseId].topics[topicId] = { subtopics: {} }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Roadmap Data Helpers
+  // ---------------------------------------------------------------------------
+
+  function getTotalLessonCount(roadmapId: string): number {
+    return getRoadmapPhases(roadmapId).reduce((acc, phase) => {
+      return acc + phase.topics.reduce((topicAcc, topic) => {
+        return topicAcc + countSubtopics(topic.subtopics)
+      }, 0)
+    }, 0)
+  }
+
+  function getPhaseSubtopicCount(roadmapId: string, phaseSlug: string): number {
+    const phase = getRoadmapPhases(roadmapId).find(p => p.slug === phaseSlug)
+    if (!phase) return 0
+    return phase.topics.reduce((acc, topic) => acc + countSubtopics(topic.subtopics), 0)
+  }
+
+  function getTopicSubtopicCount(roadmapId: string, phaseSlug: string, topicSlug: string): number {
+    const phase = getRoadmapPhases(roadmapId).find(p => p.slug === phaseSlug)
+    if (!phase) return 0
+    const topic = phase.topics.find(t => t.slug === topicSlug || toSlug(t.name) === topicSlug)
+    return topic ? countSubtopics(topic.subtopics) : 0
   }
 
   // ---------------------------------------------------------------------------
   // Progress Actions
   // ---------------------------------------------------------------------------
 
-  /**
-   * Mark a subtopic/lesson as complete with optional time tracking
-   * Cheat sheets are automatically excluded from progress tracking
-   * @param phaseId - Phase identifier
-   * @param topicId - Topic identifier
-   * @param subtopicId - Subtopic identifier
-   * @param estimatedMinutes - Optional: estimated time for the lesson (from frontmatter)
-   */
   function markComplete(
+    roadmapId: string,
     phaseId: string,
     topicId: string,
     subtopicId: string,
     estimatedMinutes?: number
   ): void {
-    // Cheat sheets should not be tracked in progress
     if (isCheatSheet(subtopicId)) {
       return
     }
 
-    ensureStructure(phaseId, topicId)
+    ensureStructure(roadmapId, phaseId, topicId)
 
-    const existing = progress.value.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId]
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
+    const existing = roadmapProgress.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId]
 
-    // Only add time if marking complete for the first time
     if (!existing?.completed && estimatedMinutes && estimatedMinutes > 0) {
-      progress.value.totalTimeSpent = (progress.value.totalTimeSpent ?? 0) + estimatedMinutes
+      roadmapProgress.totalTimeSpent = (roadmapProgress.totalTimeSpent ?? 0) + estimatedMinutes
     }
 
-    progress.value.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId] = {
+    roadmapProgress.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId] = {
       completed: true,
       completedAt: new Date().toISOString(),
       quizScore: existing?.quizScore ?? null,
       quizCompletedAt: existing?.quizCompletedAt ?? null
     }
 
-    // Update last accessed path
-    progress.value.lastAccessed = `${phaseId}/${topicId}/${subtopicId}`
+    roadmapProgress.lastAccessed = `${phaseId}/${topicId}/${subtopicId}`
 
     saveToStorage()
   }
 
-  /**
-   * Mark a subtopic/lesson as incomplete
-   * @param phaseId - Phase identifier
-   * @param topicId - Topic identifier
-   * @param subtopicId - Subtopic identifier
-   */
-  function markIncomplete(phaseId: string, topicId: string, subtopicId: string): void {
-    ensureStructure(phaseId, topicId)
+  function markIncomplete(
+    roadmapId: string,
+    phaseId: string,
+    topicId: string,
+    subtopicId: string
+  ): void {
+    ensureStructure(roadmapId, phaseId, topicId)
 
-    const existing = progress.value.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId]
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
+    const existing = roadmapProgress.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId]
 
     if (existing) {
       existing.completed = false
@@ -244,31 +246,25 @@ export function useProgress() {
     }
   }
 
-  /**
-   * Record a quiz score for a subtopic
-   * @param phaseId - Phase identifier
-   * @param topicId - Topic identifier
-   * @param subtopicId - Subtopic identifier
-   * @param score - Quiz score (0-100)
-   */
   function recordQuizScore(
+    roadmapId: string,
     phaseId: string,
     topicId: string,
     subtopicId: string,
     score: number
   ): void {
-    ensureStructure(phaseId, topicId)
+    ensureStructure(roadmapId, phaseId, topicId)
 
-    const subtopic = progress.value.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId]
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
+    const subtopic = roadmapProgress.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId]
 
     if (subtopic) {
-      // Only update if new score is higher or no previous score
       if (subtopic.quizScore === null || score > subtopic.quizScore) {
         subtopic.quizScore = score
         subtopic.quizCompletedAt = new Date().toISOString()
       }
     } else {
-      progress.value.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId] = {
+      roadmapProgress.phases[phaseId]!.topics[topicId]!.subtopics[subtopicId] = {
         completed: false,
         completedAt: null,
         quizScore: score,
@@ -283,58 +279,46 @@ export function useProgress() {
   // Progress Queries
   // ---------------------------------------------------------------------------
 
-  /**
-   * Check if a specific item is complete
-   * Now properly calculates phase/topic completion based on roadmap data
-   * @param phaseId - Phase identifier (slug)
-   * @param topicId - Optional topic identifier (slug)
-   * @param subtopicId - Optional subtopic identifier (slug)
-   * @returns Boolean indicating completion status
-   */
-  function isComplete(phaseId: string, topicId?: string, subtopicId?: string): boolean {
-    // Check specific subtopic
+  function isComplete(
+    roadmapId: string,
+    phaseId: string,
+    topicId?: string,
+    subtopicId?: string
+  ): boolean {
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
+
     if (subtopicId && topicId) {
-      return !!progress.value.phases[phaseId]?.topics[topicId]?.subtopics[subtopicId]?.completed
+      return !!roadmapProgress.phases[phaseId]?.topics[topicId]?.subtopics[subtopicId]?.completed
     }
 
-    // Check if entire topic is complete
     if (topicId) {
-      const total = getTopicSubtopicCount(phaseId, topicId)
+      const total = getTopicSubtopicCount(roadmapId, phaseId, topicId)
       if (total === 0) return false
-      const completed = getCompletedCountForTopic(phaseId, topicId)
+      const completed = getCompletedCountForTopic(roadmapId, phaseId, topicId)
       return completed >= total
     }
 
-    // Check if entire phase is complete
-    const total = getPhaseSubtopicCount(phaseId)
+    const total = getPhaseSubtopicCount(roadmapId, phaseId)
     if (total === 0) return false
-    const completed = getCompletedCountForPhase(phaseId)
+    const completed = getCompletedCountForPhase(roadmapId, phaseId)
     return completed >= total
   }
 
-  /**
-   * Get progress data for a specific subtopic
-   * @param phaseId - Phase identifier
-   * @param topicId - Topic identifier
-   * @param subtopicId - Subtopic identifier
-   * @returns SubtopicProgress or undefined
-   */
   function getSubtopicProgress(
+    roadmapId: string,
     phaseId: string,
     topicId: string,
     subtopicId: string
   ): SubtopicProgress | undefined {
-    return progress.value.phases[phaseId]?.topics[topicId]?.subtopics[subtopicId]
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
+    return roadmapProgress.phases[phaseId]?.topics[topicId]?.subtopics[subtopicId]
   }
 
-  /**
-   * Get total count of completed subtopics
-   * @returns Number of completed subtopics
-   */
-  function getCompletedCount(): number {
+  function getCompletedCount(roadmapId: string): number {
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
     let count = 0
 
-    for (const phase of Object.values(progress.value.phases)) {
+    for (const phase of Object.values(roadmapProgress.phases)) {
       for (const topic of Object.values(phase.topics)) {
         for (const subtopic of Object.values(topic.subtopics)) {
           if (subtopic.completed) count++
@@ -345,25 +329,18 @@ export function useProgress() {
     return count
   }
 
-  /**
-   * Get completion percentage
-   * @param totalLessons - Total number of lessons in the course
-   * @returns Percentage (0-100)
-   */
-  function getCompletionPercentage(totalLessons: number): number {
+  function getCompletionPercentage(roadmapId: string): number {
+    const totalLessons = getTotalLessonCount(roadmapId)
     if (totalLessons === 0) return 0
-    return Math.round((getCompletedCount() / totalLessons) * 100)
+    return Math.round((getCompletedCount(roadmapId) / totalLessons) * 100)
   }
 
-  /**
-   * Get average quiz score across all completed quizzes
-   * @returns Average score (0-100) or 0 if no quizzes completed
-   */
-  function getAverageQuizScore(): number {
+  function getAverageQuizScore(roadmapId: string): number {
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
     let totalScore = 0
     let quizCount = 0
 
-    for (const phase of Object.values(progress.value.phases)) {
+    for (const phase of Object.values(roadmapProgress.phases)) {
       for (const topic of Object.values(phase.topics)) {
         for (const subtopic of Object.values(topic.subtopics)) {
           if (subtopic.quizScore !== null) {
@@ -381,13 +358,9 @@ export function useProgress() {
   // Phase/Topic Progress Helpers
   // ---------------------------------------------------------------------------
 
-  /**
-   * Get completed count for a specific phase
-   * @param phaseId - Phase identifier (slug)
-   * @returns Number of completed subtopics in the phase
-   */
-  function getCompletedCountForPhase(phaseId: string): number {
-    const phaseProgress = progress.value.phases[phaseId]
+  function getCompletedCountForPhase(roadmapId: string, phaseId: string): number {
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
+    const phaseProgress = roadmapProgress.phases[phaseId]
     if (!phaseProgress) return 0
 
     let count = 0
@@ -399,14 +372,13 @@ export function useProgress() {
     return count
   }
 
-  /**
-   * Get completed count for a specific topic
-   * @param phaseId - Phase identifier
-   * @param topicId - Topic identifier
-   * @returns Number of completed subtopics in the topic
-   */
-  function getCompletedCountForTopic(phaseId: string, topicId: string): number {
-    const topicProgress = progress.value.phases[phaseId]?.topics[topicId]
+  function getCompletedCountForTopic(
+    roadmapId: string,
+    phaseId: string,
+    topicId: string
+  ): number {
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
+    const topicProgress = roadmapProgress.phases[phaseId]?.topics[topicId]
     if (!topicProgress) return 0
 
     let count = 0
@@ -416,102 +388,74 @@ export function useProgress() {
     return count
   }
 
-  /**
-   * Get completion percentage for a phase
-   * @param phaseId - Phase identifier (slug)
-   * @returns Percentage (0-100)
-   */
-  function getPhaseCompletionPercentage(phaseId: string): number {
-    const total = getPhaseSubtopicCount(phaseId)
+  function getPhaseCompletionPercentage(roadmapId: string, phaseId: string): number {
+    const total = getPhaseSubtopicCount(roadmapId, phaseId)
     if (total === 0) return 0
-    return Math.round((getCompletedCountForPhase(phaseId) / total) * 100)
+    return Math.round((getCompletedCountForPhase(roadmapId, phaseId) / total) * 100)
   }
 
-  /**
-   * Get completion percentage for a topic
-   * @param phaseId - Phase identifier
-   * @param topicId - Topic identifier
-   * @returns Percentage (0-100)
-   */
-  function getTopicCompletionPercentage(phaseId: string, topicId: string): number {
-    const total = getTopicSubtopicCount(phaseId, topicId)
+  function getTopicCompletionPercentage(
+    roadmapId: string,
+    phaseId: string,
+    topicId: string
+  ): number {
+    const total = getTopicSubtopicCount(roadmapId, phaseId, topicId)
     if (total === 0) return 0
-    return Math.round((getCompletedCountForTopic(phaseId, topicId) / total) * 100)
+    return Math.round((getCompletedCountForTopic(roadmapId, phaseId, topicId) / total) * 100)
   }
 
   // ---------------------------------------------------------------------------
   // Time Tracking
   // ---------------------------------------------------------------------------
 
-  /**
-   * Get total time spent in hours
-   * Converts accumulated minutes to hours (rounded to 1 decimal)
-   * @returns Hours spent learning
-   */
-  function getTotalTimeSpentHours(): number {
-    const minutes = progress.value.totalTimeSpent ?? 0
+  function getTotalTimeSpentHours(roadmapId: string): number {
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
+    const minutes = roadmapProgress.totalTimeSpent ?? 0
     return Math.round((minutes / 60) * 10) / 10
   }
 
-  /**
-   * Get total time spent in minutes
-   * @returns Minutes spent learning
-   */
-  function getTotalTimeSpentMinutes(): number {
-    return progress.value.totalTimeSpent ?? 0
+  function getTotalTimeSpentMinutes(roadmapId: string): number {
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
+    return roadmapProgress.totalTimeSpent ?? 0
   }
 
   // ---------------------------------------------------------------------------
   // Certificate Eligibility
   // ---------------------------------------------------------------------------
 
-  /**
-   * Check if user can generate a certificate
-   * Requires 100% completion of all lessons
-   * @returns Boolean indicating certificate eligibility
-   */
-  function canGenerateCertificate(): boolean {
-    const total = getTotalLessonCount()
-    const completed = getCompletedCount()
+  function canGenerateCertificate(roadmapId: string): boolean {
+    const total = getTotalLessonCount(roadmapId)
+    const completed = getCompletedCount(roadmapId)
     return total > 0 && completed >= total
   }
 
-  /**
-   * Get certificate readiness percentage
-   * Shows progress toward certificate eligibility
-   * @returns Percentage (0-100)
-   */
-  function getCertificateProgress(): number {
-    const total = getTotalLessonCount()
+  function getCertificateProgress(roadmapId: string): number {
+    const total = getTotalLessonCount(roadmapId)
     if (total === 0) return 0
-    return Math.round((getCompletedCount() / total) * 100)
+    return Math.round((getCompletedCount(roadmapId) / total) * 100)
   }
 
   // ---------------------------------------------------------------------------
   // Resume Learning
   // ---------------------------------------------------------------------------
 
-  /**
-   * Get resume learning data from lastAccessed
-   * Parses the stored path into component parts for navigation
-   * @returns Object with path info or null if no last accessed
-   */
-  function getResumeLearningData(): {
+  function getResumeLearningData(roadmapId: string): {
     path: string
     phaseId: string
     topicId: string
     subtopicId: string
   } | null {
-    if (!progress.value.lastAccessed) return null
+    const roadmapProgress = ensureRoadmapProgress(roadmapId)
+    if (!roadmapProgress.lastAccessed) return null
 
-    const parts = progress.value.lastAccessed.split('/')
+    const parts = roadmapProgress.lastAccessed.split('/')
     if (parts.length !== 3) return null
 
     const [phaseId, topicId, subtopicId] = parts
     if (!phaseId || !topicId || !subtopicId) return null
 
     return {
-      path: `/${progress.value.lastAccessed}`,
+      path: `/${roadmapProgress.lastAccessed}`,
       phaseId,
       topicId,
       subtopicId
@@ -522,58 +466,40 @@ export function useProgress() {
   // Name Management
   // ---------------------------------------------------------------------------
 
-  /**
-   * Set the user's name for certificates
-   * Validates non-empty string and trims whitespace
-   * @param name - User's full name
-   * @returns Boolean indicating success (false if empty/invalid)
-   */
   function setUserName(name: string): boolean {
     const trimmed = name.trim()
     if (!trimmed) return false
 
-    progress.value.userName = trimmed
+    progress.value.globalSettings = {
+      ...(progress.value.globalSettings ?? {}),
+      userName: trimmed
+    }
     saveToStorage()
     return true
   }
 
-  /**
-   * Get the user's saved name
-   * @returns User's name or undefined if not set
-   */
   function getUserName(): string | undefined {
-    return progress.value.userName
+    return progress.value.globalSettings?.userName
   }
 
-  /**
-   * Check if user has set their name
-   * @returns Boolean indicating if name is set
-   */
   function hasUserName(): boolean {
-    return !!progress.value.userName && progress.value.userName.trim().length > 0
+    const name = progress.value.globalSettings?.userName
+    return !!name && name.trim().length > 0
   }
 
   // ---------------------------------------------------------------------------
   // Data Management
   // ---------------------------------------------------------------------------
 
-  /**
-   * Export progress data as JSON string
-   * @returns JSON string of progress data
-   */
   function exportProgress(): string {
     return JSON.stringify(progress.value, null, 2)
   }
 
-  /**
-   * Import progress data from JSON string
-   * @param data - JSON string of progress data
-   * @returns Boolean indicating success
-   */
   function importProgress(data: string): boolean {
     try {
-      const parsed = JSON.parse(data) as UserProgress
-      progress.value = parsed
+      const parsed = JSON.parse(data) as unknown
+      const migrated = migrateProgressData(parsed)
+      progress.value = migrated
       saveToStorage()
       return true
     } catch {
@@ -581,11 +507,13 @@ export function useProgress() {
     }
   }
 
-  /**
-   * Reset all progress data
-   */
   function resetProgress(): void {
-    progress.value = createDefaultProgress()
+    progress.value = createDefaultMultiProgress()
+    saveToStorage()
+  }
+
+  function resetRoadmapProgress(roadmapId: string): void {
+    progress.value.roadmaps[roadmapId] = createDefaultRoadmapProgress()
     saveToStorage()
   }
 
@@ -605,53 +533,43 @@ export function useProgress() {
   // ---------------------------------------------------------------------------
 
   return {
-    // State (readonly to prevent external mutation)
     progress: readonly(progress),
 
-    // Actions
     markComplete,
     markIncomplete,
     recordQuizScore,
 
-    // Queries - Subtopic level
     isComplete,
     getSubtopicProgress,
 
-    // Queries - Aggregated counts
     getCompletedCount,
     getCompletedCountForPhase,
     getCompletedCountForTopic,
 
-    // Queries - Percentages
     getCompletionPercentage,
     getPhaseCompletionPercentage,
     getTopicCompletionPercentage,
     getAverageQuizScore,
 
-    // Roadmap data helpers
     getTotalLessonCount,
     getPhaseSubtopicCount,
     getTopicSubtopicCount,
 
-    // Time tracking
     getTotalTimeSpentHours,
     getTotalTimeSpentMinutes,
 
-    // Certificate eligibility
     canGenerateCertificate,
     getCertificateProgress,
 
-    // Resume learning
     getResumeLearningData,
 
-    // Name management
     setUserName,
     getUserName,
     hasUserName,
 
-    // Data management
     exportProgress,
     importProgress,
-    resetProgress
+    resetProgress,
+    resetRoadmapProgress
   }
 }

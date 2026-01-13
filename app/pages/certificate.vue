@@ -35,7 +35,7 @@
 -->
 
 <script setup lang="ts">
-import type { PhaseCertificateData, CourseCertificateData } from '~/data/types'
+import type { PhaseCertificateData, CourseCertificateData, Roadmap } from '~/data/types'
 import NameInputModal from '~/components/certificate/NameInputModal.vue'
 import CertificateCard from '~/components/certificate/CertificateCard.vue'
 import CertificateDownloadButton from '~/components/certificate/CertificateDownloadButton.vue'
@@ -57,6 +57,9 @@ useSeoMeta({
 // COMPOSABLES
 // =============================================================================
 
+const route = useRoute()
+const { allRoadmaps, getRoadmapById, getRoutePath } = useRoadmap()
+
 const {
   getPhaseCertificateStatuses,
   buildPhaseCertificateData,
@@ -67,17 +70,44 @@ const {
 const {
   getCompletedCount,
   getTotalLessonCount,
+  getCompletionPercentage,
   getUserName,
   hasUserName,
   setUserName
 } = useProgress()
+const selectedRoadmapId = computed(() => {
+  const value = route.query.roadmap
+  return typeof value === 'string' ? value : ''
+})
+
+const selectedRoadmap = computed(() => {
+  if (!selectedRoadmapId.value) return null
+  return getRoadmapById(selectedRoadmapId.value) ?? null
+})
+
+const hasSelectedRoadmap = computed(() => !!selectedRoadmap.value)
+const roadmapId = computed(() => selectedRoadmap.value?.id ?? '')
+
+const roadmapCards = computed(() => {
+  return allRoadmaps.map(roadmap => ({
+    roadmap,
+    progress: getCompletionPercentage(roadmap.id)
+  }))
+})
+
+function handleSelectRoadmap(roadmap: Roadmap) {
+  navigateTo(`/certificate?roadmap=${roadmap.id}`)
+}
 
 // =============================================================================
 // STATE
 // =============================================================================
 
 /** All phase certificate statuses */
-const certificateStatuses = ref(getPhaseCertificateStatuses())
+const certificateStatuses = computed(() => {
+  if (!selectedRoadmap.value) return []
+  return getPhaseCertificateStatuses(roadmapId.value)
+})
 
 /** Currently viewing certificate data */
 const viewingCertificate = ref<PhaseCertificateData | CourseCertificateData | null>(null)
@@ -109,12 +139,18 @@ const displayName = computed(() => getUserName() || 'Learner')
 /**
  * Overall lesson completion count
  */
-const completedLessons = computed(() => getCompletedCount())
+const completedLessons = computed(() => {
+  if (!roadmapId.value) return 0
+  return getCompletedCount(roadmapId.value)
+})
 
 /**
  * Total lesson count
  */
-const totalLessons = computed(() => getTotalLessonCount())
+const totalLessons = computed(() => {
+  if (!roadmapId.value) return 0
+  return getTotalLessonCount(roadmapId.value)
+})
 
 /**
  * Overall completion percentage
@@ -135,7 +171,15 @@ const phasesCompleted = computed(() => {
 /**
  * Check if course certificate is unlocked
  */
-const isCourseCertificateUnlocked = computed(() => canUnlockCourseCertificate())
+const isCourseCertificateUnlocked = computed(() => {
+  if (!roadmapId.value) return false
+  return canUnlockCourseCertificate(roadmapId.value)
+})
+
+const roadmapHomePath = computed(() => {
+  if (!roadmapId.value) return '/'
+  return getRoutePath(roadmapId.value)
+})
 
 /**
  * PDF filename for current viewing certificate
@@ -143,13 +187,15 @@ const isCourseCertificateUnlocked = computed(() => canUnlockCourseCertificate())
 const pdfFilename = computed(() => {
   if (!viewingCertificate.value) return ''
 
+  const prefix = (roadmapId.value || 'devops').toUpperCase()
+
   if (viewingCertificateType.value === 'course') {
-    return `DevOps-Master-Certificate-${viewingCertificate.value.certificateId}.pdf`
+    return `${prefix}-Master-Certificate-${viewingCertificate.value.certificateId}.pdf`
   } else if ('phaseNumber' in viewingCertificate.value) {
-    return `DevOps-Phase${viewingCertificate.value.phaseNumber}-Certificate-${viewingCertificate.value.certificateId}.pdf`
+    return `${prefix}-Phase${viewingCertificate.value.phaseNumber}-Certificate-${viewingCertificate.value.certificateId}.pdf`
   }
 
-  return 'DevOps-Certificate.pdf'
+  return `${prefix}-Certificate.pdf`
 })
 
 // =============================================================================
@@ -160,23 +206,31 @@ const pdfFilename = computed(() => {
  * Check for user name on mount
  * Prompt name entry if not set and user has any unlocked certificates
  */
-onMounted(() => {
-  // Simulate loading for smoother UX (data is actually instant from localStorage)
-  setTimeout(() => {
-    // Refresh certificate statuses
-    certificateStatuses.value = getPhaseCertificateStatuses()
+function runLoadingCheck() {
+  if (!hasSelectedRoadmap.value) {
+    isLoading.value = false
+    return
+  }
 
-    // Mark loading complete
+  // Simulate loading for smoother UX (data is instant from localStorage)
+  isLoading.value = true
+  setTimeout(() => {
     isLoading.value = false
 
-    // Prompt for name if not set and user has unlocked certificates
     if (!hasUserName() && phasesCompleted.value > 0) {
-      // Small delay for better UX
       setTimeout(() => {
         isNameModalOpen.value = true
       }, 500)
     }
   }, 300)
+}
+
+onMounted(() => {
+  runLoadingCheck()
+})
+
+watch(selectedRoadmapId, () => {
+  runLoadingCheck()
 })
 
 // =============================================================================
@@ -188,8 +242,9 @@ onMounted(() => {
  * @param phaseSlug - Phase slug to view certificate for
  */
 function handleViewPhaseCertificate(phaseSlug: string) {
+  if (!roadmapId.value) return
   // Build certificate data
-  const certData = buildPhaseCertificateData(phaseSlug)
+  const certData = buildPhaseCertificateData(roadmapId.value, phaseSlug)
 
   if (!certData) {
     // Check if name is missing
@@ -212,8 +267,9 @@ function handleViewPhaseCertificate(phaseSlug: string) {
  * Handle viewing the course completion certificate
  */
 function handleViewCourseCertificate() {
+  if (!roadmapId.value) return
   // Build certificate data
-  const certData = buildCourseCertificateData()
+  const certData = buildCourseCertificateData(roadmapId.value)
 
   if (!certData) {
     // Check if name is missing
@@ -240,8 +296,7 @@ function handleNameSave(name: string) {
   const success = setUserName(name)
 
   if (success) {
-    // Refresh certificate statuses to reflect name change
-    certificateStatuses.value = getPhaseCertificateStatuses()
+    isNameModalOpen.value = false
   }
 }
 
@@ -256,351 +311,381 @@ function handleEditName() {
 <template>
   <div class="min-h-screen bg-gray-900 py-8">
     <div class="container mx-auto px-4 max-w-7xl">
-      <!--
+      <div
+        v-if="!hasSelectedRoadmap"
+        class="py-10"
+      >
+        <div class="text-center mb-8">
+          <h1 class="text-3xl font-bold text-gray-100 mb-3">
+            Choose a Roadmap
+          </h1>
+          <p class="text-gray-400 text-base">
+            Select a roadmap to view and download certificates.
+          </p>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-2">
+          <RoadmapCard
+            v-for="item in roadmapCards"
+            :key="item.roadmap.id"
+            :roadmap="item.roadmap"
+            :progress="item.progress"
+            @select="handleSelectRoadmap"
+          />
+        </div>
+      </div>
+
+      <div v-else>
+        <!--
         Page Header
         ===========
         Title, breadcrumb, and name display with edit option
       -->
-      <div class="mb-8">
-        <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-100 mb-2">
-              Certificates
-            </h1>
-            <p class="text-gray-400">
-              View and download your earned certificates
-            </p>
+        <div class="mb-8">
+          <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
+            <div>
+              <h1 class="text-3xl font-bold text-gray-100 mb-2">
+                {{ selectedRoadmap?.title }} Certificates
+              </h1>
+              <p class="text-gray-400">
+                View and download your earned certificates
+              </p>
+            </div>
+
+            <!-- Edit name button -->
+            <UButton
+              v-if="hasUserName()"
+              label="Edit Name"
+              icon="i-lucide-edit-2"
+              color="neutral"
+              variant="outline"
+              class="cursor-pointer"
+              @click="handleEditName"
+            />
           </div>
 
-          <!-- Edit name button -->
-          <UButton
-            v-if="hasUserName()"
-            label="Edit Name"
-            icon="i-lucide-edit-2"
-            color="neutral"
-            variant="outline"
-            class="cursor-pointer"
-            @click="handleEditName"
-          />
+          <!-- Welcome message -->
+          <div class="text-lg text-gray-300">
+            Welcome, <span class="font-semibold text-indigo-400">{{ displayName }}</span>
+          </div>
         </div>
 
-        <!-- Welcome message -->
-        <div class="text-lg text-gray-300">
-          Welcome, <span class="font-semibold text-indigo-400">{{ displayName }}</span>
-        </div>
-      </div>
-
-      <!--
+        <!--
         Loading Skeleton
         ================
         Show skeleton while data loads
       -->
-      <div
-        v-if="isLoading"
-        class="space-y-8"
-      >
-        <!-- Header skeleton -->
-        <div class="space-y-4">
-          <USkeleton class="h-8 w-48" />
-          <USkeleton class="h-5 w-64" />
-        </div>
-
-        <!-- Progress summary skeleton -->
-        <UCard
-          class="p-6 ring-1 ring-gray-700/50 bg-gray-800"
+        <div
+          v-if="isLoading"
+          class="space-y-8"
         >
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div
-              v-for="i in 3"
-              :key="i"
-            >
-              <USkeleton class="h-4 w-24 mb-2" />
-              <USkeleton class="h-8 w-32 mb-1" />
-              <USkeleton class="h-4 w-28" />
+          <!-- Header skeleton -->
+          <div class="space-y-4">
+            <USkeleton class="h-8 w-48" />
+            <USkeleton class="h-5 w-64" />
+          </div>
+
+          <!-- Progress summary skeleton -->
+          <UCard
+            class="p-6 ring-1 ring-gray-700/50 bg-gray-800"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div
+                v-for="i in 3"
+                :key="i"
+              >
+                <USkeleton class="h-4 w-24 mb-2" />
+                <USkeleton class="h-8 w-32 mb-1" />
+                <USkeleton class="h-4 w-28" />
+              </div>
+            </div>
+          </UCard>
+
+          <!-- Certificate cards skeleton -->
+          <div>
+            <USkeleton class="h-8 w-48 mb-6" />
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <UCard
+                v-for="i in 6"
+                :key="i"
+                class="p-5 sm:p-6 ring-1 ring-gray-700/50 bg-gray-800"
+              >
+                <div class="space-y-4">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="flex-1">
+                      <USkeleton class="h-4 w-16 mb-2" />
+                      <USkeleton class="h-6 w-40" />
+                    </div>
+                    <USkeleton class="h-6 w-16" />
+                  </div>
+                  <USkeleton class="h-4 w-full" />
+                  <USkeleton class="h-2 w-full" />
+                  <USkeleton class="h-10 w-full" />
+                </div>
+              </UCard>
             </div>
           </div>
-        </UCard>
-
-        <!-- Certificate cards skeleton -->
-        <div>
-          <USkeleton class="h-8 w-48 mb-6" />
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <UCard
-              v-for="i in 6"
-              :key="i"
-              class="p-5 sm:p-6 ring-1 ring-gray-700/50 bg-gray-800"
-            >
-              <div class="space-y-4">
-                <div class="flex items-start justify-between gap-3">
-                  <div class="flex-1">
-                    <USkeleton class="h-4 w-16 mb-2" />
-                    <USkeleton class="h-6 w-40" />
-                  </div>
-                  <USkeleton class="h-6 w-16" />
-                </div>
-                <USkeleton class="h-4 w-full" />
-                <USkeleton class="h-2 w-full" />
-                <USkeleton class="h-10 w-full" />
-              </div>
-            </UCard>
-          </div>
         </div>
-      </div>
 
-      <!--
+        <!--
         Main Content (Loaded)
         ======================
         Show actual content when loaded
       -->
-      <div v-else>
-        <!--
+        <div v-else>
+          <!--
           Overall Progress Summary
           ========================
           Stats grid with completion metrics
         -->
-        <UCard
-          class="mb-8 p-6 ring-1 ring-gray-700/50 bg-gray-800"
-        >
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Overall lessons stat -->
-            <div>
-              <div class="text-sm text-gray-400 mb-1">
-                Overall Progress
+          <UCard
+            class="mb-8 p-6 ring-1 ring-gray-700/50 bg-gray-800"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Overall lessons stat -->
+              <div>
+                <div class="text-sm text-gray-400 mb-1">
+                  Overall Progress
+                </div>
+                <div class="text-2xl font-bold text-gray-100">
+                  {{ completedLessons }}/{{ totalLessons }}
+                </div>
+                <div class="text-sm text-gray-500 mt-1">
+                  {{ overallPercentage }}% Complete
+                </div>
               </div>
-              <div class="text-2xl font-bold text-gray-100">
-                {{ completedLessons }}/{{ totalLessons }}
-              </div>
-              <div class="text-sm text-gray-500 mt-1">
-                {{ overallPercentage }}% Complete
-              </div>
-            </div>
 
-            <!-- Phases completed stat -->
-            <div>
-              <div class="text-sm text-gray-400 mb-1">
-                Phases Completed
+              <!-- Phases completed stat -->
+              <div>
+                <div class="text-sm text-gray-400 mb-1">
+                  Phases Completed
+                </div>
+                <div class="text-2xl font-bold text-gray-100">
+                  {{ phasesCompleted }}/{{ selectedRoadmap?.stats.phaseCount }}
+                </div>
+                <div class="text-sm text-gray-500 mt-1">
+                  {{ (selectedRoadmap?.stats.phaseCount ?? 0) - phasesCompleted }} Remaining
+                </div>
               </div>
-              <div class="text-2xl font-bold text-gray-100">
-                {{ phasesCompleted }}/10
-              </div>
-              <div class="text-sm text-gray-500 mt-1">
-                {{ 10 - phasesCompleted }} Remaining
-              </div>
-            </div>
 
-            <!-- Progress visualization -->
-            <div class="flex items-center justify-center md:justify-end">
-              <div class="relative w-24 h-24">
-                <!-- Progress ring (simplified visual - would use ProgressRing component in real implementation) -->
-                <svg class="w-24 h-24 transform -rotate-90">
-                  <circle
-                    cx="48"
-                    cy="48"
-                    r="40"
-                    stroke="currentColor"
-                    stroke-width="8"
-                    fill="none"
-                    class="text-gray-700"
-                  />
-                  <circle
-                    cx="48"
-                    cy="48"
-                    r="40"
-                    stroke="currentColor"
-                    stroke-width="8"
-                    fill="none"
-                    :stroke-dasharray="`${overallPercentage * 2.51} 251`"
-                    class="text-indigo-500 transition-all duration-500"
-                  />
-                </svg>
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <span class="text-lg font-bold text-gray-100">{{ overallPercentage }}%</span>
+              <!-- Progress visualization -->
+              <div class="flex items-center justify-center md:justify-end">
+                <div class="relative w-24 h-24">
+                  <!-- Progress ring (simplified visual - would use ProgressRing component in real implementation) -->
+                  <svg class="w-24 h-24 transform -rotate-90">
+                    <circle
+                      cx="48"
+                      cy="48"
+                      r="40"
+                      stroke="currentColor"
+                      stroke-width="8"
+                      fill="none"
+                      class="text-gray-700"
+                    />
+                    <circle
+                      cx="48"
+                      cy="48"
+                      r="40"
+                      stroke="currentColor"
+                      stroke-width="8"
+                      fill="none"
+                      :stroke-dasharray="`${overallPercentage * 2.51} 251`"
+                      class="text-indigo-500 transition-all duration-500"
+                    />
+                  </svg>
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-lg font-bold text-gray-100">{{ overallPercentage }}%</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </UCard>
+          </UCard>
 
-        <!--
+          <!--
         Course Completion Certificate Section
         ======================================
         Prominent display when unlocked, locked state otherwise
       -->
-        <UCard
-          v-if="isCourseCertificateUnlocked"
-          class="mb-8 border-2 border-amber-500/30 p-6 ring-0 bg-gradient-to-br from-amber-900/20 to-amber-800/10"
-        >
-          <div class="flex items-center gap-4">
-            <div class="flex-shrink-0">
-              <div class="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center">
-                <UIcon
-                  name="i-lucide-trophy"
-                  class="h-8 w-8 text-amber-400"
+          <UCard
+            v-if="isCourseCertificateUnlocked"
+            class="mb-8 border-2 border-amber-500/30 p-6 ring-0 bg-gradient-to-br from-amber-900/20 to-amber-800/10"
+          >
+            <div class="flex items-center gap-4">
+              <div class="flex-shrink-0">
+                <div class="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center">
+                  <UIcon
+                    name="i-lucide-trophy"
+                    class="h-8 w-8 text-amber-400"
+                  />
+                </div>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-xl font-bold text-amber-400 mb-1">
+                  {{ selectedRoadmap?.certificateTitle }}
+                </h3>
+                <p class="text-gray-300">
+                  Congratulations! You've completed this roadmap.
+                </p>
+              </div>
+              <div class="flex-shrink-0">
+                <UButton
+                  label="View Certificate"
+                  icon="i-lucide-award"
+                  color="warning"
+                  size="lg"
+                  class="cursor-pointer"
+                  @click="handleViewCourseCertificate"
                 />
               </div>
             </div>
-            <div class="flex-1">
-              <h3 class="text-xl font-bold text-amber-400 mb-1">
-                DevOps Master Certificate
-              </h3>
-              <p class="text-gray-300">
-                Congratulations! You've completed the entire DevOps course.
-              </p>
-            </div>
-            <div class="flex-shrink-0">
-              <UButton
-                label="View Certificate"
-                icon="i-lucide-award"
-                color="warning"
-                size="lg"
-                class="cursor-pointer"
-                @click="handleViewCourseCertificate"
-              />
-            </div>
+          </UCard>
+
+          <div
+            v-else
+            class="mb-8 text-center py-6 text-gray-500"
+          >
+            <UIcon
+              name="i-lucide-lock"
+              class="h-8 w-8 mx-auto mb-2 opacity-50"
+            />
+            <p>
+              Complete all {{ (selectedRoadmap?.stats.phaseCount ?? 0) - phasesCompleted }} remaining phases
+              to unlock the Master Certificate
+            </p>
           </div>
-        </UCard>
 
-        <div
-          v-else
-          class="mb-8 text-center py-6 text-gray-500"
-        >
-          <UIcon
-            name="i-lucide-lock"
-            class="h-8 w-8 mx-auto mb-2 opacity-50"
-          />
-          <p>Complete all {{ 10 - phasesCompleted }} remaining phases to unlock the Master Certificate</p>
-        </div>
-
-        <!--
+          <!--
         Empty State (No Progress)
         ==========================
         Show encouraging message for new users with no progress
       -->
-        <UCard
-          v-if="completedLessons === 0"
-          class="mb-8 text-center p-12 ring-1 ring-gray-700/50 bg-gray-800"
-        >
-          <div class="space-y-4">
-            <div class="w-20 h-20 mx-auto rounded-full bg-indigo-500/10 flex items-center justify-center">
-              <UIcon
-                name="i-lucide-graduation-cap"
-                class="h-10 w-10 text-indigo-400"
+          <UCard
+            v-if="completedLessons === 0"
+            class="mb-8 text-center p-12 ring-1 ring-gray-700/50 bg-gray-800"
+          >
+            <div class="space-y-4">
+              <div class="w-20 h-20 mx-auto rounded-full bg-indigo-500/10 flex items-center justify-center">
+                <UIcon
+                  name="i-lucide-graduation-cap"
+                  class="h-10 w-10 text-indigo-400"
+                />
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-gray-100 mb-2">
+                  Start Your Learning Journey
+                </h3>
+                <p class="text-gray-400 max-w-md mx-auto">
+                  Complete lessons to earn certificates for each phase. Start learning now to unlock your first certificate!
+                </p>
+              </div>
+              <UButton
+                label="Start Learning"
+                icon="i-lucide-rocket"
+                color="primary"
+                size="lg"
+                class="cursor-pointer"
+                :to="roadmapHomePath"
               />
             </div>
-            <div>
-              <h3 class="text-xl font-bold text-gray-100 mb-2">
-                Start Your DevOps Journey
-              </h3>
-              <p class="text-gray-400 max-w-md mx-auto">
-                Complete lessons to earn certificates for each phase. Start learning now to unlock your first certificate!
-              </p>
-            </div>
-            <UButton
-              label="Start Learning"
-              icon="i-lucide-rocket"
-              color="primary"
-              size="lg"
-              class="cursor-pointer"
-              to="/"
-            />
-          </div>
-        </UCard>
+          </UCard>
 
-        <!--
+          <!--
         Phase Certificates Grid
         ========================
         Grid of certificate cards for all 10 phases
       -->
-        <div
-          v-else
-          class="mb-4"
-        >
-          <h2 class="text-2xl font-bold text-gray-100 mb-6">
-            Phase Certificates
-          </h2>
+          <div
+            v-else
+            class="mb-4"
+          >
+            <h2 class="text-2xl font-bold text-gray-100 mb-6">
+              Phase Certificates
+            </h2>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <CertificateCard
-              v-for="status in certificateStatuses"
-              :key="status.phaseSlug"
-              :status="status"
-              @view-certificate="handleViewPhaseCertificate(status.phaseSlug)"
-            />
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <CertificateCard
+                v-for="status in certificateStatuses"
+                :key="status.phaseSlug"
+                :status="status"
+                :roadmap-id="roadmapId"
+                @view-certificate="handleViewPhaseCertificate(status.phaseSlug)"
+              />
+            </div>
           </div>
         </div>
-      </div>
-      <!-- End of v-else for loaded content -->
+        <!-- End of v-else for loaded content -->
 
-      <!--
+        <!--
         Certificate Preview Modal
         =========================
         Modal displaying certificate preview with download button
       -->
-      <UModal
-        v-model:open="isCertificateModalOpen"
-        title="Certificate Preview"
-        class="max-w-4xl"
-      >
-        <template #body>
-          <!-- Certificate preview content -->
-          <div
-            ref="certificatePreviewRef"
-            class="bg-gray-900 rounded-lg p-8 text-center"
-          >
+        <UModal
+          v-model:open="isCertificateModalOpen"
+          title="Certificate Preview"
+          class="max-w-4xl"
+        >
+          <template #body>
+            <!-- Certificate preview content -->
             <div
-              v-if="viewingCertificate"
-              class="space-y-4"
+              ref="certificatePreviewRef"
+              class="bg-gray-900 rounded-lg p-8 text-center"
             >
-              <!-- Certificate preview display -->
-              <div class="text-4xl font-bold text-amber-400 mb-4">
-                <UIcon
-                  name="i-lucide-award"
-                  class="h-16 w-16 mx-auto mb-4"
-                />
-                {{
-                  viewingCertificateType === 'course'
-                    ? 'DevOps Master Certificate'
-                    : `Phase ${'phaseNumber' in viewingCertificate ? viewingCertificate.phaseNumber : ''} Certificate`
-                }}
-              </div>
-              <div class="text-xl text-gray-300">
-                {{ viewingCertificate.userName }}
-              </div>
-              <div class="text-gray-400">
-                Certificate ID: {{ viewingCertificate.certificateId }}
+              <div
+                v-if="viewingCertificate"
+                class="space-y-4"
+              >
+                <!-- Certificate preview display -->
+                <div class="text-4xl font-bold text-amber-400 mb-4">
+                  <UIcon
+                    name="i-lucide-award"
+                    class="h-16 w-16 mx-auto mb-4"
+                  />
+                  {{
+                    viewingCertificateType === 'course'
+                      ? (selectedRoadmap?.certificateTitle ?? 'Master Certificate')
+                      : `Phase ${'phaseNumber' in viewingCertificate ? viewingCertificate.phaseNumber : ''} Certificate`
+                  }}
+                </div>
+                <div class="text-xl text-gray-300">
+                  {{ viewingCertificate.userName }}
+                </div>
+                <div class="text-gray-400">
+                  Certificate ID: {{ viewingCertificate.certificateId }}
+                </div>
               </div>
             </div>
-          </div>
-        </template>
+          </template>
 
-        <template #footer>
-          <div class="flex justify-end gap-3">
-            <UButton
-              label="Close"
-              color="neutral"
-              variant="outline"
-              class="cursor-pointer"
-              @click="isCertificateModalOpen = false"
-            />
-            <CertificateDownloadButton
-              :certificate-ref="certificatePreviewRef"
-              :filename="pdfFilename"
-              @download:complete="isCertificateModalOpen = false"
-            />
-          </div>
-        </template>
-      </UModal>
+          <template #footer>
+            <div class="flex justify-end gap-3">
+              <UButton
+                label="Close"
+                color="neutral"
+                variant="outline"
+                class="cursor-pointer"
+                @click="isCertificateModalOpen = false"
+              />
+              <CertificateDownloadButton
+                :certificate-ref="certificatePreviewRef"
+                :filename="pdfFilename"
+                @download:complete="isCertificateModalOpen = false"
+              />
+            </div>
+          </template>
+        </UModal>
 
-      <!--
+        <!--
         Name Input Modal
         ================
         Modal for entering/editing user name
       -->
-      <NameInputModal
-        v-model:open="isNameModalOpen"
-        :initial-name="getUserName() || ''"
-        @save="handleNameSave"
-      />
+        <NameInputModal
+          v-model:open="isNameModalOpen"
+          :initial-name="getUserName() || ''"
+          @save="handleNameSave"
+        />
+      </div>
     </div>
   </div>
 </template>

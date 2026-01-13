@@ -82,7 +82,10 @@ const certificateTitle = computed(() => {
   if (isPhase.value && 'phaseName' in props.certificateData) {
     return `Phase ${props.certificateData.phaseNumber}: ${props.certificateData.phaseName}`
   }
-  return 'DevOps Master Certificate'
+  if (isCourse.value && 'courseName' in props.certificateData && props.certificateData.courseName) {
+    return props.certificateData.courseName
+  }
+  return 'Master Certificate'
 })
 
 /**
@@ -188,7 +191,7 @@ const phaseCompletionDates = computed(() => {
 
       <!-- Subtitle -->
       <div class="text-lg text-gray-400">
-        DevOps Learning Management System
+        Learning Management System
       </div>
     </div>
 

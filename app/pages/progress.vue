@@ -1,44 +1,11 @@
 <!--
   progress.vue - Detailed Progress Dashboard Page
   ================================================
-  A dedicated page showing detailed learning progress across all phases,
-  with statistics, phase-by-phase breakdown, and data management tools.
-
-  Features:
-  - Overall progress hero section with key stats
-  - Phase-by-phase expandable progress cards
-  - Data management: export, import, reset
-  - Breadcrumb navigation
-  - Responsive layout
-
-  Route: /progress
-
-  Visual Structure:
-  ┌────────────────────────────────────────────────────────┐
-  │  Home > Progress                                        │
-  ├────────────────────────────────────────────────────────┤
-  │                                                         │
-  │  ┌─────────────────────────────────────────────────┐   │
-  │  │        Overall Progress (OverallProgress)        │   │
-  │  └─────────────────────────────────────────────────┘   │
-  │                                                         │
-  │  Phase-by-Phase Progress                               │
-  │  ┌─────────────────────────────────────────────────┐   │
-  │  │  Phase 1: SDLC                        [80%]     │   │
-  │  └─────────────────────────────────────────────────┘   │
-  │  ┌─────────────────────────────────────────────────┐   │
-  │  │  Phase 2: Foundations                 [0%]      │   │
-  │  └─────────────────────────────────────────────────┘   │
-  │  ...                                                   │
-  │                                                         │
-  │  Data Management                                        │
-  │  [Export]  [Import]  [Reset]                           │
-  │                                                         │
-  └────────────────────────────────────────────────────────┘
+  Multi-roadmap progress dashboard with overview and drill-down views.
 -->
 
 <script setup lang="ts">
-import { roadmapData } from '~/data/roadmap'
+import { allRoadmaps } from '~/data/roadmaps'
 
 // =============================================================================
 // PAGE META
@@ -49,78 +16,88 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'Progress | DevOps Learning Path',
-  description: 'Track your learning progress across all DevOps topics'
+  title: 'Progress | Learning Paths',
+  description: 'Track your learning progress across all roadmaps'
 })
 
 // =============================================================================
 // COMPOSABLES
 // =============================================================================
 
+const route = useRoute()
+const { getRoutePath } = useRoadmap()
+
 const {
   exportProgress,
   importProgress,
   resetProgress,
-  getCompletedCount
+  getCompletedCount,
+  getTotalLessonCount,
+  getCompletionPercentage,
+  getTotalTimeSpentHours,
+  getResumeLearningData
 } = useProgress()
 
 // =============================================================================
 // STATE
 // =============================================================================
 
-/**
- * Track which phase cards are expanded
- * Key: phase slug, Value: expanded state
- */
 const expandedPhases = ref<Record<string, boolean>>({})
-
-/**
- * File input reference for import functionality
- */
 const fileInputRef = ref<HTMLInputElement | null>(null)
-
-/**
- * Show reset confirmation modal
- */
 const showResetConfirm = ref(false)
+
+// =============================================================================
+// COMPUTED
+// =============================================================================
+
+const roadmapFilter = computed(() => {
+  const value = route.query.roadmap
+  return typeof value === 'string' ? value : null
+})
+
+const filteredRoadmaps = computed(() => {
+  if (!roadmapFilter.value) return allRoadmaps
+  return allRoadmaps.filter(roadmap => roadmap.id === roadmapFilter.value || roadmap.slug === roadmapFilter.value)
+})
+
+const hasProgress = computed(() => {
+  return allRoadmaps.some(roadmap => getCompletedCount(roadmap.id) > 0)
+})
+
+function getResumePath(roadmapId: string): string | undefined {
+  const resumeData = getResumeLearningData(roadmapId)
+  if (!resumeData) return undefined
+  return getRoutePath(roadmapId, resumeData.phaseId, resumeData.topicId, resumeData.subtopicId)
+}
 
 // =============================================================================
 // METHODS
 // =============================================================================
 
-/**
- * Toggle a phase card's expanded state
- */
-function togglePhase(phaseSlug: string) {
-  expandedPhases.value[phaseSlug] = !expandedPhases.value[phaseSlug]
+function togglePhase(roadmapId: string, phaseSlug: string) {
+  const key = `${roadmapId}:${phaseSlug}`
+  expandedPhases.value[key] = !expandedPhases.value[key]
 }
 
-/**
- * Export progress as JSON file download
- */
 function handleExport() {
   const data = exportProgress()
   const blob = new Blob([data], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `devops-progress-${new Date().toISOString().split('T')[0]}.json`
+  const suffix = new Date().toISOString().split('T')[0]
+  const prefix = roadmapFilter.value ? roadmapFilter.value : 'roadmaps'
+  a.download = `${prefix}-progress-${suffix}.json`
   document.body.appendChild(a)
   a.click()
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
 }
 
-/**
- * Trigger file input for import
- */
 function triggerImport() {
   fileInputRef.value?.click()
 }
 
-/**
- * Handle file selection for import
- */
 async function handleImport(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
@@ -138,36 +115,18 @@ async function handleImport(event: Event) {
     alert('Failed to read file.')
   }
 
-  // Reset input so same file can be selected again
   input.value = ''
 }
 
-/**
- * Confirm and reset all progress
- */
 function handleReset() {
   showResetConfirm.value = false
   resetProgress()
 }
-
-// =============================================================================
-// COMPUTED
-// =============================================================================
-
-/**
- * Check if user has any progress to show export/reset buttons
- */
-const hasProgress = computed(() => getCompletedCount() > 0)
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-900">
-    <!-- Main Content Container -->
-    <div class="max-w-4xl mx-auto px-4 py-8">
-      <!--
-        Breadcrumb Navigation
-        =====================
-      -->
+    <div class="max-w-6xl mx-auto px-4 py-8">
       <nav class="mb-6">
         <ul class="flex items-center text-sm text-gray-400">
           <li>
@@ -187,59 +146,140 @@ const hasProgress = computed(() => getCompletedCount() > 0)
         </ul>
       </nav>
 
-      <!--
-        Page Title
-        ==========
-      -->
-      <h1 class="text-3xl font-bold text-white mb-8">
-        Learning Progress
-      </h1>
+      <div class="flex items-center justify-between flex-wrap gap-4 mb-8">
+        <div>
+          <h1 class="text-3xl font-bold text-white">
+            Learning Progress
+          </h1>
+          <p class="text-gray-400">
+            Track completion, time invested, and resume where you left off.
+          </p>
+        </div>
+        <UButton
+          v-if="roadmapFilter"
+          color="neutral"
+          variant="outline"
+          class="cursor-pointer"
+          to="/progress"
+        >
+          Clear Filter
+        </UButton>
+      </div>
 
-      <!--
-        Overall Progress Section
-        ========================
-      -->
-      <section class="mb-10">
-        <ProgressOverallProgress />
-      </section>
-
-      <!--
-        Phase-by-Phase Progress
-        =======================
-      -->
       <section class="mb-10">
         <h2 class="text-xl font-semibold text-white mb-4">
-          Phase-by-Phase Progress
+          Roadmap Overview
         </h2>
+        <div class="grid gap-4 md:grid-cols-2">
+          <UCard
+            v-for="roadmap in filteredRoadmaps"
+            :key="roadmap.id"
+            class="bg-gray-800 ring-1 ring-gray-700/50"
+          >
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <div class="text-lg font-semibold text-gray-100">
+                  {{ roadmap.title }}
+                </div>
+                <div class="text-sm text-gray-400">
+                  {{ roadmap.description }}
+                </div>
+              </div>
+              <ProgressRing
+                :value="getCompletionPercentage(roadmap.id)"
+                :size="56"
+                :stroke-width="5"
+                color="#10b981"
+                show-label
+              />
+            </div>
 
-        <div class="space-y-3">
-          <ProgressPhaseProgress
-            v-for="phase in roadmapData"
-            :key="phase.slug"
-            :phase="phase"
-            :expanded="expandedPhases[phase.slug] ?? false"
-            @toggle="togglePhase(phase.slug)"
-          />
+            <div class="mt-4 grid grid-cols-2 gap-4 text-sm text-gray-300">
+              <div>
+                <div class="text-xs text-gray-500">
+                  Lessons
+                </div>
+                <div class="font-semibold text-gray-100">
+                  {{ getCompletedCount(roadmap.id) }}/{{ getTotalLessonCount(roadmap.id) }}
+                </div>
+              </div>
+              <div>
+                <div class="text-xs text-gray-500">
+                  Time Spent
+                </div>
+                <div class="font-semibold text-gray-100">
+                  {{ getTotalTimeSpentHours(roadmap.id) }} hrs
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 flex items-center justify-between">
+              <NuxtLink
+                :to="`/progress?roadmap=${roadmap.id}`"
+                class="text-sm text-emerald-400 hover:text-emerald-300"
+              >
+                View Details
+              </NuxtLink>
+              <NuxtLink
+                v-if="getResumePath(roadmap.id)"
+                :to="getResumePath(roadmap.id)"
+              >
+                <UButton
+                  size="sm"
+                  color="primary"
+                  class="cursor-pointer"
+                >
+                  Resume Learning
+                </UButton>
+              </NuxtLink>
+            </div>
+          </UCard>
         </div>
       </section>
 
-      <!--
-        Data Management Section
-        =======================
-      -->
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold text-white mb-4">
+          Phase Breakdown
+        </h2>
+
+        <div
+          v-for="roadmap in filteredRoadmaps"
+          :key="roadmap.id"
+          class="mb-8"
+        >
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-semibold text-gray-200">
+              {{ roadmap.title }}
+            </h3>
+            <span class="text-sm text-gray-500">
+              {{ roadmap.stats.phaseCount }} phases
+            </span>
+          </div>
+
+          <div class="space-y-3">
+            <ProgressPhaseProgress
+              v-for="phase in roadmap.phases"
+              :key="phase.slug"
+              :phase="phase"
+              :expanded="expandedPhases[`${roadmap.id}:${phase.slug}`] ?? false"
+              :roadmap-id="roadmap.id"
+              @toggle="togglePhase(roadmap.id, phase.slug)"
+            />
+          </div>
+        </div>
+      </section>
+
       <section class="border-t border-gray-700 pt-8">
         <h2 class="text-xl font-semibold text-white mb-4">
           Data Management
         </h2>
 
         <p class="text-gray-400 text-sm mb-4">
-          Your progress is stored locally in your browser. Use these tools to backup,
-          restore, or reset your progress data.
+          Progress is stored locally in your browser. Use these tools to backup,
+          restore, or reset your data.
         </p>
 
-        <!-- Action Buttons -->
         <div class="flex flex-wrap gap-3">
-          <!-- Export Button -->
           <UButton
             :disabled="!hasProgress"
             color="neutral"
@@ -254,7 +294,6 @@ const hasProgress = computed(() => getCompletedCount() > 0)
             Export Progress
           </UButton>
 
-          <!-- Import Button -->
           <UButton
             color="neutral"
             variant="outline"
@@ -268,7 +307,6 @@ const hasProgress = computed(() => getCompletedCount() > 0)
             Import Progress
           </UButton>
 
-          <!-- Hidden file input for import -->
           <input
             ref="fileInputRef"
             type="file"
@@ -277,7 +315,6 @@ const hasProgress = computed(() => getCompletedCount() > 0)
             @change="handleImport"
           >
 
-          <!-- Reset Button -->
           <UButton
             :disabled="!hasProgress"
             color="error"
@@ -293,7 +330,6 @@ const hasProgress = computed(() => getCompletedCount() > 0)
           </UButton>
         </div>
 
-        <!-- Reset Confirmation Modal -->
         <UModal v-model:open="showResetConfirm">
           <template #content>
             <UCard>
@@ -310,15 +346,7 @@ const hasProgress = computed(() => getCompletedCount() > 0)
               </template>
 
               <p class="text-gray-300">
-                This will permanently delete all your learning progress, including:
-              </p>
-              <ul class="list-disc list-inside text-gray-400 mt-2 space-y-1">
-                <li>Completed lesson tracking</li>
-                <li>Quiz scores</li>
-                <li>Time spent data</li>
-              </ul>
-              <p class="text-gray-300 mt-3">
-                This action cannot be undone. Are you sure?
+                This will permanently delete all your learning progress across roadmaps.
               </p>
 
               <template #footer>
@@ -344,26 +372,6 @@ const hasProgress = computed(() => getCompletedCount() > 0)
           </template>
         </UModal>
       </section>
-
-      <!--
-        Back to Roadmap Link
-        ====================
-      -->
-      <div class="mt-10 text-center">
-        <NuxtLink to="/">
-          <UButton
-            color="primary"
-            variant="ghost"
-            class="cursor-pointer"
-          >
-            <UIcon
-              name="i-lucide-arrow-left"
-              class="w-4 h-4 mr-2"
-            />
-            Back to Roadmap
-          </UButton>
-        </NuxtLink>
-      </div>
     </div>
   </div>
 </template>

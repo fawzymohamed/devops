@@ -2,7 +2,7 @@
   [subtopic].vue - Dynamic Lesson Page
   ====================================
   Displays lesson content from markdown files using @nuxt/content.
-  Accessed via routes like /phase-1-sdlc/sdlc-models/waterfall-model
+  Accessed via routes like /fullstack/phase-1-web-fundamentals/html5-essentials/semantic-html
 
   Features:
   - Breadcrumb navigation back to roadmap
@@ -14,9 +14,9 @@
   - Previous/Next lesson navigation
 
   Route Parameters:
-  - phase: Phase slug (e.g., "phase-1-sdlc")
-  - topic: Topic slug (e.g., "sdlc-models")
-  - subtopic: Subtopic slug (e.g., "waterfall-model")
+  - phase: Phase slug (e.g., "phase-1-web-fundamentals")
+  - topic: Topic slug (e.g., "html5-essentials")
+  - subtopic: Subtopic slug (e.g., "semantic-html")
 
   Layout Structure:
   ┌─────────────────────────────────────────────────────────────┐
@@ -205,6 +205,12 @@ const { phase, topic, subtopic } = route.params as {
   topic: string
   subtopic: string
 }
+const { getContentPath, setCurrentRoadmapBySlug } = useRoadmap()
+const roadmapId = 'fullstack'
+
+onMounted(() => {
+  setCurrentRoadmapBySlug('fullstack')
+})
 
 /**
  * Content Path
@@ -213,7 +219,10 @@ const { phase, topic, subtopic } = route.params as {
  * Maps: /phase-1-sdlc/sdlc-models/waterfall-model
  * To:   /1.phase-1-sdlc/1.sdlc-models/waterfall-model
  */
-const contentPath = computed(() => `/${phase}/${topic}/${subtopic}`)
+const contentPath = computed(() => {
+  const root = getContentPath(roadmapId)
+  return root ? `${root}/${phase}/${topic}/${subtopic}` : `/${phase}/${topic}/${subtopic}`
+})
 
 /**
  * Fetch Lesson Content
@@ -260,7 +269,6 @@ const nextLesson = computed(() => surround.value?.[1] ?? null)
  * Use the progress composable for completion tracking
  */
 const { markComplete, isComplete, recordQuizScore } = useProgress()
-const roadmapId = 'devops'
 
 /**
  * Computed: Is Lesson Completed
@@ -311,7 +319,7 @@ function handleMarkComplete() {
         {
           label: 'View Certificate',
           onClick: () => {
-            navigateTo('/certificate?roadmap=devops')
+            navigateTo('/certificate?roadmap=fullstack')
           }
         }
       ]
@@ -429,7 +437,7 @@ useSeoMeta({
                   variant="soft"
                   color="neutral"
                   class="cursor-pointer"
-                  to="/"
+                  to="/fullstack"
                 >
                   Back to Roadmap
                 </UButton>
@@ -481,7 +489,7 @@ useSeoMeta({
                   variant="soft"
                   color="neutral"
                   class="cursor-pointer"
-                  to="/"
+                  to="/fullstack"
                 >
                   Back to Roadmap
                 </UButton>
@@ -516,7 +524,7 @@ useSeoMeta({
                 variant="soft"
                 color="error"
                 class="mt-3 cursor-pointer"
-                to="/"
+                to="/fullstack"
               >
                 Back to Roadmap
               </UButton>
@@ -545,7 +553,7 @@ useSeoMeta({
             The lesson you're looking for doesn't exist or hasn't been created yet.
           </p>
           <UButton
-            to="/"
+            to="/fullstack"
             class="cursor-pointer"
           >
             Back to Roadmap
@@ -592,7 +600,7 @@ useSeoMeta({
           >
             <UBreadcrumb
               :items="[
-                { label: 'DevOps', icon: 'i-lucide-home', to: '/' },
+                { label: 'Full Stack', icon: 'i-lucide-home', to: '/fullstack' },
                 { label: formatPhaseName(phase) },
                 { label: formatTopicName(topic) },
                 { label: lesson.title }

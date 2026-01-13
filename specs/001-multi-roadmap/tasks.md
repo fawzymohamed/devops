@@ -28,12 +28,12 @@
 
 **Purpose**: Project initialization and data layer foundation
 
-- [ ] T001 Add Roadmap and MultiRoadmapProgress interfaces in app/data/types.ts
-- [ ] T002 Add RoadmapProgress and GlobalSettings interfaces in app/data/types.ts
-- [ ] T003 [P] Update roadmap.ts exports to use `devopsPhases` naming in app/data/roadmap.ts
-- [ ] T004 [P] Create Full Stack roadmap data file in app/data/fullstack-roadmap.ts (convert from dev-plans/fullstack-interview-roadmap.md)
-- [ ] T005 Create roadmap registry with both roadmaps in app/data/roadmaps.ts
-- [ ] T006 Run `npm run typecheck` to verify all type definitions compile
+- [X] T001 Add Roadmap and MultiRoadmapProgress interfaces in app/data/types.ts
+- [X] T002 Add RoadmapProgress and GlobalSettings interfaces in app/data/types.ts
+- [X] T003 [P] Update roadmap.ts exports to use `devopsPhases` naming in app/data/roadmap.ts
+- [X] T004 [P] Create Full Stack roadmap data file in app/data/fullstack-roadmap.ts (convert from dev-plans/fullstack-interview-roadmap.md)
+- [X] T005 Create roadmap registry with both roadmaps in app/data/roadmaps.ts
+- [X] T006 Run `npm run typecheck` to verify all type definitions compile
 
 ---
 
@@ -43,14 +43,14 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T007 Create useRoadmap composable with state and queries in app/composables/useRoadmap.ts
-- [ ] T008 Add getRoadmapBySlug and getRoadmapById helper functions in app/composables/useRoadmap.ts
-- [ ] T009 Add getContentPath and getRoutePath utility functions in app/composables/useRoadmap.ts
-- [ ] T010 Refactor useProgress to use MultiRoadmapProgress structure in app/composables/useProgress.ts
-- [ ] T011 Add progress data migration logic (v1 → v2) in app/composables/useProgress.ts
-- [ ] T012 Update all useProgress functions to accept roadmapId parameter in app/composables/useProgress.ts
-- [ ] T013 Add resetRoadmapProgress function for per-roadmap reset in app/composables/useProgress.ts
-- [ ] T014 Run `npm run typecheck` and verify localStorage migration works in browser
+- [X] T007 Create useRoadmap composable with state and queries in app/composables/useRoadmap.ts
+- [X] T008 Add getRoadmapBySlug and getRoadmapById helper functions in app/composables/useRoadmap.ts
+- [X] T009 Add getContentPath and getRoutePath utility functions in app/composables/useRoadmap.ts
+- [X] T010 Refactor useProgress to use MultiRoadmapProgress structure in app/composables/useProgress.ts
+- [X] T011 Add progress data migration logic (v1 → v2) in app/composables/useProgress.ts
+- [X] T012 Update all useProgress functions to accept roadmapId parameter in app/composables/useProgress.ts
+- [X] T013 Add resetRoadmapProgress function for per-roadmap reset in app/composables/useProgress.ts
+- [X] T014 Run `npm run typecheck` and verify localStorage migration works in browser
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -64,11 +64,11 @@
 
 ### Implementation for User Story 6
 
-- [ ] T015 [US6] Verify fullstack-roadmap.ts follows Phase interface structure in app/data/fullstack-roadmap.ts
-- [ ] T016 [US6] Add priorityLabels configuration for Full Stack roadmap in app/data/roadmaps.ts
-- [ ] T017 [US6] Compute and add stats (phaseCount, topicCount, subtopicCount, totalWeeks) for Full Stack roadmap in app/data/roadmaps.ts
-- [ ] T018 [US6] Create placeholder content directory structure in content/fullstack/ (empty folders for phase structure)
-- [ ] T019 [US6] Run `npm run typecheck` to verify Full Stack data compiles
+- [X] T015 [US6] Verify fullstack-roadmap.ts follows Phase interface structure in app/data/fullstack-roadmap.ts
+- [X] T016 [US6] Add priorityLabels configuration for Full Stack roadmap in app/data/roadmaps.ts
+- [X] T017 [US6] Compute and add stats (phaseCount, topicCount, subtopicCount, totalWeeks) for Full Stack roadmap in app/data/roadmaps.ts
+- [X] T018 [US6] Create placeholder content directory structure in content/fullstack/ (empty folders for phase structure)
+- [X] T019 [US6] Run `npm run typecheck` to verify Full Stack data compiles
 
 **Checkpoint**: Full Stack roadmap data is complete and type-safe
 
@@ -82,14 +82,14 @@
 
 ### Implementation for User Story 1
 
-- [ ] T020 [P] [US1] Create RoadmapCard component with props interface in app/components/RoadmapCard.vue
-- [ ] T021 [P] [US1] Style RoadmapCard with UCard, progress ring, and stats grid in app/components/RoadmapCard.vue
-- [ ] T022 [US1] Add click handler and navigation to roadmap on RoadmapCard in app/components/RoadmapCard.vue
-- [ ] T023 [US1] Redesign index.vue to show roadmap selection above DevOps phases in app/pages/index.vue
-- [ ] T024 [US1] Integrate RoadmapCard components for both roadmaps in app/pages/index.vue
-- [ ] T025 [US1] Add progress percentage calculation per roadmap on landing page in app/pages/index.vue
-- [ ] T026 [US1] Ensure DevOps phases section remains below roadmap selection in app/pages/index.vue
-- [ ] T027 [US1] Run `npm run dev` and verify landing page shows both roadmap cards
+- [X] T020 [P] [US1] Create RoadmapCard component with props interface in app/components/RoadmapCard.vue
+- [X] T021 [P] [US1] Style RoadmapCard with UCard, progress ring, and stats grid in app/components/RoadmapCard.vue
+- [X] T022 [US1] Add click handler and navigation to roadmap on RoadmapCard in app/components/RoadmapCard.vue
+- [X] T023 [US1] Redesign index.vue to show roadmap selection above DevOps phases in app/pages/index.vue
+- [X] T024 [US1] Integrate RoadmapCard components for both roadmaps in app/pages/index.vue
+- [X] T025 [US1] Add progress percentage calculation per roadmap on landing page in app/pages/index.vue
+- [X] T026 [US1] Ensure DevOps phases section remains below roadmap selection in app/pages/index.vue
+- [X] T027 [US1] Run `npm run dev` and verify landing page shows both roadmap cards
 
 **Checkpoint**: Landing page displays roadmap selection with progress indicators
 
@@ -103,16 +103,16 @@
 
 ### Implementation for User Story 2
 
-- [ ] T028 [P] [US2] Create fullstack/index.vue page showing Full Stack roadmap phases in app/pages/fullstack/index.vue
-- [ ] T029 [P] [US2] Create fullstack/[phase]/[topic]/[subtopic].vue for Full Stack lessons in app/pages/fullstack/[phase]/[topic]/[subtopic].vue
-- [ ] T030 [P] [US2] Create RoadmapSwitcher component for header navigation in app/components/RoadmapSwitcher.vue
-- [ ] T031 [US2] Update PhaseCard to accept optional roadmapId prop in app/components/PhaseCard.vue
-- [ ] T032 [US2] Update TopicCard to accept optional roadmapId prop in app/components/TopicCard.vue
-- [ ] T033 [US2] Update breadcrumb generation to include roadmap name in lesson pages in app/pages/[phase]/[topic]/[subtopic].vue
-- [ ] T034 [US2] Update breadcrumb for Full Stack lessons in app/pages/fullstack/[phase]/[topic]/[subtopic].vue
-- [ ] T035 [US2] Add RoadmapSwitcher to default layout header in app/layouts/default.vue
-- [ ] T036 [US2] Add "Coming Soon" badge display for lessons without content in app/components/TopicCard.vue
-- [ ] T037 [US2] Run `npm run dev` and test navigation between roadmaps
+- [X] T028 [P] [US2] Create fullstack/index.vue page showing Full Stack roadmap phases in app/pages/fullstack/index.vue
+- [X] T029 [P] [US2] Create fullstack/[phase]/[topic]/[subtopic].vue for Full Stack lessons in app/pages/fullstack/[phase]/[topic]/[subtopic].vue
+- [X] T030 [P] [US2] Create RoadmapSwitcher component for header navigation in app/components/RoadmapSwitcher.vue
+- [X] T031 [US2] Update PhaseCard to accept optional roadmapId prop in app/components/PhaseCard.vue
+- [X] T032 [US2] Update TopicCard to accept optional roadmapId prop in app/components/TopicCard.vue
+- [X] T033 [US2] Update breadcrumb generation to include roadmap name in lesson pages in app/pages/[phase]/[topic]/[subtopic].vue
+- [X] T034 [US2] Update breadcrumb for Full Stack lessons in app/pages/fullstack/[phase]/[topic]/[subtopic].vue
+- [X] T035 [US2] Add RoadmapSwitcher to default layout header in app/layouts/default.vue
+- [X] T036 [US2] Add "Coming Soon" badge display for lessons without content in app/components/TopicCard.vue
+- [X] T037 [US2] Run `npm run dev` and test navigation between roadmaps
 
 **Checkpoint**: Full navigation works for both roadmaps with proper breadcrumbs
 
@@ -126,13 +126,13 @@
 
 ### Implementation for User Story 3
 
-- [ ] T038 [US3] Update markComplete calls to include roadmapId in DevOps lesson page in app/pages/[phase]/[topic]/[subtopic].vue
-- [ ] T039 [US3] Add markComplete calls with roadmapId in Full Stack lesson page in app/pages/fullstack/[phase]/[topic]/[subtopic].vue
-- [ ] T040 [US3] Update PhaseCard progress queries to use roadmapId in app/components/PhaseCard.vue
-- [ ] T041 [US3] Update TopicCard completion checks to use roadmapId in app/components/TopicCard.vue
-- [ ] T042 [US3] Update OverallProgress component to accept and use roadmapId prop in app/components/progress/OverallProgress.vue
-- [ ] T043 [US3] Verify export/import preserves progress for both roadmaps in app/composables/useProgress.ts
-- [ ] T044 [US3] Test progress isolation between roadmaps in browser
+- [X] T038 [US3] Update markComplete calls to include roadmapId in DevOps lesson page in app/pages/[phase]/[topic]/[subtopic].vue
+- [X] T039 [US3] Add markComplete calls with roadmapId in Full Stack lesson page in app/pages/fullstack/[phase]/[topic]/[subtopic].vue
+- [X] T040 [US3] Update PhaseCard progress queries to use roadmapId in app/components/PhaseCard.vue
+- [X] T041 [US3] Update TopicCard completion checks to use roadmapId in app/components/TopicCard.vue
+- [X] T042 [US3] Update OverallProgress component to accept and use roadmapId prop in app/components/progress/OverallProgress.vue
+- [X] T043 [US3] Verify export/import preserves progress for both roadmaps in app/composables/useProgress.ts
+- [X] T044 [US3] Test progress isolation between roadmaps in browser
 
 **Checkpoint**: Progress is correctly isolated per roadmap
 
@@ -146,13 +146,13 @@
 
 ### Implementation for User Story 5
 
-- [ ] T045 [US5] Redesign progress.vue to show multi-roadmap overview in app/pages/progress.vue
-- [ ] T046 [US5] Add roadmap summary cards with stats grid in app/pages/progress.vue
-- [ ] T047 [US5] Add per-roadmap Resume Learning button in app/pages/progress.vue
-- [ ] T048 [US5] Update PhaseProgress component to accept roadmapId prop in app/components/progress/PhaseProgress.vue
-- [ ] T049 [US5] Add roadmap filter query parameter support in app/pages/progress.vue
-- [ ] T050 [US5] Add drill-down view to show phase-by-phase breakdown per roadmap in app/pages/progress.vue
-- [ ] T051 [US5] Run `npm run dev` and test progress dashboard
+- [X] T045 [US5] Redesign progress.vue to show multi-roadmap overview in app/pages/progress.vue
+- [X] T046 [US5] Add roadmap summary cards with stats grid in app/pages/progress.vue
+- [X] T047 [US5] Add per-roadmap Resume Learning button in app/pages/progress.vue
+- [X] T048 [US5] Update PhaseProgress component to accept roadmapId prop in app/components/progress/PhaseProgress.vue
+- [X] T049 [US5] Add roadmap filter query parameter support in app/pages/progress.vue
+- [X] T050 [US5] Add drill-down view to show phase-by-phase breakdown per roadmap in app/pages/progress.vue
+- [X] T051 [US5] Run `npm run dev` and test progress dashboard
 
 **Checkpoint**: Progress dashboard shows comprehensive multi-roadmap view
 
@@ -166,13 +166,13 @@
 
 ### Implementation for User Story 4
 
-- [ ] T052 [US4] Update useCertificate to accept roadmapId parameter in app/composables/useCertificate.ts
-- [ ] T053 [US4] Update certificate ID format to include roadmap identifier in app/composables/useCertificate.ts
-- [ ] T054 [US4] Update generateCourseCertificate to use roadmap.certificateTitle in app/composables/useCertificate.ts
-- [ ] T055 [US4] Update certificate.vue to handle roadmap query parameter in app/pages/certificate.vue
-- [ ] T056 [US4] Add roadmap selection UI if no roadmap specified in app/pages/certificate.vue
-- [ ] T057 [US4] Update canGenerateCertificate calls to include roadmapId in app/pages/certificate.vue
-- [ ] T058 [US4] Test certificate generation for both roadmaps
+- [X] T052 [US4] Update useCertificate to accept roadmapId parameter in app/composables/useCertificate.ts
+- [X] T053 [US4] Update certificate ID format to include roadmap identifier in app/composables/useCertificate.ts
+- [X] T054 [US4] Update generateCourseCertificate to use roadmap.certificateTitle in app/composables/useCertificate.ts
+- [X] T055 [US4] Update certificate.vue to handle roadmap query parameter in app/pages/certificate.vue
+- [X] T056 [US4] Add roadmap selection UI if no roadmap specified in app/pages/certificate.vue
+- [X] T057 [US4] Update canGenerateCertificate calls to include roadmapId in app/pages/certificate.vue
+- [X] T058 [US4] Test certificate generation for both roadmaps
 
 **Checkpoint**: Certificates are roadmap-specific with correct branding
 
@@ -182,14 +182,14 @@
 
 **Purpose**: Improvements that affect multiple user stories and final validation
 
-- [ ] T059 [P] Run `npm run lint` and fix any linting errors
+- [X] T059 [P] Run `npm run lint` and fix any linting errors
 - [ ] T060 [P] Run `npm run typecheck` and fix any type errors
-- [ ] T061 [P] Run `npm run build` to verify production build succeeds
+- [X] T061 [P] Run `npm run build` to verify production build succeeds
 - [ ] T062 Verify DevOps URLs still work without changes (backward compatibility)
 - [ ] T063 Verify Full Stack URLs work with /fullstack prefix
 - [ ] T064 Test localStorage migration with existing DevOps progress data
-- [ ] T065 Verify static generation works with `npm run generate`
-- [ ] T066 Update CLAUDE.md to document multi-roadmap architecture
+- [X] T065 Verify static generation works with `npm run generate`
+- [X] T066 Update CLAUDE.md to document multi-roadmap architecture
 - [ ] T067 Final walkthrough: test all user stories end-to-end
 
 ---

@@ -36,10 +36,10 @@
 /**
  * Data Imports
  * ------------
- * - roadmapData: Complete array of phases for calculating statistics
+ * - devopsPhases: Complete array of phases for calculating statistics
  * - totalDuration: Pre-calculated duration string (e.g., "24 weeks")
  */
-import { roadmapData, totalDuration } from '~/data/roadmap'
+import { devopsPhases, totalDuration } from '~/data/roadmap'
 
 // =============================================================================
 // PROGRESS TRACKING
@@ -51,26 +51,37 @@ const {
   getCertificateProgress,
   getResumeLearningData
 } = useProgress()
+const { getRoutePath } = useRoadmap()
+const roadmapId = 'devops'
 
 /**
  * Number of completed lessons
  */
-const completedLessons = computed(() => getCompletedCount())
+const completedLessons = computed(() => getCompletedCount(roadmapId))
 
 /**
  * Total number of lessons from roadmap
  */
-const totalLessons = computed(() => getTotalLessonCount())
+const totalLessons = computed(() => getTotalLessonCount(roadmapId))
 
 /**
  * Overall completion percentage
  */
-const completionPercentage = computed(() => getCertificateProgress())
+const completionPercentage = computed(() => getCertificateProgress(roadmapId))
 
 /**
  * Resume learning data (last accessed lesson)
  */
-const resumeData = computed(() => getResumeLearningData())
+const resumeData = computed(() => getResumeLearningData(roadmapId))
+const resumePath = computed(() => {
+  if (!resumeData.value) return null
+  return getRoutePath(
+    roadmapId,
+    resumeData.value.phaseId,
+    resumeData.value.topicId,
+    resumeData.value.subtopicId
+  )
+})
 
 /**
  * Whether user has any progress
@@ -93,13 +104,13 @@ const hasProgress = computed(() => completedLessons.value > 0)
  */
 const stats = computed(() => {
   // Count total number of phases
-  const totalPhases = roadmapData.length
+  const totalPhases = devopsPhases.length
 
   // Sum all topics across all phases
-  const totalTopics = roadmapData.reduce((acc, p) => acc + p.topics.length, 0)
+  const totalTopics = devopsPhases.reduce((acc, p) => acc + p.topics.length, 0)
 
   // Sum all subtopics (skills) across all topics in all phases
-  const totalSkills = roadmapData.reduce(
+  const totalSkills = devopsPhases.reduce(
     (acc, p) => acc + p.topics.reduce((a, t) => a + t.subtopics.length, 0),
     0
   )
@@ -107,7 +118,7 @@ const stats = computed(() => {
   // Find the certifications phase and count certification items
   // Looks for the phase with "Certifications" in the title
   // Then finds the topic with "Certification" in the name
-  const certPhase = roadmapData.find(p => p.title.includes('Certifications'))
+  const certPhase = devopsPhases.find(p => p.title.includes('Certifications'))
   const certTopic = certPhase?.topics.find(t => t.name.includes('Certification'))
   const totalCerts = certTopic?.subtopics.length || 0
 
@@ -149,7 +160,7 @@ const stats = computed(() => {
           <div class="flex justify-between mt-2 text-sm text-gray-500">
             <span>{{ completedLessons }} of {{ totalLessons }} lessons completed</span>
             <NuxtLink
-              to="/progress"
+              to="/progress?roadmap=devops"
               class="text-primary-500 hover:text-primary-400 cursor-pointer"
             >
               View Details &rarr;
@@ -159,8 +170,8 @@ const stats = computed(() => {
 
         <!-- Resume learning button -->
         <NuxtLink
-          v-if="resumeData"
-          :to="resumeData.path"
+          v-if="resumePath"
+          :to="resumePath"
         >
           <UButton
             color="primary"

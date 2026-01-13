@@ -45,10 +45,13 @@ interface Props {
   phase: Phase
   /** Whether the topic list is expanded */
   expanded?: boolean
+  /** Roadmap context for progress */
+  roadmapId?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  expanded: false
+  expanded: false,
+  roadmapId: 'devops'
 })
 
 /**
@@ -79,7 +82,7 @@ const {
  * Used for the progress ring display
  */
 const phaseCompletion = computed(() => {
-  return getPhaseCompletionPercentage(props.phase.slug)
+  return getPhaseCompletionPercentage(props.roadmapId, props.phase.slug)
 })
 
 /**
@@ -111,9 +114,9 @@ function getTopicSlug(topic: Phase['topics'][0]): string {
  */
 function getTopicStats(topic: Phase['topics'][0]) {
   const topicSlug = getTopicSlug(topic)
-  const completed = getCompletedCountForTopic(props.phase.slug, topicSlug)
-  const total = getTopicSubtopicCount(props.phase.slug, topicSlug)
-  const percentage = getTopicCompletionPercentage(props.phase.slug, topicSlug)
+  const completed = getCompletedCountForTopic(props.roadmapId, props.phase.slug, topicSlug)
+  const total = getTopicSubtopicCount(props.roadmapId, props.phase.slug, topicSlug)
+  const percentage = getTopicCompletionPercentage(props.roadmapId, props.phase.slug, topicSlug)
   return { completed, total, percentage }
 }
 </script>

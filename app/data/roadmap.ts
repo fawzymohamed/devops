@@ -120,7 +120,7 @@ export const priorityConfig = {
  *
  * Total Duration: Automatically calculated (currently 24 weeks)
  */
-export const roadmapData: Phase[] = [
+export const devopsPhases: Phase[] = [
   {
     phase: 1,
     title: 'Phase 1: Software Development Lifecycle (SDLC)',
@@ -645,14 +645,14 @@ export const roadmapData: Phase[] = [
  * Dynamically calculates the total duration by summing all phase durations.
  *
  * How it works:
- * 1. Iterates through all phases in roadmapData
+ * 1. Iterates through all phases in devopsPhases
  * 2. Uses regex to extract numeric week values (matches "X week" or "X weeks")
  * 3. Sums up all valid week durations
  * 4. Ignores non-week durations like "Ongoing"
  *
  * This ensures the total automatically updates when phase durations change.
  */
-export const totalWeeks = roadmapData.reduce((total, phase) => {
+export const totalWeeks = devopsPhases.reduce((total, phase) => {
   // Regex pattern: matches "1 week", "2 weeks", "10 weeks", etc.
   const match = phase.duration.match(/^(\d+)\s*weeks?$/i)
   if (match) {

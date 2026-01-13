@@ -42,6 +42,7 @@ import type { PhaseCertificateStatus } from '~/data/types'
  */
 const props = defineProps<{
   status: PhaseCertificateStatus
+  roadmapId?: string
 }>()
 
 /**
@@ -58,6 +59,7 @@ const emit = defineEmits<{
 // =============================================================================
 
 const { getResumeLearningData } = useProgress()
+const { getRoutePath } = useRoadmap()
 
 // =============================================================================
 // COMPUTED PROPERTIES
@@ -102,16 +104,21 @@ const formattedDate = computed(() => {
  * Returns path to first incomplete lesson
  */
 const resumeLearningPath = computed(() => {
-  const resumeData = getResumeLearningData()
+  const resumeData = getResumeLearningData(props.roadmapId ?? 'devops')
   if (!resumeData) return null
 
   // Check if resume path is in current phase
   if (resumeData.phaseId === props.status.phaseSlug) {
-    return resumeData.path
+    return getRoutePath(
+      props.roadmapId ?? 'devops',
+      resumeData.phaseId,
+      resumeData.topicId,
+      resumeData.subtopicId
+    )
   }
 
   // Default: navigate to phase page
-  return `/${props.status.phaseSlug}`
+  return getRoutePath(props.roadmapId ?? 'devops', props.status.phaseSlug)
 })
 </script>
 
