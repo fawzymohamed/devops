@@ -177,10 +177,11 @@ export function useCertificate() {
 
     try {
       // Dynamic imports for client-side only libraries
-      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+      const [{ default: _html2canvas }, { default: jsPDF }] = await Promise.all([
         import('html2canvas'),
         import('jspdf')
       ])
+      // Note: _html2canvas imported for future use if canvas-based approach is needed
 
       // Create a simple canvas drawing approach to avoid CSS parsing issues
       // Get certificate text content

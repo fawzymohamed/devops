@@ -179,7 +179,8 @@ export function resetPhaseProgress(phaseId: number = 1) {
     if (existingData) {
       const progressData: ProgressData = JSON.parse(existingData)
       if (progressData.phases[phaseId]) {
-        delete progressData.phases[phaseId]
+        const { [phaseId]: _removed, ...remainingPhases } = progressData.phases
+        progressData.phases = remainingPhases
         localStorage.setItem(progressKey, JSON.stringify(progressData))
         console.log(`✓ Reset Phase ${phaseId} progress`)
         return true
