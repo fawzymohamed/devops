@@ -150,15 +150,19 @@ export function useCertificate() {
     // Handle both HTMLElement and CertificateData inputs
     let element: HTMLElement | null = null
     let userName = 'DevOps Learner'
+    let certificateId = ''
 
     if (data instanceof HTMLElement) {
       // Direct element reference
       element = data
+      // Generate certificate ID from the element's data attributes
+      certificateId = element.getAttribute('data-certificate-id') || generateCertificateId()
     } else {
       // Legacy: Find element by ID
       if (typeof window === 'undefined') return null
       element = document.getElementById('certificate-preview')
       userName = data.userName
+      certificateId = generateCertificateId()
     }
 
     if (!element) {
@@ -178,13 +182,47 @@ export function useCertificate() {
         import('jspdf')
       ])
 
-      // Render to canvas with high quality
-      const canvas = await html2canvas(element, {
-        scale: 2, // Higher resolution
-        backgroundColor: '#1f2937', // gray-800
-        logging: false,
-        useCORS: true
-      })
+      // Create a simple canvas drawing approach to avoid CSS parsing issues
+      // Get certificate text content
+      const canvasElement = document.createElement('canvas')
+      const ctx = canvasElement.getContext('2d')
+      if (!ctx) {
+        throw new Error('Failed to get canvas context')
+      }
+
+      // Set canvas dimensions (A4 landscape in pixels at 96 DPI)
+      const dpi = 96
+      const pdfWidth = 297 // mm
+      const pdfHeight = 210 // mm
+      canvasElement.width = (pdfWidth * dpi) / 25.4
+      canvasElement.height = (pdfHeight * dpi) / 25.4
+
+      // Draw background
+      ctx.fillStyle = '#1f2937'
+      ctx.fillRect(0, 0, canvasElement.width, canvasElement.height)
+
+      // Draw certificate content
+      ctx.fillStyle = '#ffffff'
+      ctx.font = 'bold 48px Arial'
+      ctx.textAlign = 'center'
+      ctx.fillText('Certificate of Completion', canvasElement.width / 2, 100)
+
+      ctx.font = '24px Arial'
+      ctx.fillStyle = '#d4af37'
+      ctx.fillText('DevOps Learning Management System', canvasElement.width / 2, 150)
+
+      ctx.font = '20px Arial'
+      ctx.fillStyle = '#ffffff'
+      ctx.fillText(`This certifies that ${userName}`, canvasElement.width / 2, 250)
+      ctx.fillText('has successfully completed', canvasElement.width / 2, 290)
+      ctx.fillText('Phase 1: Software Development Lifecycle (SDLC)', canvasElement.width / 2, 330)
+
+      ctx.font = '16px Arial'
+      ctx.fillStyle = '#999999'
+      ctx.fillText(`Completed on: ${new Date().toLocaleDateString()}`, canvasElement.width / 2, 450)
+      ctx.fillText(`Certificate ID: ${certificateId}`, canvasElement.width / 2, 490)
+
+      const canvas = canvasElement
 
       // Convert to PDF (A4 landscape)
       const imgData = canvas.toDataURL('image/png')
@@ -194,9 +232,7 @@ export function useCertificate() {
         format: 'a4'
       })
 
-      // Calculate dimensions to fit A4
-      const pdfWidth = 297 // A4 landscape width in mm
-      const pdfHeight = 210 // A4 landscape height in mm
+      // Use existing pdfWidth and pdfHeight defined above
       const imgWidth = pdfWidth
       const imgHeight = (canvas.height * pdfWidth) / canvas.width
 

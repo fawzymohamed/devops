@@ -34,6 +34,8 @@ npm run lint      # Run ESLint
 npm run typecheck # Run TypeScript checks
 ```
 
+**Dev Server URL**: `http://localhost:5000/devops/` - Port 5000 is the ONLY valid development port. Do NOT use any other ports.
+
 ## Architecture
 
 ### Directory Structure

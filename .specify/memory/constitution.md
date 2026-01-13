@@ -2,15 +2,12 @@
 ================================================================================
 SYNC IMPACT REPORT
 ================================================================================
-Version Change: 1.1.0 → 1.2.0 (MINOR - Section materially expanded)
+Version Change: 1.2.0 → 1.2.1 (PATCH - Clarification added)
 
 Modified Principles: None
 
 Added Sections:
-  - Tooling Reference (comprehensive guide to all skills, commands, and agents)
-    - Commands Reference (8 project commands)
-    - Skills Reference (7 knowledge skills)
-    - Agents Reference (1 autonomous agent)
+  - Development Server Configuration (under Technology Standards)
 
 Removed Sections: None
 
@@ -164,6 +161,11 @@ and produce consistent, high-quality output.
 - Static generation: `npm run generate`
 - GitHub Pages with `baseURL: '/devops/'`
 - GitHub Actions workflow in `.github/workflows/deploy.yml`
+
+**Development Server Configuration:**
+- Dev server URL: `http://localhost:5000/devops/`
+- Port 5000 is the ONLY valid development port
+- Do NOT attempt to run the dev server on any other ports
 
 ## Tooling Reference
 
@@ -334,4 +336,4 @@ This Constitution supersedes all other development practices for the DevOps LMS 
 - MINOR: New principle added, section materially expanded
 - PATCH: Clarifications, wording improvements, non-semantic refinements
 
-**Version**: 1.2.0 | **Ratified**: 2026-01-12 | **Last Amended**: 2026-01-12
+**Version**: 1.2.1 | **Ratified**: 2026-01-12 | **Last Amended**: 2026-01-13
