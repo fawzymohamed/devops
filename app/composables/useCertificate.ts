@@ -17,7 +17,8 @@
  * ```
  */
 
-import type { CertificateData } from '~/data/types'
+import type { CertificateData, PhaseCertificateData, CourseCertificateData, PhaseCertificateStatus } from '~/data/types'
+import { roadmapData } from '~/data/roadmap'
 
 // =============================================================================
 // COMPOSABLE
@@ -47,6 +48,29 @@ export function useCertificate() {
     const timestamp = Date.now().toString(36).toUpperCase()
     const random = Math.random().toString(36).substring(2, 8).toUpperCase()
     return `DEVOPS-${timestamp}-${random}`
+  }
+
+  /**
+   * Generate a phase-specific certificate ID
+   * Format: DEVOPS-P{phaseNumber}-{timestamp}-{random}
+   * @param phaseNumber - Phase number (1-10)
+   * @returns Unique phase certificate identifier string
+   */
+  function generatePhaseCertificateId(phaseNumber: number): string {
+    const timestamp = Date.now().toString(36).toUpperCase()
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase()
+    return `DEVOPS-P${phaseNumber}-${timestamp}-${random}`
+  }
+
+  /**
+   * Generate a course completion certificate ID
+   * Format: DEVOPS-MASTER-{timestamp}-{random}
+   * @returns Unique course certificate identifier string
+   */
+  function generateCourseCertificateId(): string {
+    const timestamp = Date.now().toString(36).toUpperCase()
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase()
+    return `DEVOPS-MASTER-${timestamp}-${random}`
   }
 
   // ---------------------------------------------------------------------------
@@ -168,20 +192,39 @@ export function useCertificate() {
 
   /**
    * Generate and download certificate as PDF
-   * @param data - Certificate data
+   * Supports phase-specific and course completion certificates
+   * @param data - Certificate data (any certificate type)
+   * @param certificateType - Type of certificate ('phase' | 'course' | 'legacy')
    */
-  async function downloadCertificate(data: CertificateData): Promise<void> {
-    const blob = await generatePDF(data)
+  async function downloadCertificate(
+    data: CertificateData | PhaseCertificateData | CourseCertificateData,
+    certificateType: 'phase' | 'course' | 'legacy' = 'legacy'
+  ): Promise<void> {
+    const blob = await generatePDF(data as CertificateData)
 
     if (!blob) {
       return
+    }
+
+    // Determine filename based on certificate type
+    let filename: string
+
+    if (certificateType === 'phase' && 'phaseNumber' in data) {
+      // Phase certificate: DevOps-Phase{num}-Certificate-{ID}.pdf
+      filename = `DevOps-Phase${data.phaseNumber}-Certificate-${data.certificateId}.pdf`
+    } else if (certificateType === 'course') {
+      // Course certificate: DevOps-Master-Certificate-{ID}.pdf
+      filename = `DevOps-Master-Certificate-${data.certificateId}.pdf`
+    } else {
+      // Legacy format: DevOps-Certificate-{ID}.pdf
+      filename = `DevOps-Certificate-${data.certificateId}.pdf`
     }
 
     // Create download link
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `DevOps-Certificate-${data.certificateId}.pdf`
+    link.download = filename
 
     // Trigger download
     document.body.appendChild(link)
@@ -222,6 +265,251 @@ export function useCertificate() {
   }
 
   // ---------------------------------------------------------------------------
+  // Phase Certificate Functions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Build phase certificate data for a completed phase
+   * @param phaseSlug - Phase slug (e.g., "phase-1-sdlc")
+   * @returns PhaseCertificateData or null if phase not found or incomplete
+   */
+  function buildPhaseCertificateData(phaseSlug: string): PhaseCertificateData | null {
+    // Get progress composable
+    const {
+      progress,
+      getCompletedCountForPhase,
+      getPhaseSubtopicCount
+    } = useProgress()
+
+    // Find phase in roadmap data
+    const phase = roadmapData.find(p => p.slug === phaseSlug)
+    if (!phase) {
+      console.warn(`Phase not found: ${phaseSlug}`)
+      return null
+    }
+
+    // Check if phase is complete
+    const totalLessons = getPhaseSubtopicCount(phaseSlug)
+    const completedLessons = getCompletedCountForPhase(phaseSlug)
+
+    if (completedLessons < totalLessons) {
+      console.warn(`Phase ${phaseSlug} is not complete: ${completedLessons}/${totalLessons}`)
+      return null
+    }
+
+    // Get user name
+    const userName = progress.value.userName
+    if (!userName) {
+      console.warn('User name not set - cannot generate certificate')
+      return null
+    }
+
+    // Calculate phase-specific metrics
+    const averageQuizScore = getPhaseQuizAverage(phaseSlug)
+    const hoursSpent = getPhaseHoursSpent(phaseSlug)
+
+    return {
+      certificateId: generatePhaseCertificateId(phase.phase),
+      userName,
+      completionDate: new Date().toISOString(),
+      phaseNumber: phase.phase,
+      phaseName: phase.title.replace(/^Phase \d+:\s*/, ''), // Remove "Phase X: " prefix
+      phaseSlug,
+      lessonsCompleted: completedLessons,
+      totalLessons,
+      averageQuizScore,
+      hoursSpent
+    }
+  }
+
+  /**
+   * Build course completion certificate data
+   * @returns CourseCertificateData or null if course not complete
+   */
+  function buildCourseCertificateData(): CourseCertificateData | null {
+    // Get progress composable
+    const {
+      progress,
+      getCompletedCount,
+      getTotalLessonCount,
+      getTotalTimeSpentHours,
+      getAverageQuizScore
+    } = useProgress()
+
+    // Check if all lessons are complete
+    const totalLessons = getTotalLessonCount()
+    const completedLessons = getCompletedCount()
+
+    if (completedLessons < totalLessons) {
+      console.warn(`Course is not complete: ${completedLessons}/${totalLessons}`)
+      return null
+    }
+
+    // Get user name
+    const userName = progress.value.userName
+    if (!userName) {
+      console.warn('User name not set - cannot generate certificate')
+      return null
+    }
+
+    // Collect phase completion dates
+    const phaseCompletionDates: string[] = []
+    for (const phase of roadmapData) {
+      // Find the latest completion date among all subtopics in the phase
+      let latestDate: Date | null = null
+
+      const phaseProgress = progress.value.phases[phase.slug]
+      if (phaseProgress) {
+        for (const topic of Object.values(phaseProgress.topics)) {
+          for (const subtopic of Object.values(topic.subtopics)) {
+            if (subtopic.completedAt) {
+              const date = new Date(subtopic.completedAt)
+              if (!latestDate || date > latestDate) {
+                latestDate = date
+              }
+            }
+          }
+        }
+      }
+
+      phaseCompletionDates.push(latestDate?.toISOString() ?? new Date().toISOString())
+    }
+
+    return {
+      certificateId: generateCourseCertificateId(),
+      userName,
+      completionDate: new Date().toISOString(),
+      totalLessonsCompleted: completedLessons,
+      totalHoursSpent: getTotalTimeSpentHours(),
+      overallQuizScore: getAverageQuizScore(),
+      phaseCompletionDates
+    }
+  }
+
+  /**
+   * Get certificate statuses for all phases
+   * @returns Array of PhaseCertificateStatus objects
+   */
+  function getPhaseCertificateStatuses(): PhaseCertificateStatus[] {
+    // Get progress composable
+    const {
+      getCompletedCountForPhase,
+      getPhaseSubtopicCount,
+      getPhaseCompletionPercentage,
+      progress
+    } = useProgress()
+
+    return roadmapData.map(phase => {
+      const completedLessons = getCompletedCountForPhase(phase.slug)
+      const totalLessons = getPhaseSubtopicCount(phase.slug)
+      const completionPercentage = getPhaseCompletionPercentage(phase.slug)
+
+      // Find completion date (latest subtopic completion in phase)
+      let completedAt: string | undefined
+      if (completionPercentage === 100) {
+        const phaseProgress = progress.value.phases[phase.slug]
+        if (phaseProgress) {
+          let latestDate: Date | null = null
+          for (const topic of Object.values(phaseProgress.topics)) {
+            for (const subtopic of Object.values(topic.subtopics)) {
+              if (subtopic.completedAt) {
+                const date = new Date(subtopic.completedAt)
+                if (!latestDate || date > latestDate) {
+                  latestDate = date
+                }
+              }
+            }
+          }
+          completedAt = latestDate?.toISOString()
+        }
+      }
+
+      // Determine status
+      const status: 'locked' | 'unlocked' | 'downloaded' = completionPercentage === 100 ? 'unlocked' : 'locked'
+
+      return {
+        phaseNumber: phase.phase,
+        phaseName: phase.title.replace(/^Phase \d+:\s*/, ''),
+        phaseSlug: phase.slug,
+        status,
+        completionPercentage,
+        lessonsCompleted: completedLessons,
+        totalLessons,
+        completedAt
+      }
+    })
+  }
+
+  /**
+   * Check if a phase certificate can be unlocked
+   * @param phaseSlug - Phase slug (e.g., "phase-1-sdlc")
+   * @returns Boolean indicating if phase is 100% complete
+   */
+  function canUnlockPhaseCertificate(phaseSlug: string): boolean {
+    const { getPhaseCompletionPercentage } = useProgress()
+    return getPhaseCompletionPercentage(phaseSlug) === 100
+  }
+
+  /**
+   * Check if course certificate can be unlocked
+   * @returns Boolean indicating if all phases are 100% complete
+   */
+  function canUnlockCourseCertificate(): boolean {
+    const { canGenerateCertificate } = useProgress()
+    return canGenerateCertificate()
+  }
+
+  /**
+   * Get average quiz score for a specific phase
+   * @param phaseSlug - Phase slug (e.g., "phase-1-sdlc")
+   * @returns Average quiz score (0-100) or 0 if no quizzes
+   */
+  function getPhaseQuizAverage(phaseSlug: string): number {
+    const { progress } = useProgress()
+
+    const phaseProgress = progress.value.phases[phaseSlug]
+    if (!phaseProgress) return 0
+
+    let totalScore = 0
+    let quizCount = 0
+
+    for (const topic of Object.values(phaseProgress.topics)) {
+      for (const subtopic of Object.values(topic.subtopics)) {
+        if (subtopic.quizScore !== null) {
+          totalScore += subtopic.quizScore
+          quizCount++
+        }
+      }
+    }
+
+    return quizCount > 0 ? Math.round(totalScore / quizCount) : 0
+  }
+
+  /**
+   * Get hours spent on a specific phase
+   * @param phaseSlug - Phase slug (e.g., "phase-1-sdlc")
+   * @returns Hours spent on the phase (derived from lesson count * 15 min avg)
+   */
+  function getPhaseHoursSpent(phaseSlug: string): number {
+    const { progress } = useProgress()
+
+    const phaseProgress = progress.value.phases[phaseSlug]
+    if (!phaseProgress) return 0
+
+    // Count completed lessons
+    let completedCount = 0
+    for (const topic of Object.values(phaseProgress.topics)) {
+      for (const subtopic of Object.values(topic.subtopics)) {
+        if (subtopic.completed) completedCount++
+      }
+    }
+
+    // Use average of 15 minutes per lesson (same as calculateTotalHours)
+    const totalMinutes = completedCount * 15
+    return Math.round((totalMinutes / 60) * 10) / 10
+  }
+
+  // ---------------------------------------------------------------------------
   // Return Public API
   // ---------------------------------------------------------------------------
 
@@ -232,6 +520,8 @@ export function useCertificate() {
 
     // ID & calculations
     generateCertificateId,
+    generatePhaseCertificateId,
+    generateCourseCertificateId,
     calculateTotalHours,
     formatHours,
     formatCertificateDate,
@@ -240,7 +530,16 @@ export function useCertificate() {
     generatePDF,
     downloadCertificate,
 
-    // Data builder
-    buildCertificateData
+    // Data builders
+    buildCertificateData,
+    buildPhaseCertificateData,
+    buildCourseCertificateData,
+
+    // Phase certificate functions
+    getPhaseCertificateStatuses,
+    canUnlockPhaseCertificate,
+    canUnlockCourseCertificate,
+    getPhaseQuizAverage,
+    getPhaseHoursSpent
   }
 }

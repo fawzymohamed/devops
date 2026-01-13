@@ -46,33 +46,33 @@
 
 > Dependencies: Phase 1 (type definitions)
 
-- [ ] [T008] [P1] [US1] Add `buildPhaseCertificateData(phaseSlug: string)` to `app/composables/useCertificate.ts`
+- [X] [T008] [P1] [US1] Add `buildPhaseCertificateData(phaseSlug: string)` to `app/composables/useCertificate.ts`
   - Returns `PhaseCertificateData` for a completed phase
   - Generates certificate ID format: `DEVOPS-P{num}-{timestamp}-{random}`
   - Pulls data from useProgress composable
 
-- [ ] [T009] [P1] [US5] Add `buildCourseCertificateData()` to `app/composables/useCertificate.ts`
+- [X] [T009] [P1] [US5] Add `buildCourseCertificateData()` to `app/composables/useCertificate.ts`
   - Returns `CourseCertificateData` when all 527 lessons complete
   - Generates certificate ID format: `DEVOPS-MASTER-{timestamp}-{random}`
   - Aggregates data across all phases
 
-- [ ] [T010] [P1] [US4] Add `getPhaseCertificateStatuses()` to `app/composables/useCertificate.ts`
+- [X] [T010] [P1] [US4] Add `getPhaseCertificateStatuses()` to `app/composables/useCertificate.ts`
   - Returns `PhaseCertificateStatus[]` for all 10 phases
   - Maps phase completion from useProgress to certificate status
 
-- [ ] [T011] [P1] [US1] Add `canUnlockPhaseCertificate(phaseSlug: string)` to `app/composables/useCertificate.ts`
+- [X] [T011] [P1] [US1] Add `canUnlockPhaseCertificate(phaseSlug: string)` to `app/composables/useCertificate.ts`
   - Returns boolean (true when phase is 100% complete)
 
-- [ ] [T012] [P1] [US5] Add `canUnlockCourseCertificate()` to `app/composables/useCertificate.ts`
+- [X] [T012] [P1] [US5] Add `canUnlockCourseCertificate()` to `app/composables/useCertificate.ts`
   - Returns boolean (true when all 10 phases are 100% complete)
 
-- [ ] [T013] [P2] [US1] Add `getPhaseQuizAverage(phaseSlug: string)` to `app/composables/useCertificate.ts`
+- [X] [T013] [P2] [US1] Add `getPhaseQuizAverage(phaseSlug: string)` to `app/composables/useCertificate.ts`
   - Returns average quiz score (0-100) for a specific phase
 
-- [ ] [T014] [P2] [US1] Add `getPhaseHoursSpent(phaseSlug: string)` to `app/composables/useCertificate.ts`
+- [X] [T014] [P2] [US1] Add `getPhaseHoursSpent(phaseSlug: string)` to `app/composables/useCertificate.ts`
   - Returns hours spent on a specific phase (derived from lesson time)
 
-- [ ] [T015] [P2] [US2] Modify `downloadCertificate()` to support phase-specific filenames
+- [X] [T015] [P2] [US2] Modify `downloadCertificate()` to support phase-specific filenames
   - Phase: `DevOps-Phase{num}-Certificate-{ID}.pdf`
   - Course: `DevOps-Master-Certificate-{ID}.pdf`
 
