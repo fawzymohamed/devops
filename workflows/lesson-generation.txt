@@ -1,0 +1,35 @@
+/project-status
+
+Spawn a lesson-creator agent to create the lesson for:
+phase-1-core-web-fundamentals/javascript-fundamentals/Data Types (primitives, objects, type coercion)
+============================
+
+Spawn a lesson-creator agent to create all lessons for Phase 1, 'javascript-fundamentals'
+Include: 'Functions (declarations, expressions, arrow functions)',
+          'Arrays & Objects (methods, destructuring, spread operator)',
+          'Control Flow (conditionals, loops, ternary operator)',
+          'ES6+ Features (template literals, default parameters, rest operator)'
+============================
+
+/test-feature content/2.phase-2-foundations/3.version-control
+
+/review content/2.phase-2-foundations/3.version-control
+
+test the newly created lessons in browser
+
+Mark the new lessons as done in CLAUDE.md file
+
+============================
+
+/generate-cheat-sheet phase-2-foundations/git-version-control
+
+============================
+BUGS:
+
+All quizzes first question answer is #1
+
+============================
+
+Please suggest a one line short commit message that can describe the changes we have did.
+
+============================
