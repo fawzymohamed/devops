@@ -380,7 +380,7 @@ const value = computed(() => data.length) // Inline explanation
 ### Lesson Content Progress
 
 **DevOps Roadmap: 41/527 lessons created**
-**Full Stack Roadmap: 19/450+ lessons created**
+**Full Stack Roadmap: 25/450+ lessons created**
 
 ## DevOps Roadmap Progress
 
@@ -520,7 +520,8 @@ const value = computed(() => data.length) // Inline explanation
 
 ## Full Stack Roadmap Progress
 
-#### Phase 1: Core Web Fundamentals
+#### Phase 1: Core Web Fundamentals ✓
+25/25 lessons complete (4 topics)
 <details>
 <summary>HTML5 Essentials (6/6) ✓</summary>
 
@@ -559,14 +560,14 @@ const value = computed(() => data.length) // Inline explanation
 </details>
 
 <details>
-<summary>DOM Manipulation (0/6)</summary>
+<summary>DOM Manipulation (6/6) ✓</summary>
 
-- [ ] Selecting elements (querySelector, getElementById)
-- [ ] Modifying DOM (createElement, appendChild, remove)
-- [ ] Event handling (addEventListener, event delegation)
-- [ ] Event bubbling & capturing
-- [ ] DOM traversal (parentNode, children, siblings)
-- [ ] Performance considerations
+- [x] Selecting Elements (querySelector, getElementById)
+- [x] Modifying Content (innerHTML, textContent, classList)
+- [x] Event Handling (addEventListener, event delegation, bubbling)
+- [x] Creating Elements (createElement, appendChild, insertBefore)
+- [x] Traversing DOM (parentNode, children, siblings)
+- [x] Performance (DocumentFragment, requestAnimationFrame)
 
 </details>
 
