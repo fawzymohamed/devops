@@ -5,21 +5,22 @@ Spawn a lesson-creator agent to create the lesson for:
 phase-1-core-web-fundamentals/javascript-fundamentals/Data Types (primitives, objects, type coercion)
 ============================
 
-Spawn a lesson-creator agent to create all lessons for Phase 1, 'html5-essentials'
-Include: 'Semantic HTML (header, nav, main, article, section, aside, footer)',
-          'Forms & Validation (input types, required, pattern, novalidate)',
-          'Accessibility (ARIA roles, labels, keyboard navigation)',
-          'Meta Tags & SEO (viewport, description, Open Graph)',
-          'Web APIs (Geolocation, Web Storage, History API)',
-          'Canvas & SVG Basics'
-          
+Spawn a lesson-creator agent to create all lessons for Phase 1, 'css3-mastery'
+Include:  'Flexbox (justify-content, align-items, flex-wrap, gap)',
+          'CSS Grid (grid-template, fr units, auto-fit/auto-fill)',
+          'Responsive Design (media queries, mobile-first approach)',
+          'CSS Variables (custom properties, theming)',
+          'Animations & Transitions (keyframes, easing, transform)',
+          'Pseudo-classes & Pseudo-elements (:hover, :focus, ::before, ::after)',
+          'CSS Architecture (BEM, SMACSS concepts)'
+
 ============================
 
 /test-feature content/2.phase-2-foundations/3.version-control
 
 /review content/2.phase-2-foundations/3.version-control
 
-test the newly created lessons in browser
+Please test it on the browser. The dev server is already running on http://localhost:5000/
 
 Mark the new lessons as done in CLAUDE.md file
 
