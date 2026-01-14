@@ -1,14 +1,18 @@
 /project-status
+============================
 
 Spawn a lesson-creator agent to create the lesson for:
 phase-1-core-web-fundamentals/javascript-fundamentals/Data Types (primitives, objects, type coercion)
 ============================
 
-Spawn a lesson-creator agent to create all lessons for Phase 1, 'javascript-fundamentals'
-Include: 'Functions (declarations, expressions, arrow functions)',
-          'Arrays & Objects (methods, destructuring, spread operator)',
-          'Control Flow (conditionals, loops, ternary operator)',
-          'ES6+ Features (template literals, default parameters, rest operator)'
+Spawn a lesson-creator agent to create all lessons for Phase 1, 'html5-essentials'
+Include: 'Semantic HTML (header, nav, main, article, section, aside, footer)',
+          'Forms & Validation (input types, required, pattern, novalidate)',
+          'Accessibility (ARIA roles, labels, keyboard navigation)',
+          'Meta Tags & SEO (viewport, description, Open Graph)',
+          'Web APIs (Geolocation, Web Storage, History API)',
+          'Canvas & SVG Basics'
+          
 ============================
 
 /test-feature content/2.phase-2-foundations/3.version-control

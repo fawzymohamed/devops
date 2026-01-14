@@ -380,7 +380,7 @@ const value = computed(() => data.length) // Inline explanation
 ### Lesson Content Progress
 
 **DevOps Roadmap: 41/527 lessons created**
-**Full Stack Roadmap: 4/450+ lessons created**
+**Full Stack Roadmap: 12/450+ lessons created**
 
 ## DevOps Roadmap Progress
 
@@ -522,14 +522,14 @@ const value = computed(() => data.length) // Inline explanation
 
 #### Phase 1: Core Web Fundamentals
 <details>
-<summary>HTML5 Essentials (0/6)</summary>
+<summary>HTML5 Essentials (6/6) ✓</summary>
 
-- [ ] Semantic HTML5 elements
-- [ ] Forms and input types
-- [ ] HTML5 APIs (localStorage, sessionStorage)
-- [ ] Accessibility (ARIA, semantic structure)
-- [ ] SEO basics (meta tags, structured data)
-- [ ] HTML best practices
+- [x] Semantic HTML5 elements
+- [x] Forms and input types
+- [x] HTML5 APIs (localStorage, sessionStorage)
+- [x] Accessibility (ARIA, semantic structure)
+- [x] SEO basics (meta tags, structured data)
+- [x] HTML best practices
 
 </details>
 
@@ -547,10 +547,10 @@ const value = computed(() => data.length) // Inline explanation
 </details>
 
 <details>
-<summary>JavaScript Fundamentals (4/6) 🚧</summary>
+<summary>JavaScript Fundamentals (6/6) ✓</summary>
 
-- [ ] Variables & Scope (let, const, var, hoisting)
-- [ ] Data Types (primitives, objects, type coercion)
+- [x] Variables & Scope (let, const, var, hoisting)
+- [x] Data Types (primitives, objects, type coercion)
 - [x] Functions (declarations, expressions, arrow functions)
 - [x] Arrays & Objects (methods, destructuring, spread operator)
 - [x] Control Flow (conditionals, loops, ternary operator)
