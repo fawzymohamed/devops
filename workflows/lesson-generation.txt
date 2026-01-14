@@ -5,14 +5,13 @@ Spawn a lesson-creator agent to create the lesson for:
 phase-1-core-web-fundamentals/javascript-fundamentals/Data Types (primitives, objects, type coercion)
 ============================
 
-Spawn a lesson-creator agent to create all lessons for Phase 1, 'css3-mastery'
-Include:  'Flexbox (justify-content, align-items, flex-wrap, gap)',
-          'CSS Grid (grid-template, fr units, auto-fit/auto-fill)',
-          'Responsive Design (media queries, mobile-first approach)',
-          'CSS Variables (custom properties, theming)',
-          'Animations & Transitions (keyframes, easing, transform)',
-          'Pseudo-classes & Pseudo-elements (:hover, :focus, ::before, ::after)',
-          'CSS Architecture (BEM, SMACSS concepts)'
+Spawn a lesson-creator agent to create all lessons for Phase 1, 'dom-manipulation'
+Include:  'Selecting Elements (querySelector, getElementById)',
+          'Modifying Content (innerHTML, textContent, classList)',
+          'Event Handling (addEventListener, event delegation, bubbling)',
+          'Creating Elements (createElement, appendChild, insertBefore)',
+          'Traversing DOM (parentNode, children, siblings)',
+          'Performance (DocumentFragment, requestAnimationFrame)'
 
 ============================
 
