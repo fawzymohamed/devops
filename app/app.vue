@@ -168,5 +168,8 @@ useSeoMeta({
         </p>
       </template>
     </UFooter>
+
+    <!-- Scroll to Top Button: Floating action button for quick navigation -->
+    <ScrollToTop />
   </UApp>
 </template>
