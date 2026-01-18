@@ -209,11 +209,13 @@ const { phase, topic, subtopic } = route.params as {
 /**
  * Content Path
  * ------------
- * Build the path to query the markdown file
- * Maps: /phase-1-sdlc/sdlc-models/waterfall-model
- * To:   /1.phase-1-sdlc/1.sdlc-models/waterfall-model
+ * Build the path to query the markdown file using content collection paths.
  */
-const contentPath = computed(() => `/${phase}/${topic}/${subtopic}`)
+const { getContentLessonPath } = useRoadmap()
+const roadmapId = 'devops'
+const contentPath = computed(() => {
+  return getContentLessonPath(roadmapId, phase, topic, subtopic)
+})
 
 /**
  * Fetch Lesson Content
@@ -260,7 +262,6 @@ const nextLesson = computed(() => surround.value?.[1] ?? null)
  * Use the progress composable for completion tracking
  */
 const { markComplete, isComplete, recordQuizScore } = useProgress()
-const roadmapId = 'devops'
 
 /**
  * Computed: Is Lesson Completed

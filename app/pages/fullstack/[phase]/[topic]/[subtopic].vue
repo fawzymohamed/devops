@@ -205,7 +205,7 @@ const { phase, topic, subtopic } = route.params as {
   topic: string
   subtopic: string
 }
-const { getContentPath, setCurrentRoadmapBySlug } = useRoadmap()
+const { getContentLessonPath, setCurrentRoadmapBySlug } = useRoadmap()
 const roadmapId = 'fullstack'
 
 onMounted(() => {
@@ -215,13 +215,10 @@ onMounted(() => {
 /**
  * Content Path
  * ------------
- * Build the path to query the markdown file
- * Maps: /phase-1-sdlc/sdlc-models/waterfall-model
- * To:   /1.phase-1-sdlc/1.sdlc-models/waterfall-model
+ * Build the path to query the markdown file using content collection paths.
  */
 const contentPath = computed(() => {
-  const root = getContentPath(roadmapId)
-  return root ? `${root}/${phase}/${topic}/${subtopic}` : `/${phase}/${topic}/${subtopic}`
+  return getContentLessonPath(roadmapId, phase, topic, subtopic)
 })
 
 /**

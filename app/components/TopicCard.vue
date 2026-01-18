@@ -40,9 +40,9 @@
 import type { Topic } from '~/data/roadmap'
 import { priorityConfig } from '~/data/roadmap'
 
-// TypeScript workaround: queryContent is auto-imported but TS doesn't recognize it
+// TypeScript workaround: queryCollection is auto-imported but TS doesn't recognize it
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const queryContent: any
+declare const queryCollection: any
 
 /**
  * Component Props
@@ -100,62 +100,68 @@ const topicSlug = computed(() => props.topic.slug || toSlug(props.topic.name))
  * Creates the full URL path for a subtopic lesson.
  * Pattern: /phase-slug/topic-slug/subtopic-slug
  */
-function getSubtopicUrl(subtopic: string): string {
+function getSubtopicUrl(subtopic: string, index: number): string {
   return getRoutePath(
     props.roadmapId ?? 'devops',
     props.phaseSlug,
     topicSlug.value,
-    toSlug(subtopic)
+    getSubtopicSlug(subtopic, index)
   )
 }
 
-const { getRoutePath, getContentPath } = useRoadmap()
+const { getRoutePath, getContentTopicPath } = useRoadmap()
 
 // =============================================================================
-// CONTENT AVAILABILITY CHECK
+// CONTENT SLUG LOOKUP
 // =============================================================================
 
 /**
- * Available Subtopics
+ * Available Subtopic Slugs
  * -------------------
- * Stores the list of available subtopic slugs for this topic.
+ * Stores the ordered list of subtopic slugs for this topic.
  * Populated by querying @nuxt/content for existing lesson files.
  */
-const availableSubtopics = ref<Set<string>>(new Set())
+const availableSubtopicSlugs = ref<string[]>([])
+const hasLoadedContent = ref(false)
 
 /**
- * Fetch Available Content
+ * Fetch Available Content Slugs
  * -----------------------
- * Queries the content directory to find which lessons actually exist.
- * This prevents showing links to non-existent lessons.
+ * Queries the content directory to find which lessons exist in order.
  */
 async function fetchAvailableContent() {
+  hasLoadedContent.value = false
   try {
     const roadmapSlug = props.roadmapId ?? 'devops'
-    const contentPath = getContentPath(roadmapSlug)
-    const basePath = contentPath ? `${contentPath}/${props.phaseSlug}/${topicSlug.value}` : `${props.phaseSlug}/${topicSlug.value}`
+    const basePath = getContentTopicPath(roadmapSlug, props.phaseSlug, topicSlug.value)
 
-    const lessons = await queryContent(basePath)
-      .where({ _extension: 'md' })
-      .only(['_path'])
-      .find()
+    const lessons = await queryCollection('content')
+      .where('path', 'LIKE', `${basePath}/%`)
+      .where('extension', '=', 'md')
+      .select('path')
+      .order('stem', 'ASC')
+      .all()
 
-    const slugs = new Set<string>()
+    const slugs: string[] = []
     for (const lesson of lessons) {
-      if (lesson._path) {
+      const lessonPath = lesson.path
+      if (lessonPath) {
         // Extract the subtopic slug from the path (last segment)
-        const segments = lesson._path.split('/')
+        const segments = lessonPath.split('/')
         const lastSegment = segments[segments.length - 1]
-        if (lastSegment) {
-          slugs.add(lastSegment)
+        if (lastSegment && lastSegment !== 'cheat-sheet') {
+          const normalized = lastSegment.replace(/^\d+\./, '')
+          slugs.push(normalized)
         }
       }
     }
-    availableSubtopics.value = slugs
+    availableSubtopicSlugs.value = slugs
+    hasLoadedContent.value = true
   } catch {
     // If content query fails, fall back to showing all lessons as available
     // This ensures the UI degrades gracefully
-    availableSubtopics.value = new Set()
+    availableSubtopicSlugs.value = []
+    hasLoadedContent.value = false
   }
 }
 
@@ -170,22 +176,18 @@ watch(() => props.roadmapId, () => {
 })
 
 /**
- * Check if a specific subtopic lesson is available
- * ------------------------------------------------
- * @param subtopic - The subtopic name to check
- * @returns Boolean indicating if the lesson content exists
+ * Get subtopic slug based on content order
+ * ---------------------------------------
+ * @param subtopic - The subtopic name (fallback slug source)
+ * @param index - The subtopic index in the roadmap list
+ * @returns Slug that matches the content file name
  */
-function isLessonAvailable(subtopic: string): boolean {
-  // If we haven't loaded content yet, assume available (will show loading state)
-  if (availableSubtopics.value.size === 0) {
-    // For fullstack, content doesn't exist yet - show "Coming Soon"
-    if ((props.roadmapId ?? 'devops') !== 'devops') {
-      return false
-    }
-    // For devops, if we haven't fetched yet, optimistically return true
-    return true
+function getSubtopicSlug(subtopic: string, index: number): string {
+  const fallback = toSlug(subtopic)
+  if (!hasLoadedContent.value) {
+    return fallback
   }
-  return availableSubtopics.value.has(toSlug(subtopic))
+  return availableSubtopicSlugs.value[index] ?? fallback
 }
 
 /**
@@ -241,8 +243,15 @@ const {
  * @param subtopic - Subtopic name
  * @returns Boolean indicating completion status
  */
-function isSubtopicComplete(subtopic: string): boolean {
-  return isComplete(props.roadmapId ?? 'devops', props.phaseSlug, topicSlug.value, toSlug(subtopic))
+function isSubtopicComplete(subtopic: string, index: number): boolean {
+  const roadmapId = props.roadmapId ?? 'devops'
+  const contentSlug = getSubtopicSlug(subtopic, index)
+  if (isComplete(roadmapId, props.phaseSlug, topicSlug.value, contentSlug)) {
+    return true
+  }
+  const legacySlug = toSlug(subtopic)
+  return contentSlug !== legacySlug
+    && isComplete(roadmapId, props.phaseSlug, topicSlug.value, legacySlug)
 }
 
 /**
@@ -365,29 +374,20 @@ const isTopicComplete = computed(() => {
           <NuxtLink
             v-for="(subtopic, idx) in topic.subtopics"
             :key="idx"
-            :to="getSubtopicUrl(subtopic)"
+            :to="getSubtopicUrl(subtopic, idx)"
             class="flex items-center gap-2 bg-gray-800/60 px-3 py-2 rounded-lg text-sm border-l-3 cursor-pointer transition-all hover:bg-gray-700/80 hover:translate-x-1"
             :style="{ borderLeftColor: phaseColor }"
           >
             <!-- Completion checkmark (shown when subtopic is complete) -->
             <UIcon
-              v-if="isSubtopicComplete(subtopic)"
+              v-if="isSubtopicComplete(subtopic, idx)"
               name="i-lucide-check-circle"
               class="w-4 h-4 text-green-500 flex-shrink-0"
             />
             <!-- Subtopic name with muted style if complete -->
-            <span :class="{ 'text-gray-500': isSubtopicComplete(subtopic) }">
+            <span :class="{ 'text-gray-500': isSubtopicComplete(subtopic, idx) }">
               {{ subtopic }}
             </span>
-            <UBadge
-              v-if="!isLessonAvailable(subtopic)"
-              size="xs"
-              color="warning"
-              variant="soft"
-              class="ml-auto"
-            >
-              Coming Soon
-            </UBadge>
           </NuxtLink>
         </div>
 
