@@ -1,8 +1,8 @@
 /**
  * useCheatSheetPdf Composable
  * ===========================
- * Handles cheat sheet PDF generation and download.
- * Uses html2canvas and jsPDF for client-side PDF generation.
+ * Handles cheat sheet PDF generation and print-quality output.
+ * Uses a print window for crisp text and a legacy html2canvas fallback.
  *
  * Features:
  * - Generate multi-page PDFs from cheat sheet content
@@ -24,6 +24,18 @@
 /** Extended HTMLElement with iframe reference for cleanup */
 interface CloneElement extends HTMLElement {
   _parentIframe?: HTMLIFrameElement
+}
+
+/**
+ * Escape HTML for safe insertion into a new window.
+ */
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
 }
 
 /**
@@ -65,7 +77,7 @@ async function createProcessedClone(sourceElement: HTMLElement): Promise<CloneEl
       color: #1f2937;
       padding: 1.5rem;
       line-height: 1.5;
-      font-size: 11pt;
+      font-size: 12pt;
     }
     h2 {
       font-size: 14pt;
@@ -123,19 +135,28 @@ async function createProcessedClone(sourceElement: HTMLElement): Promise<CloneEl
     }
     code {
       background-color: #f3f4f6;
-      padding: 0.125rem 0.375rem;
+      padding: 0.15rem 0.4rem;
       border-radius: 0.25rem;
-      font-size: 9pt;
+      font-size: 12pt;
+      line-height: 1.5;
       color: #059669;
       font-family: 'Consolas', 'Monaco', monospace;
+      font-variant-ligatures: none;
     }
     pre {
-      background-color: #f3f4f6;
+      background-color: #eef2f7;
       border-radius: 0.375rem;
       padding: 0.75rem;
       overflow-x: auto;
-      border: 1px solid #e5e7eb;
+      border: 1px solid #cbd5e1;
       page-break-inside: avoid;
+      line-height: 1.5;
+    }
+    pre code {
+      font-size: 12pt;
+      line-height: 1.55;
+      color: #0f172a;
+      font-variant-ligatures: none;
     }
     a {
       color: #2563eb;
@@ -176,6 +197,170 @@ function cleanupClone(clone: CloneElement): void {
   } else if (clone.parentNode) {
     clone.remove()
   }
+}
+
+/**
+ * Open a print window with vector text for crisp PDF output.
+ */
+async function openPrintWindow(
+  title: string,
+  sourceElement: HTMLElement
+): Promise<void> {
+  const safeTitle = escapeHtml(title)
+  const clonedContent = sourceElement.cloneNode(true) as HTMLElement
+  const firstHeading = clonedContent.querySelector('h1')
+  if (firstHeading) {
+    firstHeading.remove()
+  }
+  clonedContent.querySelectorAll('button').forEach(button => button.remove())
+  const contentHtml = clonedContent.innerHTML
+
+  const printFrame = document.createElement('iframe')
+  printFrame.setAttribute('aria-hidden', 'true')
+  printFrame.style.position = 'fixed'
+  printFrame.style.right = '0'
+  printFrame.style.bottom = '0'
+  printFrame.style.width = '0'
+  printFrame.style.height = '0'
+  printFrame.style.border = '0'
+
+  const printHtml = `
+    <!doctype html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>${safeTitle}</title>
+        <style>
+          * { box-sizing: border-box; }
+          html, body { margin: 0; padding: 0; }
+          body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: #0f172a;
+            background: #ffffff;
+            line-height: 1.55;
+            font-size: 12pt;
+          }
+          main {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 18mm 14mm;
+          }
+          h1 {
+            font-size: 18pt;
+            margin: 0 0 12pt;
+            color: #0f172a;
+          }
+          h2 {
+            font-size: 14pt;
+            margin: 18pt 0 8pt;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 4pt;
+            color: #111827;
+            page-break-after: avoid;
+          }
+          h3 {
+            font-size: 12pt;
+            margin: 14pt 0 6pt;
+            color: #1f2937;
+            page-break-after: avoid;
+          }
+          p { margin: 6pt 0; }
+          ul, ol { margin: 6pt 0 10pt 18pt; }
+          li { margin: 4pt 0; }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10pt 0;
+            font-size: 11pt;
+            page-break-inside: avoid;
+          }
+          th, td {
+            border: 1px solid #cbd5e1;
+            padding: 6pt 8pt;
+            text-align: left;
+          }
+          th {
+            background: #e2e8f0;
+            color: #0f172a;
+            font-weight: 700;
+          }
+          code {
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 11.5pt;
+            background: #f1f5f9;
+            padding: 1pt 3pt;
+            border-radius: 3pt;
+            color: #0f172a;
+            font-variant-ligatures: none;
+          }
+          pre {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6pt;
+            padding: 8pt 10pt;
+            overflow: visible;
+            white-space: pre-wrap;
+            word-break: break-word;
+            page-break-inside: avoid;
+          }
+          pre code {
+            font-size: 11.5pt;
+            line-height: 1.55;
+            background: transparent;
+            padding: 0;
+          }
+          button,
+          [role="button"],
+          .copy-button,
+          .code-copy,
+          .shiki-copy {
+            display: none !important;
+          }
+          a { color: #1d4ed8; text-decoration: none; }
+          img { max-width: 100%; height: auto; }
+          blockquote {
+            border-left: 3pt solid #cbd5e1;
+            padding-left: 10pt;
+            margin: 10pt 0;
+            color: #334155;
+          }
+          @page { margin: 12mm; }
+          @media print {
+            main { padding: 0; max-width: 100%; }
+            pre, table, blockquote, ul, ol { break-inside: avoid; }
+          }
+        </style>
+      </head>
+      <body>
+        <main>
+          <h1>${safeTitle}</h1>
+          ${contentHtml}
+        </main>
+      </body>
+    </html>
+  `
+
+  printFrame.srcdoc = printHtml
+  document.body.appendChild(printFrame)
+
+  await new Promise<void>((resolve) => {
+    printFrame.onload = () => resolve()
+    setTimeout(() => resolve(), 200)
+  })
+
+  const frameWindow = printFrame.contentWindow
+  if (!frameWindow) {
+    printFrame.remove()
+    throw new Error('Unable to open print frame. Please try again.')
+  }
+
+  frameWindow.focus()
+  frameWindow.print()
+
+  setTimeout(() => {
+    printFrame.remove()
+  }, 1000)
 }
 
 // =============================================================================
@@ -254,8 +439,10 @@ export function useCheatSheetPdf() {
       const processedElement = await createProcessedClone(element)
 
       // Render to canvas with high quality
+      const deviceScale = window.devicePixelRatio || 1
+      const renderScale = Math.min(6.5, Math.max(4, deviceScale * 3))
       const canvas = await html2canvas(processedElement, {
-        scale: 2, // Higher resolution for crisp text
+        scale: renderScale, // Higher resolution for crisp text
         backgroundColor: '#ffffff', // White background for printing
         logging: false,
         useCORS: true,
@@ -320,7 +507,9 @@ export function useCheatSheetPdf() {
           MARGINS.left,
           MARGINS.top,
           imgWidth,
-          pageImgHeight
+          pageImgHeight,
+          undefined,
+          'NONE'
         )
       }
 
@@ -344,30 +533,42 @@ export function useCheatSheetPdf() {
   }
 
   /**
-   * Generate and download cheat sheet as PDF
-   * @param title - Title for the PDF and filename
-   * @param slug - Topic slug for filename (e.g., 'sdlc-models')
+   * Open print dialog for high-quality PDF output
+   * @param title - Cheat sheet title for the print document
+   * @param elementId - DOM element ID to render (default: 'cheat-sheet-content')
+   */
+  async function printCheatSheet(
+    title: string,
+    elementId: string = 'cheat-sheet-content'
+  ): Promise<void> {
+    if (typeof window === 'undefined') return
+
+    isGenerating.value = true
+    error.value = null
+
+    try {
+      const element = document.getElementById(elementId)
+      if (!element) {
+        throw new Error(`Cheat sheet element #${elementId} not found`)
+      }
+
+      await openPrintWindow(title, element)
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : 'Failed to open print window'
+      console.error('Cheat sheet print failed:', e)
+    } finally {
+      isGenerating.value = false
+    }
+  }
+
+  /**
+   * Open print dialog to save the cheat sheet as PDF
+   * @param title - Title for the print document
+   * @param slug - Topic slug (unused but kept for API stability)
    */
   async function downloadCheatSheet(title: string, slug: string): Promise<void> {
-    const blob = await generatePDF(title)
-
-    if (!blob) {
-      return
-    }
-
-    // Create download link
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${slug}-cheat-sheet.pdf`
-
-    // Trigger download
-    document.body.appendChild(link)
-    link.click()
-
-    // Cleanup
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
+    void slug
+    await printCheatSheet(title)
   }
 
   // ---------------------------------------------------------------------------
@@ -381,6 +582,7 @@ export function useCheatSheetPdf() {
 
     // PDF generation
     generatePDF,
+    printCheatSheet,
     downloadCheatSheet
   }
 }

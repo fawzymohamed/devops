@@ -54,10 +54,10 @@ const emit = defineEmits<{
     >
       <UIcon
         v-if="!isGenerating"
-        name="i-lucide-download"
+        name="i-lucide-printer"
         class="w-5 h-5 mr-2"
       />
-      {{ isGenerating ? 'Generating...' : 'Download PDF' }}
+      {{ isGenerating ? 'Preparing...' : 'Print / Save PDF' }}
     </UButton>
 
     <!-- Error Message -->

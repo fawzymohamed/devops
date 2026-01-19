@@ -2,12 +2,12 @@
   CheatSheetLayout.vue - Cheat Sheet Display Component
   =====================================================
   Displays cheat sheet content with a clean, reference-style layout.
-  Optimized for quick scanning and PDF export.
+  Optimized for quick scanning and print-quality export.
 
   Features:
   - Clean typography for quick reference
   - Print-friendly styling
-  - PDF export button integration
+  - Print-friendly export button integration
   - Distinct visual style from regular lessons
 
   Props:
@@ -68,18 +68,18 @@ const props = defineProps<{
 }>()
 
 /**
- * PDF Export Composable
- * ---------------------
+ * Print Export Composable
+ * -----------------------
  */
 const { downloadCheatSheet, isGenerating, error } = useCheatSheetPdf()
 
 /**
- * Handle PDF Download
+ * Handle Print/Save PDF
  * -------------------
- * Generates and downloads the cheat sheet as a PDF
+ * Opens a print-ready view for high-quality PDF output
  */
 async function handleDownloadPdf() {
-  const title = props.lesson.cheatSheetTopic || props.lesson.title
+  const title = props.lesson.title
   const slug = props.topic
   await downloadCheatSheet(title, slug)
 }
