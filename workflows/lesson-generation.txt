@@ -2,7 +2,7 @@
 ============================
 
 Spawn a lesson-creator agent to create the lesson for:
-phase-1-core-web-fundamentals/javascript-fundamentals/Data Types (primitives, objects, type coercion)
+phase-2-advanced-javascript/closures-and-scope/'Lexical Scope & Scope Chain'
 ============================
 
 Spawn a lesson-creator agent to create all lessons for Phase 1, 'dom-manipulation'
@@ -29,8 +29,8 @@ Mark the new lessons as done in CLAUDE.md file
 
 ============================
 BUGS:
-
-All quizzes first question answer is #1
+- All select questions have three correct choices all the time!
+- When a question has code, it must use the code component.
 
 ============================
 

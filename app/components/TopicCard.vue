@@ -131,6 +131,7 @@ const hasLoadedContent = ref(false)
  */
 async function fetchAvailableContent() {
   hasLoadedContent.value = false
+  availableSubtopicSlugs.value = [] // Clear stale data
   try {
     const roadmapSlug = props.roadmapId ?? 'devops'
     const basePath = getContentTopicPath(roadmapSlug, props.phaseSlug, topicSlug.value)
@@ -170,10 +171,13 @@ onMounted(() => {
   fetchAvailableContent()
 })
 
-// Re-fetch if roadmapId changes
-watch(() => props.roadmapId, () => {
-  fetchAvailableContent()
-})
+// Re-fetch if roadmapId, phaseSlug, or topic changes
+watch(
+  () => [props.roadmapId, props.phaseSlug, props.topic.slug, props.topic.name],
+  () => {
+    fetchAvailableContent()
+  }
+)
 
 /**
  * Get subtopic slug based on content order

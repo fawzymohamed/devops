@@ -7,6 +7,7 @@
 import type { Phase } from './roadmap'
 
 export const fullstackPhases: Phase[] = [
+  // Phase 1: Core Web Fundamentals
   {
     phase: 1,
     title: 'Phase 1: Core Web Fundamentals',
@@ -71,6 +72,7 @@ export const fullstackPhases: Phase[] = [
       }
     ]
   },
+  // Phase 2: Advanced JavaScript
   {
     phase: 2,
     title: 'Phase 2: Advanced JavaScript',
@@ -172,6 +174,7 @@ export const fullstackPhases: Phase[] = [
       }
     ]
   },
+  // Phase 3: TypeScript
   {
     phase: 3,
     title: 'Phase 3: TypeScript',
@@ -261,6 +264,7 @@ export const fullstackPhases: Phase[] = [
       }
     ]
   },
+  // Phase 4: Vue.js Ecosystem
   {
     phase: 4,
     title: 'Phase 4: Vue.js Ecosystem',
@@ -350,6 +354,7 @@ export const fullstackPhases: Phase[] = [
       }
     ]
   },
+  // Phase 5: Nuxt.js Mastery
   {
     phase: 5,
     title: 'Phase 5: Nuxt.js Mastery',
@@ -439,6 +444,7 @@ export const fullstackPhases: Phase[] = [
       }
     ]
   },
+  // Phase 6: React Fundamentals
   {
     phase: 6,
     title: 'Phase 6: React Fundamentals',
@@ -541,6 +547,7 @@ export const fullstackPhases: Phase[] = [
       }
     ]
   },
+  // Phase 7: Next.js
   {
     phase: 7,
     title: 'Phase 7: Next.js',
@@ -630,6 +637,7 @@ export const fullstackPhases: Phase[] = [
       }
     ]
   },
+  // Phase 8: Node.js & Backend
   {
     phase: 8,
     title: 'Phase 8: Node.js & Backend',
@@ -719,6 +727,7 @@ export const fullstackPhases: Phase[] = [
       }
     ]
   },
+  // Phase 9: Databases
   {
     phase: 9,
     title: 'Phase 9: Databases',
@@ -808,6 +817,7 @@ export const fullstackPhases: Phase[] = [
       }
     ]
   },
+  // Phase 10: DevOps & Deployment
   {
     phase: 10,
     title: 'Phase 10: DevOps & Deployment',
@@ -910,6 +920,7 @@ export const fullstackPhases: Phase[] = [
       }
     ]
   },
+  // Phase 11: Testing
   {
     phase: 11,
     title: 'Phase 11: Testing',
@@ -986,6 +997,7 @@ export const fullstackPhases: Phase[] = [
       }
     ]
   },
+  // Phase 12: Modern Web Patterns
   {
     phase: 12,
     title: 'Phase 12: Modern Web Patterns',
@@ -1088,6 +1100,7 @@ export const fullstackPhases: Phase[] = [
       }
     ]
   },
+  // Phase 13: Interview Preparation
   {
     phase: 13,
     title: 'Phase 13: Interview Preparation',

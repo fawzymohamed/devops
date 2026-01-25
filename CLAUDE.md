@@ -380,7 +380,7 @@ const value = computed(() => data.length) // Inline explanation
 ### Lesson Content Progress
 
 **DevOps Roadmap: 41/527 lessons created**
-**Full Stack Roadmap: 25/450+ lessons created**
+**Full Stack Roadmap: 30/450+ lessons created**
 
 ## DevOps Roadmap Progress
 
@@ -568,6 +568,18 @@ const value = computed(() => data.length) // Inline explanation
 - [x] Creating Elements (createElement, appendChild, insertBefore)
 - [x] Traversing DOM (parentNode, children, siblings)
 - [x] Performance (DocumentFragment, requestAnimationFrame)
+
+</details>
+
+#### Phase 2: Advanced JavaScript
+<details>
+<summary>Closures & Scope (5/5) ✓</summary>
+
+- [x] Lexical Scope & Scope Chain
+- [x] Closure Use Cases (private variables, factory functions)
+- [x] Memory Considerations & Garbage Collection
+- [x] Module Pattern & Revealing Module Pattern
+- [x] IIFE (Immediately Invoked Function Expression)
 
 </details>
 
