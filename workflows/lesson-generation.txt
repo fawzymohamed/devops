@@ -3,29 +3,30 @@
 
 Spawn a lesson-creator agent to create the lesson for:
 phase-2-advanced-javascript/closures-and-scope/'Lexical Scope & Scope Chain'
-============================
-
-Spawn a lesson-creator agent to create all lessons for Phase 1, 'dom-manipulation'
-Include:  'Selecting Elements (querySelector, getElementById)',
-          'Modifying Content (innerHTML, textContent, classList)',
-          'Event Handling (addEventListener, event delegation, bubbling)',
-          'Creating Elements (createElement, appendChild, insertBefore)',
-          'Traversing DOM (parentNode, children, siblings)',
-          'Performance (DocumentFragment, requestAnimationFrame)'
 
 ============================
 
-/test-feature content/2.phase-2-foundations/3.version-control
-
-/review content/2.phase-2-foundations/3.version-control
-
-Please test it on the browser. The dev server is already running on http://localhost:5000/
-
-Mark the new lessons as done in CLAUDE.md file
+Spawn a lesson-creator agent to create all lessons for Phase 2, 'phase-2-advanced-javascript/asynchronous-javascript'
+Include:  'Callbacks & Callback Hell',
+          'Promises (then, catch, finally, Promise.all, Promise.race, Promise.allSettled)',
+          'Async/Await (error handling, parallel execution)',
+          'Event Loop (call stack, task queue, microtask queue)',
+          'Fetch API & AbortController',
+          'Web Workers Basics'
 
 ============================
 
-/generate-cheat-sheet phase-2-foundations/git-version-control
+/test-feature content/fullstack/2.phase-2-advanced-javascript
+
+/review content/fullstack/2.phase-2-advanced-javascript
+
+Please test the newly created lessons on the browser. The dev server is already running on http://localhost:5000/
+
+Mark the newly created lessons as done in CLAUDE.md file
+
+============================
+
+/generate-cheat-sheet for "content/fullstack/2.phase-2-advanced-javascript" lessons
 
 ============================
 BUGS:

@@ -235,30 +235,55 @@ const { data: lesson, error } = await useAsyncData(
 )
 
 /**
- * Fetch Prev/Next Navigation
- * --------------------------
- * Get surrounding lessons for navigation using Nuxt Content v3 API
- * Returns array: [prev, next] where each can be null or SurroundItem
+ * Fetch Prev/Next Navigation (Excluding Cheat Sheets)
+ * ----------------------------------------------------
+ * Get surrounding lessons using the standard API, then filter out cheat sheets
+ * in the computed properties.
  */
 const { data: surround } = await useAsyncData(
   `surround-${contentPath.value}`,
   async () => {
     const result = await queryCollectionItemSurroundings('content', contentPath.value, {
-      fields: ['path', 'title']
+      fields: ['path', 'title', 'isCheatSheet']
     })
-    // Result is [prev, next] array - cast through unknown for type safety
-    return result as unknown as [SurroundItem | null, SurroundItem | null] | null
+    // Result is [prev, next] array
+    return result as unknown as [SurroundItem & { isCheatSheet?: boolean } | null, SurroundItem & { isCheatSheet?: boolean } | null] | null
   }
 )
 
 /**
- * Computed: Previous and Next lessons
- * ------------------------------------
- * Extract prev/next from surround array safely
- * Index 0 = previous lesson, Index 1 = next lesson
+ * Computed: Previous and Next lessons (filtered)
+ * -----------------------------------------------
+ * Extract prev/next from surround array, skipping cheat sheets
+ *
+ * LIMITATION: If a cheat sheet is the immediate prev/next, we show nothing
+ * instead of finding the next non-cheat-sheet. This is a known limitation.
+ * Cheat sheets are typically at the end of a topic (99.cheat-sheet.md),
+ * so this mainly affects navigation at topic boundaries.
  */
-const prevLesson = computed(() => surround.value?.[0] ?? null)
-const nextLesson = computed(() => surround.value?.[1] ?? null)
+const prevLesson = computed((): SurroundItem | null => {
+  const prev = surround.value?.[0]
+  if (!prev) return null
+
+  // Skip if it's a cheat sheet
+  if (prev.isCheatSheet === true) {
+    return null
+  }
+
+  return prev
+})
+
+const nextLesson = computed((): SurroundItem | null => {
+  const next = surround.value?.[1]
+  if (!next) return null
+
+  // Skip if it's a cheat sheet
+  if (next.isCheatSheet === true) {
+    return null
+  }
+
+  return next
+})
 
 /**
  * Progress Tracking

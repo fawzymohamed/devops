@@ -213,6 +213,99 @@ Quick reference sheets at the end of each topic section with PDF export capabili
 - **No illustrations** (use tables/lists instead of MDC illustration components)
 - Appears last in topic navigation (via `99.` prefix)
 
+### Lesson File Rendering & Navigation
+
+How lesson markdown files get rendered with prev/next navigation arrows.
+
+**File Naming Convention:**
+```
+content/
+└── fullstack/
+    └── 2.phase-2-advanced-javascript/
+        └── asynchronous-javascript/
+            ├── 01.callbacks-and-callback-hell.md
+            ├── 02.promises.md
+            ├── 03.async-await.md
+            ├── 04.event-loop.md
+            ├── 05.fetch-api-abortcontroller.md
+            ├── 06.web-workers-basics.md
+            └── 99.cheat-sheet.md
+```
+
+**Naming Rules:**
+- Use numeric prefixes (`01.`, `02.`, etc.) to control lesson order
+- Use kebab-case for file names after the prefix
+- Cheat sheets use `99.` prefix to appear last alphabetically
+- File names become URL slugs (e.g., `01.callbacks-and-callback-hell.md` → `/callbacks-and-callback-hell`)
+
+**Page Rendering:**
+
+Lesson pages are rendered by dynamic Vue routes:
+- **DevOps**: `app/pages/[phase]/[topic]/[subtopic].vue`
+- **Full Stack**: `app/pages/fullstack/[phase]/[topic]/[subtopic].vue`
+
+**How It Works:**
+1. **Route Matching**: Nuxt matches URLs like `/fullstack/phase-2-advanced-javascript/asynchronous-javascript/promises` to the dynamic page
+2. **Content Query**: Page uses `queryCollection('content').path(contentPath).first()` to fetch the markdown file
+3. **Rendering**: `<ContentRenderer>` component renders the markdown with MDC support
+4. **Navigation**: `queryCollectionItemSurroundings()` fetches adjacent lessons for prev/next arrows
+
+**Prev/Next Navigation:**
+
+The navigation arrows use Nuxt Content's `queryCollectionItemSurroundings` API:
+
+```typescript
+// Fetch surrounding lessons
+const { data: surround } = await useAsyncData(
+  `surround-${contentPath.value}`,
+  async () => {
+    const result = await queryCollectionItemSurroundings('content', contentPath.value, {
+      fields: ['path', 'title', 'isCheatSheet']
+    })
+    return result // Returns [prev, next] array
+  }
+)
+```
+
+**Cheat Sheet Filtering:**
+
+Cheat sheets are **excluded** from prev/next navigation to maintain lesson flow:
+
+```typescript
+const prevLesson = computed(() => {
+  const prev = surround.value?.[0]
+  // Skip if it's a cheat sheet
+  if (prev?.isCheatSheet === true) return null
+  return prev
+})
+```
+
+**Navigation Behavior:**
+- ✅ Regular lessons: Navigate sequentially (01 → 02 → 03...)
+- ✅ Cross-topic: After last lesson of Topic A → First lesson of Topic B
+- ❌ Cheat sheets: Skipped in prev/next (accessible from topic page only)
+- ⚠️ Limitation: If cheat sheet is immediate prev/next, arrow is hidden instead of finding next valid lesson
+
+**URL Structure:**
+```
+/fullstack/{phase}/{topic}/{subtopic}
+└─ Example: /fullstack/phase-2-advanced-javascript/asynchronous-javascript/promises
+```
+
+**File-to-URL Mapping:**
+```
+content/fullstack/2.phase-2-advanced-javascript/asynchronous-javascript/02.promises.md
+         ↓
+/fullstack/phase-2-advanced-javascript/asynchronous-javascript/promises
+```
+
+The numeric prefix (`02.`) is **removed** from the URL but controls sort order in queries.
+
+**Key Files:**
+- `app/pages/fullstack/[phase]/[topic]/[subtopic].vue` - Full Stack lesson page
+- `app/pages/[phase]/[topic]/[subtopic].vue` - DevOps lesson page
+- `app/composables/useRoadmap.ts` - Content path helper (`getContentLessonPath`)
+
 ### Progress Tracking System
 
 Comprehensive progress tracking with localStorage persistence and visual indicators.
@@ -376,211 +469,3 @@ const value = computed(() => data.length) // Inline explanation
 - [x] Multi-roadmap UI (landing selection, switcher, progress dashboard)
 - [x] Roadmap-specific certificates
 - [ ] Phase 9 polish: remaining manual verification tasks (URLs, migration, walkthrough)
-
-### Lesson Content Progress
-
-**DevOps Roadmap: 41/527 lessons created**
-**Full Stack Roadmap: 30/450+ lessons created**
-
-## DevOps Roadmap Progress
-
-#### Phase 1: Software Development Lifecycle (SDLC) ✓
-21/21 lessons complete (4 topics)
-
-#### Phase 2: Foundations
-<details>
-<summary>Linux Fundamentals (10/10) ✓</summary>
-
-- [x] File System Hierarchy
-- [x] Navigation Commands (cd, ls, pwd)
-- [x] File Operations (cp, mv, rm, mkdir)
-- [x] File Permissions (chmod, chown)
-- [x] Users & Groups
-- [x] Process Management (ps, top, kill)
-- [x] Package Managers (apt, yum, dnf)
-- [x] System Services (systemd, systemctl)
-- [x] Cron Jobs & Scheduling
-- [x] Log Files & Journalctl
-
-</details>
-
-<details>
-<summary>Bash Scripting (0/10)</summary>
-
-- [ ] Variables & Data Types
-- [ ] Conditionals (if/else)
-- [ ] Loops (for, while)
-- [ ] Functions
-- [ ] Input/Output Redirection
-- [ ] Pipes & Filters
-- [ ] Text Processing (grep, sed, awk)
-- [ ] Script Arguments
-- [ ] Exit Codes
-- [ ] Error Handling
-
-</details>
-
-<details>
-<summary>Networking Fundamentals (0/11)</summary>
-
-- [ ] OSI Model (7 Layers)
-- [ ] TCP/IP Model
-- [ ] IP Addressing & Subnetting
-- [ ] DNS (Domain Name System)
-- [ ] DHCP
-- [ ] HTTP/HTTPS Protocols
-- [ ] SSL/TLS Basics
-- [ ] Firewalls & Ports
-- [ ] Load Balancers
-- [ ] VPNs
-- [ ] Network Troubleshooting (ping, traceroute, netstat, ss, curl)
-
-</details>
-
-<details>
-<summary>Git Version Control (10/10) ✓</summary>
-
-- [x] Git Basics (init, clone, add, commit)
-- [x] Branching & Merging
-- [x] Remote Repositories
-- [x] Git Flow Workflow
-- [x] Rebasing vs Merging
-- [x] Cherry Picking
-- [x] Stashing Changes
-- [x] Resolving Conflicts
-- [x] Git Hooks
-- [x] Tags & Releases
-
-</details>
-
-<details>
-<summary>Python for Automation (0/10)</summary>
-
-- [ ] Python Syntax & Basics
-- [ ] Data Types & Structures
-- [ ] Control Flow
-- [ ] Functions & Modules
-- [ ] File Operations
-- [ ] Error Handling (try/except)
-- [ ] Working with APIs (requests)
-- [ ] JSON/YAML Parsing
-- [ ] Regular Expressions
-- [ ] Virtual Environments (venv, pip)
-
-</details>
-
-<details>
-<summary>JavaScript Fundamentals (0/12)</summary>
-
-- [ ] Variables (let, const, var)
-- [ ] Data Types & Operators
-- [ ] Functions & Arrow Functions
-- [ ] Arrays & Objects
-- [ ] OOP: Classes & Constructors
-- [ ] OOP: Inheritance & Prototypes
-- [ ] OOP: Encapsulation & Modules
-- [ ] Async/Await & Promises
-- [ ] Fetch API
-- [ ] ES6+ Features
-- [ ] Node.js Basics
-- [ ] npm Package Manager
-
-</details>
-
-<details>
-<summary>TypeScript Essentials (0/9)</summary>
-
-- [ ] Type Annotations
-- [ ] Interfaces & Types
-- [ ] Generics
-- [ ] Enums
-- [ ] Union & Intersection Types
-- [ ] Type Guards
-- [ ] tsconfig.json
-- [ ] Compiling TypeScript
-- [ ] TypeScript with Node.js
-
-</details>
-
-<details>
-<summary>YAML & JSON (0/7)</summary>
-
-- [ ] YAML Syntax
-- [ ] JSON Syntax
-- [ ] Data Structures
-- [ ] Nested Objects
-- [ ] Arrays/Lists
-- [ ] Configuration Files
-- [ ] Validation
-
-</details>
-
-<!-- Remaining phases collapsed for brevity -->
-<!-- Phase 3-10 lesson tracking will be added as we progress -->
-
-## Full Stack Roadmap Progress
-
-#### Phase 1: Core Web Fundamentals ✓
-25/25 lessons complete (4 topics)
-<details>
-<summary>HTML5 Essentials (6/6) ✓</summary>
-
-- [x] Semantic HTML5 elements
-- [x] Forms and input types
-- [x] HTML5 APIs (localStorage, sessionStorage)
-- [x] Accessibility (ARIA, semantic structure)
-- [x] SEO basics (meta tags, structured data)
-- [x] HTML best practices
-
-</details>
-
-<details>
-<summary>CSS3 Mastery (7/7) ✓</summary>
-
-- [x] Flexbox (justify-content, align-items, flex-wrap, gap)
-- [x] CSS Grid (grid-template, fr units, auto-fit/auto-fill)
-- [x] Responsive Design (media queries, mobile-first approach)
-- [x] CSS Variables (custom properties, theming)
-- [x] Animations & Transitions (keyframes, easing, transform)
-- [x] Pseudo-classes & Pseudo-elements (:hover, :focus, ::before, ::after)
-- [x] CSS Architecture (BEM, SMACSS concepts)
-
-</details>
-
-<details>
-<summary>JavaScript Fundamentals (6/6) ✓</summary>
-
-- [x] Variables & Scope (let, const, var, hoisting)
-- [x] Data Types (primitives, objects, type coercion)
-- [x] Functions (declarations, expressions, arrow functions)
-- [x] Arrays & Objects (methods, destructuring, spread operator)
-- [x] Control Flow (conditionals, loops, ternary operator)
-- [x] ES6+ Features (template literals, default parameters, rest operator)
-
-</details>
-
-<details>
-<summary>DOM Manipulation (6/6) ✓</summary>
-
-- [x] Selecting Elements (querySelector, getElementById)
-- [x] Modifying Content (innerHTML, textContent, classList)
-- [x] Event Handling (addEventListener, event delegation, bubbling)
-- [x] Creating Elements (createElement, appendChild, insertBefore)
-- [x] Traversing DOM (parentNode, children, siblings)
-- [x] Performance (DocumentFragment, requestAnimationFrame)
-
-</details>
-
-#### Phase 2: Advanced JavaScript
-<details>
-<summary>Closures & Scope (5/5) ✓</summary>
-
-- [x] Lexical Scope & Scope Chain
-- [x] Closure Use Cases (private variables, factory functions)
-- [x] Memory Considerations & Garbage Collection
-- [x] Module Pattern & Revealing Module Pattern
-- [x] IIFE (Immediately Invoked Function Expression)
-
-</details>
-
-<!-- Remaining phases will be tracked as lessons are created -->
