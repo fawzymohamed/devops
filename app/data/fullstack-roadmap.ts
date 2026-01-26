@@ -2,6 +2,12 @@
  * Full Stack Roadmap Data
  * =========================
  * Structured roadmap data for the Full Stack Developer Interview Mastery track.
+ *
+ * Subtopic counts are now natural (not artificially constrained to 6):
+ * - Topics have 4-8 subtopics based on content needs
+ * - Well-balanced topics kept as-is
+ * - Expanded topics cover critical interview concepts
+ * - Reduced topics remove legacy/redundant content
  */
 
 import type { Phase } from './roadmap'
@@ -40,7 +46,8 @@ export const fullstackPhases: Phase[] = [
           'CSS Variables (custom properties, theming)',
           'Animations & Transitions (keyframes, easing, transform)',
           'Pseudo-classes & Pseudo-elements (:hover, :focus, ::before, ::after)',
-          'CSS Architecture (BEM, SMACSS concepts)'
+          'CSS Architecture (BEM, SMACSS concepts)',
+          'CSS Specificity & Cascade (calculating specificity, !important, inheritance)'
         ],
         priority: 'essential'
       },
@@ -53,7 +60,9 @@ export const fullstackPhases: Phase[] = [
           'Functions (declarations, expressions, arrow functions)',
           'Arrays & Objects (methods, destructuring, spread operator)',
           'Control Flow (conditionals, loops, ternary operator)',
-          'ES6+ Features (template literals, default parameters, rest operator)'
+          'ES6+ Features (template literals, default parameters, rest operator)',
+          'String Methods (slice, split, replace, includes, trim, padStart)',
+          'this Keyword Basics (implicit binding, default binding, arrow functions)'
         ],
         priority: 'essential'
       },
@@ -103,7 +112,8 @@ export const fullstackPhases: Phase[] = [
           'Async/Await (error handling, parallel execution)',
           'Event Loop (call stack, task queue, microtask queue)',
           'Fetch API & AbortController',
-          'Web Workers Basics'
+          'Web Workers Basics',
+          'Error Handling in Async Code (try/catch patterns, Promise rejection handling)'
         ],
         priority: 'essential'
       },
@@ -116,7 +126,8 @@ export const fullstackPhases: Phase[] = [
           'Inheritance (extends, super)',
           'Static Methods & Properties',
           'Getters & Setters',
-          'Private Fields (#privateField)'
+          'Private Fields (#privateField)',
+          'this Binding Deep Dive (call, apply, bind, explicit vs implicit)'
         ],
         priority: 'important'
       },
@@ -127,8 +138,7 @@ export const fullstackPhases: Phase[] = [
           'Pure Functions & Side Effects',
           'Higher-Order Functions (map, filter, reduce, flatMap)',
           'Immutability Patterns',
-          'Composition & Currying',
-          'Partial Application',
+          'Composition, Currying & Partial Application',
           'Memoization'
         ],
         priority: 'important'
@@ -154,8 +164,7 @@ export const fullstackPhases: Phase[] = [
           'Default vs Named Exports',
           'Dynamic Imports (lazy loading)',
           'CommonJS vs ES Modules',
-          'Module Bundlers (Vite, Webpack, Rollup)',
-          'Tree-shaking & Dead Code Elimination'
+          'Module Bundlers & Tree-shaking (Vite, Webpack, Rollup)'
         ],
         priority: 'essential'
       },
@@ -165,10 +174,12 @@ export const fullstackPhases: Phase[] = [
         subtopics: [
           'Singleton Pattern',
           'Factory Pattern',
+          'Builder Pattern',
           'Observer Pattern (Pub/Sub)',
           'Module Pattern',
           'Decorator Pattern',
-          'Strategy Pattern'
+          'Strategy Pattern',
+          'Adapter & Facade Patterns'
         ],
         priority: 'important'
       }
@@ -206,7 +217,8 @@ export const fullstackPhases: Phase[] = [
           'Mapped Types',
           'Conditional Types',
           'Template Literal Types',
-          'keyof & typeof Operators'
+          'keyof & typeof Operators',
+          'Type Narrowing (typeof, instanceof, truthiness, equality checks)'
         ],
         priority: 'essential'
       },
@@ -215,11 +227,10 @@ export const fullstackPhases: Phase[] = [
         slug: 'typescript-with-functions',
         subtopics: [
           'Function Type Expressions',
-          'Call Signatures',
+          'Call Signatures & this Parameter',
           'Overloads',
           'Generic Functions',
-          'Rest Parameters & Spread',
-          'this Parameter'
+          'Rest Parameters & Spread'
         ],
         priority: 'essential'
       },
@@ -244,8 +255,7 @@ export const fullstackPhases: Phase[] = [
           'Abstract Classes',
           'Implements vs Extends',
           'Static Members',
-          'Parameter Properties',
-          'Decorators (experimental)'
+          'Parameter Properties'
         ],
         priority: 'important'
       },
@@ -283,7 +293,8 @@ export const fullstackPhases: Phase[] = [
           'Component Basics (props, emits, slots)',
           'Lifecycle Hooks (onMounted, onUpdated, onUnmounted)',
           'Conditional & List Rendering (v-if, v-show, v-for, key)',
-          'Event Handling (v-on, modifiers)'
+          'Event Handling (v-on, modifiers)',
+          'Two-way Binding (v-model, custom v-model)'
         ],
         priority: 'essential'
       },
@@ -321,7 +332,6 @@ export const fullstackPhases: Phase[] = [
           'Store Composition & Modules',
           'Pinia Plugins',
           'State Persistence (pinia-plugin-persistedstate)',
-          'Vuex Legacy (migration knowledge)',
           'When to Use Global vs Local State'
         ],
         priority: 'important'
@@ -340,15 +350,13 @@ export const fullstackPhases: Phase[] = [
         priority: 'essential'
       },
       {
-        name: 'Vuetify UI Framework',
-        slug: 'vuetify-ui-framework',
+        name: 'Vue Component Libraries',
+        slug: 'vue-component-libraries',
         subtopics: [
-          'Component Library (v-btn, v-card, v-dialog, v-form)',
-          'Grid System & Layouts',
-          'Theming & Customization',
-          'Form Validation with Vee-Validate or Vuetify Rules',
-          'Responsive Design with Vuetify',
-          'Custom Components with Vuetify'
+          'Component Library Selection (Vuetify, Nuxt UI, PrimeVue, Element Plus)',
+          'Headless UI Components (Radix Vue, Headless UI)',
+          'Theming & Customization Patterns',
+          'Accessibility Considerations in UI Libraries'
         ],
         priority: 'important'
       }
@@ -385,8 +393,7 @@ export const fullstackPhases: Phase[] = [
           'Static Site Generation (SSG)',
           'Hybrid Rendering (route rules)',
           'Client-Side Rendering (SPA mode)',
-          'Incremental Static Regeneration (ISR)',
-          'Edge-Side Rendering'
+          'ISR & Edge-Side Rendering'
         ],
         priority: 'essential'
       },
@@ -421,10 +428,9 @@ export const fullstackPhases: Phase[] = [
         slug: 'nuxt-modules-and-plugins',
         subtopics: [
           'Using Nuxt Modules (@nuxt/image, @nuxtjs/i18n)',
-          'Creating Custom Modules',
+          'Creating & Configuring Custom Modules',
           'Plugins (client-only, server-only)',
           'Nuxt UI & Nuxt UI Pro',
-          'Module Configuration',
           'Content Module (@nuxt/content)'
         ],
         priority: 'important'
@@ -476,7 +482,8 @@ export const fullstackPhases: Phase[] = [
           'useContext for Global State',
           'useRef (DOM refs, mutable values)',
           'useMemo & useCallback (performance)',
-          'Custom Hooks'
+          'Custom Hooks',
+          'useId (accessibility, SSR-safe unique IDs)'
         ],
         priority: 'essential'
       },
@@ -485,7 +492,6 @@ export const fullstackPhases: Phase[] = [
         slug: 'component-patterns',
         subtopics: [
           'Composition vs Inheritance',
-          'Render Props Pattern',
           'Higher-Order Components (HOC)',
           'Compound Components',
           'Controlled vs Uncontrolled Components',
@@ -539,9 +545,7 @@ export const fullstackPhases: Phase[] = [
           'Styling (CSS Modules, Styled Components, Tailwind)',
           'Form Libraries (React Hook Form, Formik)',
           'UI Libraries (Material UI, Chakra UI, shadcn/ui)',
-          'Animation (Framer Motion)',
-          'Testing (React Testing Library)',
-          'Storybook for Components'
+          'Testing (React Testing Library)'
         ],
         priority: 'recommended'
       }
@@ -576,9 +580,8 @@ export const fullstackPhases: Phase[] = [
         subtopics: [
           'Server Components vs Client Components',
           'Static Rendering (default)',
-          'Dynamic Rendering',
+          'Dynamic Rendering & Partial Prerendering (PPR)',
           'Streaming with Suspense',
-          'Partial Prerendering (PPR)',
           'ISR (Incremental Static Regeneration)'
         ],
         priority: 'essential'
@@ -601,8 +604,7 @@ export const fullstackPhases: Phase[] = [
         slug: 'server-actions',
         subtopics: [
           'Creating Server Actions',
-          'Form Handling with Actions',
-          'useFormState & useFormStatus',
+          'Form Handling with Actions (useFormState, useFormStatus)',
           'Optimistic Updates',
           'Error Handling',
           'Revalidation after Mutations'
@@ -617,8 +619,7 @@ export const fullstackPhases: Phase[] = [
           'Authentication with Middleware',
           'Redirects & Rewrites',
           'Edge Runtime',
-          'Geolocation & A/B Testing',
-          'Rate Limiting Patterns'
+          'Geolocation & A/B Testing'
         ],
         priority: 'important'
       },
@@ -652,6 +653,7 @@ export const fullstackPhases: Phase[] = [
         slug: 'node-js-core',
         subtopics: [
           'Node.js Runtime & Event Loop',
+          'HTTP Module & Basic Server',
           'File System (fs module, async operations)',
           'Path & URL Modules',
           'Streams & Buffers',
@@ -681,6 +683,7 @@ export const fullstackPhases: Phase[] = [
           'API Versioning Strategies',
           'Request Validation (Joi, Zod, express-validator)',
           'Response Formatting (JSON standards)',
+          'Pagination Patterns (offset, cursor, keyset)',
           'CORS Configuration',
           'API Documentation (Swagger/OpenAPI)'
         ],
@@ -691,6 +694,7 @@ export const fullstackPhases: Phase[] = [
         slug: 'authentication-and-authorization',
         subtopics: [
           'JWT (JSON Web Tokens) - creation, verification, refresh',
+          'Refresh Token Rotation & Security',
           'LDAP/Active Directory Integration',
           'Session-based Authentication',
           'OAuth 2.0 Basics',
@@ -707,8 +711,7 @@ export const fullstackPhases: Phase[] = [
           'PDF Generation (pdf-lib)',
           'Image Processing (Sharp)',
           'File Storage Strategies (local, cloud)',
-          'Streaming Large Files',
-          'CSV/Excel Processing'
+          'Streaming Large Files'
         ],
         priority: 'important'
       },
@@ -746,7 +749,8 @@ export const fullstackPhases: Phase[] = [
           'Subqueries & CTEs (Common Table Expressions)',
           'Aggregate Functions (COUNT, SUM, AVG, GROUP BY, HAVING)',
           'Window Functions (ROW_NUMBER, RANK, LAG, LEAD)',
-          'CASE Expressions'
+          'CASE Expressions',
+          'Indexing Basics (B-tree, when to index, covering indexes)'
         ],
         priority: 'essential'
       },
@@ -771,7 +775,6 @@ export const fullstackPhases: Phase[] = [
           'Transactions (BEGIN, COMMIT, ROLLBACK, Isolation Levels)',
           'Stored Procedures & Functions',
           'Views & Materialized Views',
-          'Triggers',
           'Database-specific Features'
         ],
         priority: 'essential'
@@ -785,7 +788,8 @@ export const fullstackPhases: Phase[] = [
           'Aggregation Pipeline',
           'Indexing Strategies',
           'Schema Design Patterns',
-          'Mongoose ODM'
+          'Mongoose ODM',
+          'MongoDB Transactions (multi-document ACID)'
         ],
         priority: 'important'
       },
@@ -809,7 +813,6 @@ export const fullstackPhases: Phase[] = [
           'Prisma (modern ORM)',
           'Sequelize (traditional ORM)',
           'Knex.js (query builder)',
-          'Mongoose (MongoDB)',
           'Migrations & Seeding',
           'Raw Queries When Needed'
         ],
@@ -836,7 +839,8 @@ export const fullstackPhases: Phase[] = [
           'Interactive Rebase & Squashing',
           'Cherry-pick & Stashing',
           'Git Hooks & Husky',
-          'Conventional Commits'
+          'Conventional Commits',
+          'Git Bisect & Debugging'
         ],
         priority: 'essential'
       },
@@ -849,7 +853,8 @@ export const fullstackPhases: Phase[] = [
           'Package Management (apt, npm, yarn, pnpm)',
           'Service Management (systemd)',
           'SSH & Key-based Authentication',
-          'Cron Jobs & Scheduling'
+          'Cron Jobs & Scheduling',
+          'Networking Basics (ports, firewall, iptables/ufw)'
         ],
         priority: 'essential'
       },
@@ -872,6 +877,7 @@ export const fullstackPhases: Phase[] = [
         subtopics: [
           'Containers vs VMs',
           'Dockerfile & Image Building',
+          'Multi-stage Builds',
           'Docker Compose for Multi-container Apps',
           'Volume Mounting',
           'Environment Variables',
@@ -909,11 +915,10 @@ export const fullstackPhases: Phase[] = [
         name: 'Monitoring & Debugging',
         slug: 'monitoring-and-debugging',
         subtopics: [
-          'Application Logging Best Practices',
+          'Application Logging & Log Aggregation',
           'Error Tracking (Sentry)',
           'Performance Monitoring (APM)',
           'Health Checks & Uptime Monitoring',
-          'Log Aggregation',
           'Alerting Basics'
         ],
         priority: 'recommended'
@@ -951,6 +956,7 @@ export const fullstackPhases: Phase[] = [
           'Test Structure (describe, it, expect)',
           'Matchers & Assertions',
           'Mocking (functions, modules, timers)',
+          'Test Doubles (spies, stubs, fakes)',
           'Testing Async Code',
           'Snapshot Testing'
         ],
@@ -1027,6 +1033,8 @@ export const fullstackPhases: Phase[] = [
           'XSS Prevention (sanitization, CSP)',
           'CSRF Protection (tokens, SameSite cookies)',
           'SQL Injection Prevention (parameterized queries)',
+          'Broken Access Control',
+          'Security Misconfiguration',
           'Input Validation & Sanitization',
           'Secure Headers Implementation',
           'Authentication Security Best Practices'
@@ -1055,7 +1063,8 @@ export const fullstackPhases: Phase[] = [
           'Keyboard Navigation',
           'Screen Reader Compatibility',
           'Color Contrast & Visual Design',
-          'ARIA Attributes & Roles'
+          'ARIA Attributes & Roles',
+          'Testing for Accessibility (axe, Lighthouse, screen readers)'
         ],
         priority: 'important'
       },
@@ -1066,8 +1075,7 @@ export const fullstackPhases: Phase[] = [
           'GraphQL vs REST',
           'Queries & Mutations',
           'Schema Definition',
-          'Apollo Client Basics',
-          'GraphQL in Vue/React',
+          'Apollo Client & Framework Integration',
           'When to Use GraphQL'
         ],
         priority: 'recommended'
@@ -1093,8 +1101,7 @@ export const fullstackPhases: Phase[] = [
           'Web App Manifest',
           'Offline Support',
           'Push Notifications',
-          'Install Prompts',
-          'PWA in Vue/Nuxt/React/Next'
+          'Install Prompts'
         ],
         priority: 'recommended'
       }
@@ -1119,7 +1126,9 @@ export const fullstackPhases: Phase[] = [
           'Caching Layer Design',
           'API Design Considerations',
           'Scalability Concepts (horizontal vs vertical)',
-          'Load Balancing Basics'
+          'Load Balancing Basics',
+          'Message Queues (Redis, RabbitMQ basics)',
+          'Microservices vs Monolith'
         ],
         priority: 'essential'
       },
@@ -1129,7 +1138,9 @@ export const fullstackPhases: Phase[] = [
         subtopics: [
           'Array & String Manipulation',
           'Object & Data Transformation',
+          'DOM Manipulation Challenges',
           'Async Problem Solving',
+          'Recursion Problems',
           'Algorithm Basics (sorting, searching)',
           'Time & Space Complexity (Big O)',
           'Common Patterns (two pointers, sliding window)'
@@ -1156,8 +1167,7 @@ export const fullstackPhases: Phase[] = [
           'Project Demo Preparation',
           'Code Walkthrough Skills',
           'Architecture Explanation',
-          'Challenge & Solution Stories',
-          'Metrics & Impact Discussion',
+          'Challenge Stories & Impact Metrics',
           'GitHub Profile Optimization'
         ],
         priority: 'essential'
