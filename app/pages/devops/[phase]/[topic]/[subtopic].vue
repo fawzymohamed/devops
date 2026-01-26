@@ -263,9 +263,21 @@ const { data: surround } = await useAsyncData(
 )
 
 /**
+ * Convert Content Path to Route Path
+ * -----------------------------------
+ * DevOps content is at root (e.g., /phase-1-sdlc/topic/lesson)
+ * but routes use /devops prefix (e.g., /devops/phase-1-sdlc/topic/lesson)
+ */
+function contentPathToRoutePath(contentPath: string): string {
+  // DevOps content paths don't have a prefix, but routes need /devops
+  return `/devops${contentPath}`
+}
+
+/**
  * Computed: Previous and Next lessons (filtered)
  * -----------------------------------------------
- * Extract prev/next from surround array, skipping cheat sheets
+ * Extract prev/next from surround array, skipping cheat sheets.
+ * Transforms content paths to route paths for navigation.
  *
  * LIMITATION: If a cheat sheet is the immediate prev/next, we show nothing
  * instead of finding the next non-cheat-sheet. This is a known limitation.
@@ -281,7 +293,11 @@ const prevLesson = computed((): SurroundItem | null => {
     return null
   }
 
-  return prev
+  // Transform content path to route path
+  return {
+    ...prev,
+    path: contentPathToRoutePath(prev.path)
+  }
 })
 
 const nextLesson = computed((): SurroundItem | null => {
@@ -293,7 +309,11 @@ const nextLesson = computed((): SurroundItem | null => {
     return null
   }
 
-  return next
+  // Transform content path to route path
+  return {
+    ...next,
+    path: contentPathToRoutePath(next.path)
+  }
 })
 
 /**
@@ -611,8 +631,6 @@ useSeoMeta({
           :phase="phase"
           :topic="topic"
           :subtopic="subtopic"
-          :prev-lesson="prevLesson"
-          :next-lesson="nextLesson"
         />
 
         <!--

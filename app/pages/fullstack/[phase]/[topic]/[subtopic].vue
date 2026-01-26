@@ -600,8 +600,6 @@ useSeoMeta({
           :phase="phase"
           :topic="topic"
           :subtopic="subtopic"
-          :prev-lesson="prevLesson"
-          :next-lesson="nextLesson"
         />
 
         <!--

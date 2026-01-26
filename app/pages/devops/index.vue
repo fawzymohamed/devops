@@ -27,6 +27,7 @@
 -->
 
 <script setup lang="ts">
+import { devopsPhases } from '~/data/roadmap'
 import { devopsRoadmap } from '~/data/roadmaps'
 
 /**
@@ -36,6 +37,17 @@ import { devopsRoadmap } from '~/data/roadmaps'
 useSeoMeta({
   title: 'DevOps Roadmap | Master DevOps to DevSecOps',
   description: 'Comprehensive learning path for DevOps engineering. 10 phases, 69 topics, 527+ skills to master.'
+})
+
+/**
+ * Roadmap Context
+ * ---------------
+ */
+const { setCurrentRoadmapBySlug, getRoutePath } = useRoadmap()
+const roadmapId = 'devops'
+
+onMounted(() => {
+  setCurrentRoadmapBySlug('devops')
 })
 
 /**
@@ -49,9 +61,6 @@ const {
   getResumeLearningData,
   getTotalTimeSpentHours
 } = useProgress()
-
-const { getRoutePath } = useRoadmap()
-const roadmapId = 'devops'
 
 /**
  * Computed progress values
@@ -118,7 +127,10 @@ const resumePath = computed(() => {
         ================
         Interactive phase navigation and topic details
       -->
-      <RoadmapTimeline />
+      <RoadmapTimeline
+        :phases="devopsPhases"
+        :roadmap-id="devopsRoadmap.id"
+      />
 
       <!--
         Stats Footer

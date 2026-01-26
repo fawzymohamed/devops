@@ -9,11 +9,13 @@
   - Print-friendly styling
   - Print-friendly export button integration
   - Distinct visual style from regular lessons
+  - No prev/next navigation (cheat sheets are standalone reference pages)
 
   Props:
   - lesson: The cheat sheet content document
   - phase: Phase slug for breadcrumb navigation
   - topic: Topic slug for breadcrumb navigation
+  - subtopic: Subtopic slug (typically "cheat-sheet")
 
   Layout Structure:
   ┌─────────────────────────────────────────────────────────────┐
@@ -25,8 +27,6 @@
   │  - Compact tables                                          │
   │  - Code blocks                                             │
   │  - Decision guides                                         │
-  ├─────────────────────────────────────────────────────────────┤
-  │  Prev/Next Navigation                                      │
   └─────────────────────────────────────────────────────────────┘
 -->
 
@@ -53,18 +53,11 @@ interface CheatSheetDocument extends LessonFrontmatter {
   }
 }
 
-interface SurroundItem {
-  path: string
-  title: string
-}
-
 const props = defineProps<{
   lesson: CheatSheetDocument
   phase: string
   topic: string
   subtopic: string
-  prevLesson: SurroundItem | null
-  nextLesson: SurroundItem | null
 }>()
 
 /**
@@ -200,62 +193,6 @@ function formatTopicName(slug: string): string {
           <ContentRenderer :value="lesson" />
         </div>
       </div>
-
-      <!--
-        Prev/Next Navigation
-        ====================
-        Links to surrounding lessons
-      -->
-      <nav
-        class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4"
-        aria-label="Lesson navigation"
-      >
-        <!-- Previous Lesson -->
-        <NuxtLink
-          v-if="prevLesson"
-          :to="prevLesson.path"
-          class="group"
-        >
-          <UCard
-            class="h-full cursor-pointer ring-1 ring-gray-700 hover:ring-gray-600 hover:bg-gray-800/50 transition-all"
-          >
-            <div class="flex items-center gap-2 text-gray-400 text-sm mb-1">
-              <UIcon
-                name="i-lucide-arrow-left"
-                class="w-4 h-4 group-hover:-translate-x-1 transition-transform"
-              />
-              Previous
-            </div>
-            <div class="font-semibold text-gray-200 group-hover:text-white transition-colors">
-              {{ prevLesson.title }}
-            </div>
-          </UCard>
-        </NuxtLink>
-        <div v-else />
-
-        <!-- Next Lesson -->
-        <NuxtLink
-          v-if="nextLesson"
-          :to="nextLesson.path"
-          class="group"
-        >
-          <UCard
-            class="h-full cursor-pointer ring-1 ring-gray-700 hover:ring-gray-600 hover:bg-gray-800/50 transition-all text-right"
-          >
-            <div class="flex items-center justify-end gap-2 text-gray-400 text-sm mb-1">
-              Next
-              <UIcon
-                name="i-lucide-arrow-right"
-                class="w-4 h-4 group-hover:translate-x-1 transition-transform"
-              />
-            </div>
-            <div class="font-semibold text-gray-200 group-hover:text-white transition-colors">
-              {{ nextLesson.title }}
-            </div>
-          </UCard>
-        </NuxtLink>
-        <div v-else />
-      </nav>
     </div>
   </div>
 </template>

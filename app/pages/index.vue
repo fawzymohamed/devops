@@ -245,24 +245,10 @@ function getRoadmapProgress(roadmapId: string): number {
               Join thousands of developers mastering their skills with structured roadmaps and hands-on learning.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-              <NuxtLink to="/devops">
-                <UButton
-                  size="xl"
-                  color="primary"
-                  class="cursor-pointer w-full sm:w-auto"
-                >
-                  <UIcon
-                    name="i-lucide-git-branch"
-                    class="w-5 h-5 mr-2"
-                  />
-                  Start DevOps Path
-                </UButton>
-              </NuxtLink>
               <NuxtLink to="/fullstack">
                 <UButton
                   size="xl"
-                  variant="outline"
-                  color="neutral"
+                  color="primary"
                   class="cursor-pointer w-full sm:w-auto"
                 >
                   <UIcon
@@ -270,6 +256,20 @@ function getRoadmapProgress(roadmapId: string): number {
                     class="w-5 h-5 mr-2"
                   />
                   Start Full Stack Path
+                </UButton>
+              </NuxtLink>
+              <NuxtLink to="/devops">
+                <UButton
+                  size="xl"
+                  variant="outline"
+                  color="neutral"
+                  class="cursor-pointer w-full sm:w-auto"
+                >
+                  <UIcon
+                    name="i-lucide-git-branch"
+                    class="w-5 h-5 mr-2"
+                  />
+                  Start DevOps Path
                 </UButton>
               </NuxtLink>
             </div>

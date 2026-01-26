@@ -77,7 +77,7 @@ export const fullstackRoadmap: Roadmap = {
   }
 }
 
-export const allRoadmaps: Roadmap[] = [devopsRoadmap, fullstackRoadmap]
+export const allRoadmaps: Roadmap[] = [fullstackRoadmap, devopsRoadmap]
 
 export function getRoadmapBySlug(slug: string): Roadmap | undefined {
   return allRoadmaps.find(roadmap => roadmap.slug === slug)

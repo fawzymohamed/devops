@@ -210,6 +210,7 @@ Quick reference sheets at the end of each topic section with PDF export capabili
 - PDF export via html2canvas + jsPDF
 - Excluded from progress tracking
 - No quiz section
+- No prev/next navigation (standalone reference pages, accessible from topic page only)
 - **No illustrations** (use tables/lists instead of MDC illustration components)
 - Appears last in topic navigation (via `99.` prefix)
 
@@ -283,8 +284,9 @@ const prevLesson = computed(() => {
 **Navigation Behavior:**
 - ✅ Regular lessons: Navigate sequentially (01 → 02 → 03...)
 - ✅ Cross-topic: After last lesson of Topic A → First lesson of Topic B
-- ❌ Cheat sheets: Skipped in prev/next (accessible from topic page only)
-- ⚠️ Limitation: If cheat sheet is immediate prev/next, arrow is hidden instead of finding next valid lesson
+- ❌ Cheat sheets: Have no prev/next navigation (standalone reference pages)
+- ✅ Regular lessons skip over cheat sheets in navigation
+- ⚠️ Limitation: If cheat sheet is immediate prev/next of a lesson, arrow is hidden instead of finding next valid lesson
 
 **URL Structure:**
 ```
