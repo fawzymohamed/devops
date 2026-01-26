@@ -24,14 +24,11 @@ export default defineNuxtConfig({
   ],
 
   /**
-   * GitHub Pages Deployment Configuration
-   * -------------------------------------
+   * Vercel Deployment Configuration
+   * -------------------------------
    * - ssr: false - Disables server-side rendering for static site generation
-   * - baseURL: '/devops/' - Sets the base path for GitHub Pages (repo name)
-   * - nitro preset: 'github-pages' - Optimizes build output for GitHub Pages
-   *
-   * Note: The baseURL must match your GitHub repository name for proper routing.
-   * The site will be accessible at: https://<username>.github.io/devops/
+   * - baseURL: '/' - Root URL for Vercel deployment
+   * - nitro preset: 'vercel' - Optimizes build output for Vercel
    */
   ssr: false,
 
@@ -45,7 +42,7 @@ export default defineNuxtConfig({
     enabled: true
   },
   app: {
-    baseURL: '/devops/'
+    baseURL: '/'
   },
 
   /**
@@ -97,7 +94,11 @@ export default defineNuxtConfig({
    * The home page is pre-rendered at build time for optimal performance.
    */
   routeRules: {
-    '/': { prerender: true }
+    '/': { prerender: true },
+    '/devops': { prerender: true },
+    '/fullstack': { prerender: true },
+    '/progress': { prerender: true },
+    '/certificate': { prerender: true }
   },
 
   // Dev server configuration - hardcoded to port 5000
@@ -114,7 +115,7 @@ export default defineNuxtConfig({
    */
   compatibilityDate: '2025-01-15',
   nitro: {
-    preset: 'github-pages'
+    preset: 'vercel'
   },
 
   /**

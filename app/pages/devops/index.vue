@@ -1,18 +1,19 @@
 <!--
-  Full Stack Index Page
-  =====================
-  Main landing page for the Full Stack roadmap with enhanced visual design.
+  DevOps Index Page
+  =================
+  Main landing page for the DevOps roadmap with enhanced visual design.
 
   Features:
   - Hero banner with animated elements
   - Progress tracking integration
   - Priority legend
   - Interactive timeline with phases
+  - Stats footer
 
   Layout:
   ┌─────────────────────────────────────────────────────────────┐
   │  HERO BANNER                                                 │
-  │  [Icon] Full Stack Developer Interview Mastery              │
+  │  [Icon] DevOps to DevSecOps Learning Roadmap                │
   │  [Stats: Phases | Topics | Skills | Duration]               │
   │  [Progress Ring] [Resume Learning]                          │
   ├─────────────────────────────────────────────────────────────┤
@@ -20,35 +21,21 @@
   ├─────────────────────────────────────────────────────────────┤
   │  ROADMAP TIMELINE                                            │
   │  [Phase Cards] [Topic Details]                              │
+  ├─────────────────────────────────────────────────────────────┤
+  │  STATS FOOTER                                                │
   └─────────────────────────────────────────────────────────────┘
 -->
 
 <script setup lang="ts">
-import { fullstackPhases } from '~/data/fullstack-roadmap'
-import { fullstackRoadmap } from '~/data/roadmaps'
+import { devopsRoadmap } from '~/data/roadmaps'
 
 /**
  * Page Meta
  * ---------
  */
-definePageMeta({
-  layout: 'default'
-})
-
 useSeoMeta({
-  title: 'Full Stack Roadmap | Master JavaScript, TypeScript & More',
-  description: 'Comprehensive learning path for Full Stack development. 13 phases, 79 topics, 450+ skills to master.'
-})
-
-/**
- * Roadmap Context
- * ---------------
- */
-const { setCurrentRoadmapBySlug, getRoutePath } = useRoadmap()
-const roadmapId = 'fullstack'
-
-onMounted(() => {
-  setCurrentRoadmapBySlug('fullstack')
+  title: 'DevOps Roadmap | Master DevOps to DevSecOps',
+  description: 'Comprehensive learning path for DevOps engineering. 10 phases, 69 topics, 527+ skills to master.'
 })
 
 /**
@@ -63,14 +50,19 @@ const {
   getTotalTimeSpentHours
 } = useProgress()
 
+const { getRoutePath } = useRoadmap()
+const roadmapId = 'devops'
+
+/**
+ * Computed progress values
+ */
 const completedLessons = computed(() => getCompletedCount(roadmapId))
 const totalLessons = computed(() => getTotalLessonCount(roadmapId))
 const completionPercentage = computed(() => getCertificateProgress(roadmapId))
 const timeSpentHours = computed(() => getTotalTimeSpentHours(roadmapId))
 
 /**
- * Resume Learning
- * ---------------
+ * Resume learning path
  */
 const resumeData = computed(() => getResumeLearningData(roadmapId))
 const resumePath = computed(() => {
@@ -93,7 +85,7 @@ const resumePath = computed(() => {
         Roadmap header with animated elements and progress
       -->
       <HeroRoadmapBanner
-        :roadmap="fullstackRoadmap"
+        :roadmap="devopsRoadmap"
         :progress="completionPercentage"
         :completed-lessons="completedLessons"
         :total-lessons="totalLessons"
@@ -126,10 +118,14 @@ const resumePath = computed(() => {
         ================
         Interactive phase navigation and topic details
       -->
-      <RoadmapTimeline
-        :phases="fullstackPhases"
-        :roadmap-id="fullstackRoadmap.id"
-      />
+      <RoadmapTimeline />
+
+      <!--
+        Stats Footer
+        ============
+        Summary statistics and navigation
+      -->
+      <StatsFooter />
     </div>
   </div>
 </template>

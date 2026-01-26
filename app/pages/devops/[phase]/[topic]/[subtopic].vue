@@ -206,15 +206,30 @@ const { phase, topic, subtopic } = route.params as {
   subtopic: string
 }
 
+const { getContentLessonPath, getRoadmapFromRoute, getRoutePath } = useRoadmap()
+
+const currentRoadmap = computed(() => getRoadmapFromRoute())
+const roadmapId = computed(() => currentRoadmap.value?.id ?? 'devops')
+
 /**
  * Content Path
  * ------------
  * Build the path to query the markdown file using content collection paths.
  */
-const { getContentLessonPath } = useRoadmap()
-const roadmapId = 'devops'
 const contentPath = computed(() => {
-  return getContentLessonPath(roadmapId, phase, topic, subtopic)
+  if (!currentRoadmap.value) return ''
+  return getContentLessonPath(currentRoadmap.value.slug, phase, topic, subtopic)
+})
+
+const breadcrumbHome = computed(() => {
+  if (!currentRoadmap.value) {
+    return { label: 'Home', icon: 'i-lucide-home', to: '/' }
+  }
+  return {
+    label: currentRoadmap.value.title,
+    icon: 'i-lucide-home',
+    to: getRoutePath(currentRoadmap.value.slug) || '/'
+  }
 })
 
 /**
@@ -294,7 +309,7 @@ const { markComplete, isComplete, recordQuizScore } = useProgress()
  * Check if this lesson is marked as complete
  */
 const lessonCompleted = computed(() => {
-  return isComplete(roadmapId, phase, topic, subtopic)
+  return isComplete(roadmapId.value, phase, topic, subtopic)
 })
 
 /**
@@ -314,13 +329,13 @@ const isCheatSheet = computed(() => {
  */
 function handleMarkComplete() {
   // Get phase completion status before marking complete
-  const wasPhaseComplete = isComplete(roadmapId, phase)
+  const wasPhaseComplete = isComplete(roadmapId.value, phase)
 
   // Mark the lesson as complete
-  markComplete(roadmapId, phase, topic, subtopic, lesson.value?.estimatedMinutes)
+  markComplete(roadmapId.value, phase, topic, subtopic, lesson.value?.estimatedMinutes)
 
   // Check if phase just became complete
-  const isPhaseCompleteNow = isComplete(roadmapId, phase)
+  const isPhaseCompleteNow = isComplete(roadmapId.value, phase)
 
   // Show phase completion notification if phase was just completed
   if (!wasPhaseComplete && isPhaseCompleteNow) {
@@ -337,7 +352,7 @@ function handleMarkComplete() {
         {
           label: 'View Certificate',
           onClick: () => {
-            navigateTo('/certificate?roadmap=devops')
+            navigateTo(`/certificate?roadmap=${roadmapId.value}`)
           }
         }
       ]
@@ -455,7 +470,7 @@ useSeoMeta({
                   variant="soft"
                   color="neutral"
                   class="cursor-pointer"
-                  to="/"
+                  :to="breadcrumbHome.to"
                 >
                   Back to Roadmap
                 </UButton>
@@ -507,7 +522,7 @@ useSeoMeta({
                   variant="soft"
                   color="neutral"
                   class="cursor-pointer"
-                  to="/"
+                  :to="breadcrumbHome.to"
                 >
                   Back to Roadmap
                 </UButton>
@@ -542,7 +557,7 @@ useSeoMeta({
                 variant="soft"
                 color="error"
                 class="mt-3 cursor-pointer"
-                to="/"
+                :to="breadcrumbHome.to"
               >
                 Back to Roadmap
               </UButton>
@@ -571,7 +586,7 @@ useSeoMeta({
             The lesson you're looking for doesn't exist or hasn't been created yet.
           </p>
           <UButton
-            to="/"
+            :to="breadcrumbHome.to"
             class="cursor-pointer"
           >
             Back to Roadmap
@@ -618,7 +633,7 @@ useSeoMeta({
           >
             <UBreadcrumb
               :items="[
-                { label: 'DevOps', icon: 'i-lucide-home', to: '/' },
+                breadcrumbHome,
                 { label: formatPhaseName(phase) },
                 { label: formatTopicName(topic) },
                 { label: lesson.title }

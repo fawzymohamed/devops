@@ -38,7 +38,7 @@ export const devopsRoadmap: Roadmap = {
   icon: 'DevOps',
   certificateTitle: 'DevOps Master Certificate',
   contentPath: '',
-  routePrefix: '',
+  routePrefix: 'devops',
   priorityLabels: {
     essential: 'Must Know',
     important: 'Should Know',

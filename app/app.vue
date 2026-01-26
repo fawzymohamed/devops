@@ -112,7 +112,6 @@ useSeoMeta({
       <!-- Right slot: Navigation links -->
       <template #right>
         <nav class="flex items-center gap-4">
-          <RoadmapSwitcher />
           <!-- Progress page link -->
           <NuxtLink
             to="/progress"

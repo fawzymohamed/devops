@@ -1,249 +1,281 @@
 <!--
-  Index.vue - Main Landing Page
-  =============================
-  This is the primary page of the DevOps to DevSecOps Learning Roadmap application.
-  It serves as the entry point and displays the complete roadmap interface.
+  index.vue - Creative Landing Page
+  ==================================
+  Immersive landing page with animated elements for roadmap selection.
 
-  Page Structure:
-  1. Header Section - Title, subtitle, and quick stats (duration, phases)
-  2. Priority Legend - Color-coded guide explaining topic importance levels
-  3. Roadmap Timeline - Interactive phase navigation and topic details
-  4. Stats Footer - Summary statistics and additional information
+  Features:
+  - Animated gradient background with floating shapes
+  - Dynamic hero section with gradient text
+  - Animated stats counter
+  - Enhanced roadmap selection cards
+  - Features showcase section
 
-  Data Flow:
-  - Imports roadmap data and computed duration from ~/data/roadmap.ts
-  - All statistics are dynamically calculated from the roadmap data
+  Layout:
+  ┌─────────────────────────────────────────────────────────────┐
+  │  [Animated Background - Gradient + Floating Elements]        │
+  ├─────────────────────────────────────────────────────────────┤
+  │  HERO SECTION                                                │
+  │  "Master Your Tech Career"                                   │
+  │  Choose your path. Track your progress.                      │
+  │  [Combined Stats: 23 Phases | 148 Topics | 977 Skills]       │
+  ├─────────────────────────────────────────────────────────────┤
+  │  ROADMAP CARDS                                               │
+  │  ┌──────────────────┐   ┌──────────────────┐                │
+  │  │  DevOps          │   │  Full Stack      │                │
+  │  │  [Stats + CTA]   │   │  [Stats + CTA]   │                │
+  │  └──────────────────┘   └──────────────────┘                │
+  ├─────────────────────────────────────────────────────────────┤
+  │  FEATURES SHOWCASE                                           │
+  │  Progress | Quizzes | Certificates | Cheat Sheets           │
+  └─────────────────────────────────────────────────────────────┘
 -->
 
 <script setup lang="ts">
-/**
- * Data Imports
- * ------------
- * - devopsPhases: Array of all learning phases with topics and subtopics
- * - totalDuration: Dynamically calculated total duration string (e.g., "24 weeks")
- */
-import { devopsPhases, totalDuration } from '~/data/roadmap'
+import { allRoadmaps } from '~/data/roadmaps'
 
 /**
- * Computed Properties
- * -------------------
- * totalPhases: Dynamically counts the number of phases in the roadmap.
- * This ensures the UI always reflects the current data structure.
+ * Page Meta
+ * ---------
+ * SEO and layout configuration
  */
-const totalPhases = computed(() => devopsPhases.length)
+definePageMeta({
+  layout: 'default'
+})
 
-// =============================================================================
-// PROGRESS TRACKING
-// =============================================================================
-
-const {
-  getCompletedCount,
-  getTotalLessonCount,
-  getCertificateProgress,
-  getResumeLearningData,
-  getTotalTimeSpentHours
-} = useProgress()
-const { getRoutePath } = useRoadmap()
-const roadmapId = 'devops'
-
-/**
- * Number of completed lessons
- */
-const completedLessons = computed(() => getCompletedCount(roadmapId))
-
-/**
- * Total number of lessons from roadmap
- */
-const totalLessons = computed(() => getTotalLessonCount(roadmapId))
-
-/**
- * Overall completion percentage
- */
-const completionPercentage = computed(() => getCertificateProgress(roadmapId))
-
-/**
- * Resume learning data (last accessed lesson)
- */
-const resumeData = computed(() => getResumeLearningData(roadmapId))
-const resumePath = computed(() => {
-  if (!resumeData.value) return null
-  return getRoutePath(
-    roadmapId,
-    resumeData.value.phaseId,
-    resumeData.value.topicId,
-    resumeData.value.subtopicId
-  )
+useSeoMeta({
+  title: 'Master Your Tech Career | Learning Roadmaps',
+  description: 'Comprehensive learning paths for DevOps and Full Stack development. Track your progress, take quizzes, and earn certificates.'
 })
 
 /**
- * Total time spent learning in hours
+ * Progress Tracking
+ * -----------------
+ * Get user's progress for each roadmap
  */
-const timeSpentHours = computed(() => getTotalTimeSpentHours(roadmapId))
+const { getCertificateProgress } = useProgress()
 
 /**
- * Whether user has any progress
+ * Computed: Total Stats
+ * ---------------------
+ * Aggregate stats from all roadmaps
  */
-const hasProgress = computed(() => completedLessons.value > 0)
+const totalStats = computed(() => ({
+  phases: allRoadmaps.reduce((sum, r) => sum + r.stats.phaseCount, 0),
+  topics: allRoadmaps.reduce((sum, r) => sum + r.stats.topicCount, 0),
+  skills: allRoadmaps.reduce((sum, r) => sum + r.stats.subtopicCount, 0),
+  weeks: allRoadmaps.reduce((sum, r) => sum + r.stats.totalWeeks, 0)
+}))
+
+/**
+ * Get progress for a specific roadmap
+ */
+function getRoadmapProgress(roadmapId: string): number {
+  return getCertificateProgress(roadmapId)
+}
 </script>
 
 <template>
-  <div class="py-8">
+  <div class="relative min-h-screen overflow-hidden">
     <!--
-    Header Section
-    ==============
-    Contains the main title with gradient text effect,
-    personalization subtitle, and key metrics (duration & phase count).
+      Animated Background
+      ===================
+      Floating shapes and gradient overlay
     -->
-    <div class="text-center mb-10">
-      <!-- Main title with multi-color gradient (green -> sky -> violet -> red) -->
-      <h1 class="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-green-500 via-sky-500 via-violet-500 to-red-500 bg-clip-text text-transparent">
-        DevOps to DevSecOps Learning Roadmap
-      </h1>
+    <AnimatedBackground variant="default" />
 
-      <!-- Personalization subtitle indicating target audience and market -->
-      <p class="text-gray-400 text-base sm:text-lg mb-4">
-        Personalized for Fawzy Mohamed | Saudi Arabia Market Focus
-      </p>
+    <!--
+      Main Content
+      ============
+      All content positioned above the background
+    -->
+    <div class="relative z-10">
+      <!--
+        Hero Section
+        ============
+        Main headline with animated text and stats
+      -->
+      <section class="pt-16 pb-12 md:pt-24 md:pb-16 px-4">
+        <div class="max-w-5xl mx-auto text-center">
+          <!--
+            Animated Badge
+            ==============
+            Small intro badge above headline
+          -->
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6 animate-slide-up">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span class="text-sm text-gray-300">Free Learning Platform</span>
+          </div>
 
-      <!-- Quick stats bar showing total duration and phase count -->
-      <div class="inline-flex flex-wrap justify-center gap-4 sm:gap-6 bg-gray-800/50 px-4 sm:px-6 py-3 rounded-xl">
-        <div>
-          <span class="text-gray-400">Total Duration: </span>
-          <span class="font-semibold text-green-500">{{ totalDuration }}</span>
+          <!--
+            Main Headline
+            =============
+            Gradient animated text
+          -->
+          <h1
+            class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-slide-up stagger-1"
+            style="opacity: 0;"
+          >
+            <span class="text-white">Master Your</span>
+            <br class="sm:hidden">
+            <span class="gradient-text animate-text-glow"> Tech Career</span>
+          </h1>
+
+          <!--
+            Subheadline
+            ===========
+          -->
+          <p
+            class="text-lg sm:text-xl md:text-2xl text-gray-400 mb-10 max-w-2xl mx-auto animate-slide-up stagger-2"
+            style="opacity: 0;"
+          >
+            Choose your path. Track your progress.
+            <span class="text-gray-300">Begin your journey.</span>
+          </p>
+
+          <!--
+            Stats Counter Row
+            =================
+            Animated counters for total stats
+          -->
+          <div
+            class="flex flex-wrap justify-center gap-6 md:gap-12 animate-slide-up stagger-3"
+            style="opacity: 0;"
+          >
+            <div class="text-center">
+              <div class="text-2xl md:text-3xl font-bold text-emerald-400">
+                <AnimatedCounter :value="totalStats.phases" />
+              </div>
+              <div class="text-sm text-gray-500">
+                Phases
+              </div>
+            </div>
+            <div class="hidden sm:block w-px h-12 bg-gray-700" />
+            <div class="text-center">
+              <div class="text-2xl md:text-3xl font-bold text-cyan-400">
+                <AnimatedCounter :value="totalStats.topics" />
+              </div>
+              <div class="text-sm text-gray-500">
+                Topics
+              </div>
+            </div>
+            <div class="hidden sm:block w-px h-12 bg-gray-700" />
+            <div class="text-center">
+              <div class="text-2xl md:text-3xl font-bold text-violet-400">
+                <AnimatedCounter
+                  :value="totalStats.skills"
+                  suffix="+"
+                />
+              </div>
+              <div class="text-sm text-gray-500">
+                Skills
+              </div>
+            </div>
+            <div class="hidden sm:block w-px h-12 bg-gray-700" />
+            <div class="text-center">
+              <div class="text-2xl md:text-3xl font-bold text-amber-400">
+                <AnimatedCounter :value="totalStats.weeks" />
+              </div>
+              <div class="text-sm text-gray-500">
+                Weeks
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <span class="text-gray-400">Phases: </span>
-          <span class="font-semibold">{{ totalPhases }}</span>
-        </div>
-      </div>
+      </section>
 
       <!--
-      Progress Indicator Card
-      =======================
-      Enhanced progress display showing learning progress, time spent,
-      and quick actions. Only displayed when user has started learning.
+        Roadmap Selection
+        =================
+        Enhanced roadmap cards
       -->
-      <div
-        v-if="hasProgress"
-        class="mt-6 max-w-2xl mx-auto"
-      >
-        <div
-          class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-900/40 via-emerald-800/30 to-teal-900/40 border border-emerald-500/30 p-5 sm:p-6 backdrop-blur-sm"
-        >
-          <!-- Decorative glow effect -->
-          <div class="absolute -top-20 -right-20 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl" />
-          <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-teal-500/15 rounded-full blur-2xl" />
+      <section class="py-12 px-4">
+        <div class="max-w-5xl mx-auto">
+          <!--
+            Section Header
+          -->
+          <div class="text-center mb-10">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-3">
+              Choose Your <span class="gradient-text-emerald">Learning Path</span>
+            </h2>
+            <p class="text-gray-400">
+              Start with one roadmap or explore both at your own pace.
+            </p>
+          </div>
 
-          <div class="relative flex flex-col sm:flex-row items-center gap-5 sm:gap-8">
-            <!-- Progress Ring -->
-            <div class="flex-shrink-0">
-              <ProgressRing
-                :value="completionPercentage"
-                :size="80"
-                :stroke-width="6"
-                color="#10b981"
-                track-color="rgba(255,255,255,0.1)"
-                show-label
-              />
-            </div>
+          <!--
+            Roadmap Cards Grid
+          -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <RoadmapHeroCard
+              v-for="roadmap in allRoadmaps"
+              :key="roadmap.id"
+              :roadmap="roadmap"
+              :progress="getRoadmapProgress(roadmap.id)"
+            />
+          </div>
+        </div>
+      </section>
 
-            <!-- Stats Grid -->
-            <div class="flex-1 grid grid-cols-2 gap-4 text-center sm:text-left">
-              <!-- Lessons Completed -->
-              <div>
-                <div class="text-2xl font-bold text-white">
-                  {{ completedLessons }}<span class="text-gray-400 text-lg">/{{ totalLessons }}</span>
-                </div>
-                <div class="text-sm text-gray-400">
-                  Lessons Completed
-                </div>
-              </div>
+      <!--
+        Features Showcase
+        =================
+        Platform features grid
+      -->
+      <section class="px-4">
+        <div class="max-w-6xl mx-auto">
+          <FeatureShowcase />
+        </div>
+      </section>
 
-              <!-- Time Spent -->
-              <div>
-                <div class="text-2xl font-bold text-white">
-                  {{ timeSpentHours }}<span class="text-gray-400 text-lg"> hrs</span>
-                </div>
-                <div class="text-sm text-gray-400">
-                  Time Invested
-                </div>
-              </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-3">
-              <!-- Resume Learning Button -->
-              <NuxtLink
-                v-if="resumePath"
-                :to="resumePath"
-              >
+      <!--
+        Footer CTA
+        ==========
+        Final call to action
+      -->
+      <section class="py-16 px-4">
+        <div class="max-w-3xl mx-auto text-center">
+          <div class="glass-strong rounded-2xl p-8 md:p-12">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">
+              Ready to Start Learning?
+            </h2>
+            <p class="text-gray-400 mb-8">
+              Join thousands of developers mastering their skills with structured roadmaps and hands-on learning.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <NuxtLink to="/devops">
                 <UButton
+                  size="xl"
                   color="primary"
-                  size="lg"
-                  class="cursor-pointer whitespace-nowrap"
+                  class="cursor-pointer w-full sm:w-auto"
                 >
                   <UIcon
-                    name="i-lucide-play-circle"
+                    name="i-lucide-git-branch"
                     class="w-5 h-5 mr-2"
                   />
-                  Resume Learning
+                  Start DevOps Path
                 </UButton>
               </NuxtLink>
-
-              <!-- View Progress Link -->
-              <NuxtLink to="/progress?roadmap=devops">
+              <NuxtLink to="/fullstack">
                 <UButton
+                  size="xl"
+                  variant="outline"
                   color="neutral"
-                  variant="ghost"
-                  size="lg"
-                  class="cursor-pointer whitespace-nowrap"
+                  class="cursor-pointer w-full sm:w-auto"
                 >
-                  View Details
                   <UIcon
-                    name="i-lucide-arrow-right"
-                    class="w-4 h-4 ml-1"
+                    name="i-lucide-layers"
+                    class="w-5 h-5 mr-2"
                   />
+                  Start Full Stack Path
                 </UButton>
               </NuxtLink>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
-
-    <!--
-    Priority Legend
-    ===============
-    Color-coded guide explaining the three priority levels:
-    - Red (Must Know): Essential skills required for job applications
-    - Yellow (Should Know): Commonly requested in technical interviews
-    - Blue (Good to Know): Skills that differentiate candidates
-    -->
-    <div class="flex flex-wrap justify-center gap-4 sm:gap-6 mb-8 text-sm text-gray-400">
-      <span><span class="text-red-400 font-semibold">Red</span> Must Know = Required for job applications</span>
-      <span><span class="text-yellow-400 font-semibold">Yellow</span> Should Know = Frequently requested in interviews</span>
-      <span><span class="text-sky-400 font-semibold">Blue</span> Good to Know = Differentiates you from other candidates</span>
-    </div>
-
-    <!--
-    Roadmap Timeline Component
-    ==========================
-    Main interactive component displaying:
-    - Horizontal scrollable phase navigation cards
-    - Detailed view of selected phase with expandable topics
-    - Accordion-style topic cards showing subtopics/skills
-    -->
-    <RoadmapTimeline />
-
-    <!--
-    Stats Footer Component
-    ======================
-    Displays summary statistics:
-    - Total phases, topics, and skills counts
-    - Overall duration
-    - Number of certifications
-    - Priority level legend reminder
-    -->
-    <StatsFooter />
   </div>
 </template>
