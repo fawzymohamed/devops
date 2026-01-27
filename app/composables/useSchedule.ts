@@ -155,22 +155,35 @@ export function useSchedule() {
   // ===========================================================================
 
   /**
-   * Add weeks to a date
-   * @param date - The starting date
-   * @param weeks - Number of weeks to add (can be fractional)
-   * @returns New Date object with added weeks
+   * Calculate calendar days from topic position
+   * Accounts for study days per week (skip days on non-study days)
+   *
+   * For N topics at D study days/week:
+   * - full_weeks = floor((N-1) / D) - how many complete weeks of studying
+   * - remaining = (N-1) % D - remaining study days after full weeks
+   * - calendar_days = full_weeks * 7 + remaining
+   *
+   * Example: 4 topics, 6 days/week
+   * - Topic 1 = day 0 (start date)
+   * - Topic 4 = floor(3/6)*7 + 3%6 = 0 + 3 = day 3
+   *
+   * @param topicPosition - 1-indexed position of the topic
+   * @param studyDaysPerWeek - Number of study days per week (1-7)
+   * @returns Number of calendar days from start date
    */
-  function addWeeks(date: Date, weeks: number): Date {
-    const result = new Date(date)
-    const daysToAdd = Math.ceil(weeks * 7)
-    result.setDate(result.getDate() + daysToAdd)
-    return result
+  function calculateCalendarDays(topicPosition: number, studyDaysPerWeek: number): number {
+    if (topicPosition <= 1) return 0
+
+    const studyDaysNeeded = topicPosition - 1 // Days of studying after topic 1
+    const fullWeeks = Math.floor(studyDaysNeeded / studyDaysPerWeek)
+    const remainingStudyDays = studyDaysNeeded % studyDaysPerWeek
+
+    return fullWeeks * 7 + remainingStudyDays
   }
 
   /**
    * Calculate completion date based on topic count and study pace
-   * Uses the formula: topics / study days per week = weeks to complete
-   * Pace baseline: 1 topic = 1 study day
+   * Uses position-based formula accounting for study days per week
    *
    * @param startDate - ISO date string (YYYY-MM-DD)
    * @param topicCount - Total number of topics to complete
@@ -186,11 +199,13 @@ export function useSchedule() {
       // Parse start date (add T00:00:00 to prevent timezone shifts)
       const start = new Date(startDate + 'T00:00:00')
 
-      // Calculate weeks to complete: topicCount / studyDaysPerWeek
-      const weeksToComplete = topicCount / studyDaysPerWeek
+      // Calculate calendar days for the last topic position
+      const daysToAdd = calculateCalendarDays(topicCount, studyDaysPerWeek)
 
-      // Add weeks to start date
-      return addWeeks(start, weeksToComplete)
+      // Add days to start date
+      const result = new Date(start)
+      result.setDate(result.getDate() + daysToAdd)
+      return result
     } catch {
       return null
     }
@@ -202,8 +217,7 @@ export function useSchedule() {
 
   /**
    * Get projected completion date for entire roadmap
-   * Uses dynamic calculation based on remaining topics and today's date.
-   * This automatically adjusts if the user falls behind or gets ahead of schedule.
+   * Shows when the roadmap SHOULD be completed based on the schedule.
    *
    * @param roadmapId - The roadmap identifier (e.g., 'devops', 'fullstack')
    * @returns Projected completion date or null if no schedule configured
@@ -216,26 +230,21 @@ export function useSchedule() {
     const roadmap = getRoadmapById(roadmapId)
     if (!roadmap) return null
 
-    // Get completed count from progress
-    const completedCount = progressComposable.getCompletedCount(roadmapId)
     const totalTopics = roadmap.stats.topicCount
-    const remainingTopics = totalTopics - completedCount
 
-    // If all topics are completed, return null (will show "Already complete")
-    if (remainingTopics <= 0) return null
+    // Check if roadmap is already complete
+    const completedCount = progressComposable.getCompletedCount(roadmapId)
+    if (completedCount >= totalTopics) return null
 
-    // Calculate from TODAY, not the original start date
-    // This makes dates shift automatically based on actual progress
-    const today = new Date()
-    const todayString = today.toISOString().split('T')[0]! // YYYY-MM-DD (safe: ISO always has 'T')
-
-    return calculateCompletion(todayString, remainingTopics, schedule.studyDaysPerWeek)
+    // Calculate from the user-configured start date
+    // Position = totalTopics (the last topic in the roadmap)
+    return calculateCompletion(schedule.startDate, totalTopics, schedule.studyDaysPerWeek)
   }
 
   /**
    * Get projected completion date for a specific phase
-   * Uses dynamic calculation based on remaining topics in all phases up to and including this one.
-   * Automatically adjusts based on actual progress.
+   * Shows when the phase SHOULD be completed based on the schedule.
+   * Uses position of the last topic in the phase (total topics up to this phase).
    *
    * @param roadmapId - The roadmap identifier (e.g., 'devops', 'fullstack')
    * @param phaseSlug - The phase slug (e.g., 'phase-1-sdlc')
@@ -249,17 +258,12 @@ export function useSchedule() {
     const roadmap = getRoadmapById(roadmapId)
     if (!roadmap) return null
 
-    // Calculate total topics and completed topics up to and including target phase
+    // Count total topics up to and including target phase
     let totalTopicsUpToPhase = 0
-    let completedTopicsUpToPhase = 0
     let foundTargetPhase = false
 
     for (const phase of roadmap.phases) {
-      const phaseTopicCount = phase.topics.length
-      const phaseCompletedCount = progressComposable.getCompletedCountForPhase(roadmapId, phase.slug)
-
-      totalTopicsUpToPhase += phaseTopicCount
-      completedTopicsUpToPhase += phaseCompletedCount
+      totalTopicsUpToPhase += phase.topics.length
 
       if (phase.slug === phaseSlug) {
         foundTargetPhase = true
@@ -269,17 +273,83 @@ export function useSchedule() {
 
     if (!foundTargetPhase || totalTopicsUpToPhase === 0) return null
 
-    // Calculate remaining topics for this phase
-    const remainingTopics = totalTopicsUpToPhase - completedTopicsUpToPhase
+    // Check if phase is already complete
+    const phaseCompletedCount = progressComposable.getCompletedCountForPhase(roadmapId, phaseSlug)
+    const phaseData = roadmap.phases.find(p => p.slug === phaseSlug)
+    if (phaseData && phaseCompletedCount >= phaseData.topics.length) {
+      return null // Phase complete, don't show date
+    }
 
-    // If phase is already complete, return null (will show as completed)
-    if (remainingTopics <= 0) return null
+    // Calculate from the user-configured start date
+    // Position = totalTopicsUpToPhase (the last topic in this phase)
+    return calculateCompletion(schedule.startDate, totalTopicsUpToPhase, schedule.studyDaysPerWeek)
+  }
 
-    // Calculate from TODAY, not the original start date
-    const today = new Date()
-    const todayString = today.toISOString().split('T')[0]! // YYYY-MM-DD (safe: ISO always has 'T')
+  // ===========================================================================
+  // PER-TOPIC PROJECTED DATE CALCULATION
+  // ===========================================================================
 
-    return calculateCompletion(todayString, remainingTopics, schedule.studyDaysPerWeek)
+  /**
+   * Get projected completion date for a specific topic
+   * Calculates based on the configured startDate + topic's position in the roadmap.
+   * Position is determined by counting all topics from the beginning up to this topic.
+   *
+   * @param roadmapId - The roadmap identifier (e.g., 'devops', 'fullstack')
+   * @param phaseSlug - The phase slug (e.g., 'phase-1-sdlc')
+   * @param topicSlug - The topic slug (e.g., 'sdlc-models')
+   * @returns Projected completion date for this topic or null if no schedule/already complete
+   */
+  function getProjectedTopicCompletion(roadmapId: string, phaseSlug: string, topicSlug: string): Date | null {
+    const schedule = getSchedule(roadmapId)
+    if (!schedule) return null
+
+    // Get roadmap data
+    const roadmap = getRoadmapById(roadmapId)
+    if (!roadmap) return null
+
+    // Find the absolute position of this topic in the roadmap (1-indexed)
+    let position = 0
+    let foundTarget = false
+    let targetIsComplete = false
+
+    for (const phase of roadmap.phases) {
+      for (const topic of phase.topics) {
+        position++ // Count every topic, not just uncompleted ones
+
+        // Check if this is our target topic
+        if (phase.slug === phaseSlug && (topic.slug || toSlug(topic.name)) === topicSlug) {
+          foundTarget = true
+          // Check if topic is complete
+          const topicCompleted = progressComposable.getCompletedCountForTopic(roadmapId, phase.slug, topic.slug || toSlug(topic.name))
+          const topicTotal = topic.subtopics.length
+          targetIsComplete = topicCompleted >= topicTotal
+          break
+        }
+      }
+      if (foundTarget) break
+    }
+
+    // If topic not found or already complete, return null
+    if (!foundTarget || targetIsComplete) return null
+
+    // Calculate date from startDate using position-based formula
+    const start = new Date(schedule.startDate + 'T00:00:00')
+    const daysToAdd = calculateCalendarDays(position, schedule.studyDaysPerWeek)
+
+    const result = new Date(start)
+    result.setDate(result.getDate() + daysToAdd)
+    return result
+  }
+
+  /**
+   * Helper: Convert name to slug
+   */
+  function toSlug(name: string): string {
+    return name
+      .replace(/\s*\([^)]*\)\s*/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
   }
 
   // ===========================================================================
@@ -331,6 +401,7 @@ export function useSchedule() {
     removeSchedule,
     getProjectedRoadmapCompletion,
     getProjectedPhaseCompletion,
+    getProjectedTopicCompletion,
     formatProjectedDate
   }
 }

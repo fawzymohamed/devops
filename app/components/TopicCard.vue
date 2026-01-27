@@ -51,6 +51,7 @@ declare const queryCollection: any
  * @prop phaseColor - Hex color string from parent phase (e.g., "#22c55e")
  * @prop phaseSlug - URL slug for the phase (e.g., "phase-1-sdlc")
  * @prop isOpen - Whether the card is currently expanded (controlled by parent)
+ * @prop projectedDate - Formatted projected completion date (only for uncompleted topics)
  */
 const props = defineProps<{
   topic: Topic
@@ -58,6 +59,7 @@ const props = defineProps<{
   phaseSlug: string
   isOpen: boolean
   roadmapId?: string
+  projectedDate?: string
 }>()
 
 /**
@@ -327,6 +329,21 @@ const isTopicComplete = computed(() => {
             class="w-3 h-3 mr-1"
           />
           {{ completedCount }}/{{ totalCount }}
+        </UBadge>
+
+        <!-- Projected date badge (only shown for uncompleted topics with schedule) -->
+        <UBadge
+          v-if="projectedDate && !isTopicComplete"
+          color="neutral"
+          variant="outline"
+          size="sm"
+          class="text-gray-400"
+        >
+          <UIcon
+            name="i-lucide-calendar"
+            class="w-3 h-3 mr-1"
+          />
+          {{ projectedDate }}
         </UBadge>
       </div>
 

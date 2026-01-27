@@ -60,7 +60,7 @@ const props = withDefaults(defineProps<{
 // SCHEDULE & PROJECTED DATES
 // =============================================================================
 
-const { hasSchedule, getProjectedPhaseCompletion, formatProjectedDate } = useSchedule()
+const { hasSchedule, getProjectedPhaseCompletion, getProjectedTopicCompletion, formatProjectedDate } = useSchedule()
 
 /**
  * Get projected completion date for a phase
@@ -71,6 +71,28 @@ function getPhaseProjectedDate(phaseSlug: string): string | undefined {
 
   const date = getProjectedPhaseCompletion(props.roadmapId, phaseSlug)
   return date ? formatProjectedDate(date) : undefined
+}
+
+/**
+ * Get projected completion date for a topic
+ * Returns formatted date string or undefined if no schedule or topic complete
+ */
+function getTopicProjectedDate(phaseSlug: string, topicSlug: string): string | undefined {
+  if (!hasSchedule(props.roadmapId)) return undefined
+
+  const date = getProjectedTopicCompletion(props.roadmapId, phaseSlug, topicSlug)
+  return date ? formatProjectedDate(date) : undefined
+}
+
+/**
+ * Helper to get topic slug
+ */
+function toSlug(name: string): string {
+  return name
+    .replace(/\s*\([^)]*\)\s*/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
 }
 
 /**
@@ -231,6 +253,7 @@ watch(activePhase, () => {
           :phase-slug="activePhaseSlug"
           :is-open="openTopicIndex === idx"
           :roadmap-id="props.roadmapId"
+          :projected-date="getTopicProjectedDate(activePhaseSlug, topic.slug || toSlug(topic.name))"
           @toggle="toggleTopic(idx)"
         />
       </div>
