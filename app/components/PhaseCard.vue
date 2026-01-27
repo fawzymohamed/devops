@@ -42,11 +42,13 @@ import type { Phase } from '~/data/roadmap'
  * ---------------
  * @prop phase - The phase data object containing all phase information
  * @prop isActive - Whether this phase is currently selected/active
+ * @prop projectedDate - Optional projected completion date for this phase (formatted string)
  */
 const props = defineProps<{
   phase: Phase
   isActive: boolean
   roadmapId?: string
+  projectedDate?: string
 }>()
 
 /**
@@ -157,11 +159,27 @@ const isPhaseComplete = computed(() => phaseCompletion.value === 100)
     <!--
       Footer: Duration Badge and Completion Status
       ---------------------------------------------
-      Shows duration and completion badge when phase is complete.
+      Shows projected date (when schedule exists) or duration badge.
+      Displays completion badge when phase is complete.
     -->
     <div class="flex items-center gap-2">
-      <!-- Duration badge -->
+      <!-- Projected Date badge (when schedule exists) -->
       <UBadge
+        v-if="projectedDate"
+        :style="{ backgroundColor: phase.color }"
+        class="text-white"
+        size="sm"
+      >
+        <UIcon
+          name="i-lucide-calendar"
+          class="w-3 h-3 mr-1"
+        />
+        {{ projectedDate }}
+      </UBadge>
+
+      <!-- Duration badge (fallback when no schedule) -->
+      <UBadge
+        v-else
         :style="{ backgroundColor: phase.color }"
         class="text-white"
         size="sm"

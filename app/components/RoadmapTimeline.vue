@@ -56,6 +56,23 @@ const props = withDefaults(defineProps<{
   roadmapId: 'devops'
 })
 
+// =============================================================================
+// SCHEDULE & PROJECTED DATES
+// =============================================================================
+
+const { hasSchedule, getProjectedPhaseCompletion, formatProjectedDate } = useSchedule()
+
+/**
+ * Get projected completion date for a phase
+ * Returns formatted date string or null if no schedule exists
+ */
+function getPhaseProjectedDate(phaseSlug: string): string | undefined {
+  if (!hasSchedule(props.roadmapId)) return undefined
+
+  const date = getProjectedPhaseCompletion(props.roadmapId, phaseSlug)
+  return date ? formatProjectedDate(date) : undefined
+}
+
 /**
  * Reactive State
  * --------------
@@ -121,6 +138,7 @@ watch(activePhase, () => {
         :phase="phase"
         :is-active="activePhase === idx"
         :roadmap-id="props.roadmapId"
+        :projected-date="getPhaseProjectedDate(phase.slug)"
         @select="activePhase = idx"
       />
     </div>

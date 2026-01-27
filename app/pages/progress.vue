@@ -65,6 +65,12 @@ const {
   getResumeLearningData
 } = useProgress()
 
+const {
+  hasSchedule,
+  getProjectedRoadmapCompletion,
+  formatProjectedDate
+} = useSchedule()
+
 // =============================================================================
 // STATE
 // =============================================================================
@@ -142,6 +148,22 @@ const timeSpentHours = computed(() => {
 })
 
 const hasProgress = computed(() => completedLessons.value > 0)
+
+/**
+ * Projected completion date (when schedule exists)
+ * Returns formatted date string, "Already complete", or null
+ */
+const projectedCompletionDate = computed(() => {
+  if (!roadmapId.value) return null
+  if (!hasSchedule(roadmapId.value)) return null
+
+  // Handle edge case: all topics completed (0 remaining)
+  const remaining = totalLessons.value - completedLessons.value
+  if (remaining <= 0) return 'Already complete'
+
+  const date = getProjectedRoadmapCompletion(roadmapId.value)
+  return date ? formatProjectedDate(date) : null
+})
 
 /**
  * Resume learning path
@@ -304,6 +326,23 @@ function handleReset() {
 
             <!-- Stats Grid -->
             <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-6">
+              <!-- Projected Completion Date (when schedule exists) -->
+              <div
+                v-if="projectedCompletionDate"
+                class="text-center md:text-left md:col-span-2"
+              >
+                <div class="text-sm text-gray-400 mb-1 flex items-center justify-center md:justify-start gap-2">
+                  <UIcon
+                    name="i-lucide-calendar-check"
+                    class="w-4 h-4"
+                  />
+                  Projected Completion
+                </div>
+                <div class="text-2xl font-bold text-emerald-400">
+                  {{ projectedCompletionDate }}
+                </div>
+              </div>
+
               <div class="text-center md:text-left">
                 <div class="text-sm text-gray-400 mb-1">
                   Lessons Completed
@@ -322,7 +361,10 @@ function handleReset() {
                 </div>
               </div>
 
-              <div class="text-center md:text-left">
+              <div
+                v-if="!projectedCompletionDate"
+                class="text-center md:text-left"
+              >
                 <div class="text-sm text-gray-400 mb-1">
                   Phases
                 </div>
@@ -331,7 +373,10 @@ function handleReset() {
                 </div>
               </div>
 
-              <div class="text-center md:text-left">
+              <div
+                v-if="!projectedCompletionDate"
+                class="text-center md:text-left"
+              >
                 <div class="text-sm text-gray-400 mb-1">
                   Skills
                 </div>
@@ -454,6 +499,15 @@ function handleReset() {
               @toggle="togglePhase(phase.slug)"
             />
           </div>
+        </section>
+
+        <!--
+          Study Schedule
+          ==============
+          Configure study pace for projected completion dates
+        -->
+        <section class="mb-10">
+          <ProgressScheduleSettings :roadmap-id="roadmapId" />
         </section>
 
         <!--

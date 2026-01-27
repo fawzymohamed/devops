@@ -285,6 +285,19 @@ export interface PhaseProgress {
 }
 
 /**
+ * Study Schedule Interface
+ * ------------------------
+ * Configuration for projected completion date calculation.
+ * Stored within RoadmapProgress in localStorage.
+ */
+export interface StudySchedule {
+  /** Start date in ISO format (YYYY-MM-DD) */
+  startDate: string
+  /** Number of days per week dedicated to studying (1-7) */
+  studyDaysPerWeek: number
+}
+
+/**
  * User Progress Interface
  * -----------------------
  * Root interface for tracking all user progress.
@@ -317,6 +330,8 @@ export interface RoadmapProgress {
   lastAccessed?: string
   /** Optional: Total time spent in minutes */
   totalTimeSpent?: number
+  /** Optional: Study schedule for projected completion dates */
+  schedule?: StudySchedule
 }
 
 /**
