@@ -227,7 +227,7 @@ export function useSchedule() {
     // Calculate from TODAY, not the original start date
     // This makes dates shift automatically based on actual progress
     const today = new Date()
-    const todayString = today.toISOString().split('T')[0] // YYYY-MM-DD
+    const todayString = today.toISOString().split('T')[0]! // YYYY-MM-DD (safe: ISO always has 'T')
 
     return calculateCompletion(todayString, remainingTopics, schedule.studyDaysPerWeek)
   }
@@ -277,7 +277,7 @@ export function useSchedule() {
 
     // Calculate from TODAY, not the original start date
     const today = new Date()
-    const todayString = today.toISOString().split('T')[0] // YYYY-MM-DD
+    const todayString = today.toISOString().split('T')[0]! // YYYY-MM-DD (safe: ISO always has 'T')
 
     return calculateCompletion(todayString, remainingTopics, schedule.studyDaysPerWeek)
   }
@@ -302,7 +302,7 @@ export function useSchedule() {
       })
     } catch {
       // Fallback to ISO date format
-      return date.toISOString().split('T')[0]
+      return date.toISOString().split('T')[0]!
     }
   }
 
