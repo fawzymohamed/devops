@@ -147,6 +147,31 @@ command2 --flag
 - Blockquotes for process summaries
 - Code blocks for command sequences
 
+### Interview Quick Hits Required
+
+**IMPORTANT:** Every cheat sheet MUST include an "Interview Quick Hits" section containing common interview questions and concise answers for the topic.
+
+**Placement:** Near the end of the cheat sheet, before any "Common Pitfalls" or "Troubleshooting" section.
+
+**Format:**
+```markdown
+## Interview Quick Hits
+
+| Question | Answer |
+|----------|--------|
+| What is X? | Concise 1-2 sentence answer |
+| When would you use Y? | Brief explanation with context |
+| What's the difference between A and B? | Key distinctions in simple terms |
+| Why is Z important? | Business/technical value in brief |
+```
+
+**Guidelines:**
+- Include 4-8 questions per cheat sheet
+- Focus on questions commonly asked in technical interviews
+- Keep answers concise (1-3 sentences max)
+- Cover fundamentals, comparisons, and "why" questions
+- Tailor questions to the topic type (concept, tool, or workflow)
+
 ## Writing Guidelines
 
 ### Content Density
@@ -220,6 +245,7 @@ Before finalizing a cheat sheet:
 - [ ] `isCheatSheet: true` in frontmatter
 - [ ] `cheatSheetTopic` matches topic name
 - [ ] **No illustrations** (no MDC illustration components)
+- [ ] **Interview Quick Hits section included** (4-8 Q&A pairs)
 - [ ] Scannable in under 30 seconds
 - [ ] Tables used for comparisons
 - [ ] No paragraphs longer than 2 sentences
@@ -284,6 +310,15 @@ git checkout main && git merge hotfix/name
 | Working on main | Always branch first |
 | Forgetting to pull | `git pull` before branch |
 | Long-lived branches | Merge frequently |
+
+## Interview Quick Hits
+
+| Question | Answer |
+|----------|--------|
+| What is a branch in Git? | A lightweight pointer to a commit that allows parallel development without affecting the main codebase |
+| What's the difference between `git merge` and `git rebase`? | Merge preserves history with a merge commit; rebase replays commits for a linear history |
+| When would you use feature branches? | When developing new features in isolation to avoid breaking the main branch |
+| How do you resolve a merge conflict? | Edit the conflicted files to choose the correct changes, then stage and commit |
 ```
 
 ## Components Reference

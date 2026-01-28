@@ -101,10 +101,23 @@ code
 
 **No Illustrations:** Cheat sheets must NEVER contain illustration components (`IllustrationLinearFlow`, `IllustrationChecklist`, etc.). Use tables, numbered lists, and blockquotes instead.
 
+**Interview Quick Hits Required:** Every cheat sheet MUST include an "Interview Quick Hits" section with common interview questions and concise answers related to the topic. Place this section near the end of the cheat sheet.
+
+```markdown
+## Interview Quick Hits
+
+| Question | Answer |
+|----------|--------|
+| What is X? | Concise 1-2 sentence answer |
+| When would you use Y? | Brief explanation with context |
+| What's the difference between A and B? | Key distinctions in simple terms |
+```
+
 ## Quality Checklist
 
 - [ ] Frontmatter includes `isCheatSheet: true`
 - [ ] **No illustrations** (no MDC illustration components)
+- [ ] **Interview Quick Hits section included** (4-8 Q&A pairs)
 - [ ] Content is scannable (tables, bullets)
 - [ ] No paragraphs longer than 2 sentences
 - [ ] Synthesizes content (not just copied)
