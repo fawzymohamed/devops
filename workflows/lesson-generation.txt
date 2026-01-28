@@ -6,27 +6,26 @@ phase-2-advanced-javascript/closures-and-scope/'Lexical Scope & Scope Chain'
 
 ============================
 
-Spawn a lesson-creator agent to create all lessons for Phase 2, 'phase-2-advanced-javascript/asynchronous-javascript'
-Include:  'Callbacks & Callback Hell',
-          'Promises (then, catch, finally, Promise.all, Promise.race, Promise.allSettled)',
-          'Async/Await (error handling, parallel execution)',
-          'Event Loop (call stack, task queue, microtask queue)',
-          'Fetch API & AbortController',
-          'Web Workers Basics'
+Spawn a lesson-creator agent to create all lessons for Phase 2, 'phase-2-advanced-javascript/object-oriented-javascript'
+Include:  'Prototypes & Prototype Chain',
+          'Classes (ES6 syntax, constructor, methods)',
+          'Inheritance (extends, super)',
+          'Static Methods & Properties',
+          'Getters & Setters',
+          'Private Fields (#privateField)',
+          'this Binding Deep Dive (call, apply, bind, explicit vs implicit)'
 
 ============================
 
-/test-feature content/fullstack/2.phase-2-advanced-javascript
+/test-feature content/fullstack/2.phase-2-advanced-javascript/object-oriented-javascript
 
-/review content/fullstack/2.phase-2-advanced-javascript
+/review content/fullstack/2.phase-2-advanced-javascript/object-oriented-javascript
 
 Please test the newly created lessons on the browser. The dev server is already running on http://localhost:5000/
 
-Mark the newly created lessons as done in CLAUDE.md file
-
 ============================
 
-/generate-cheat-sheet for "content/fullstack/2.phase-2-advanced-javascript" lessons
+/generate-cheat-sheet for "content/fullstack/1.phase-1-core-web-fundamentals/javascript-fundamentals" lessons
 
 ============================
 BUGS:
