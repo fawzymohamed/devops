@@ -26,7 +26,7 @@ export default defineNuxtConfig({
   /**
    * Vercel Deployment Configuration
    * -------------------------------
-   * - ssr: false - Disables server-side rendering for static site generation
+   * - ssr: false - Disables server-side rendering for Vercel static output
    * - baseURL: '/' - Root URL for Vercel deployment
    * - nitro preset: 'vercel' - Optimizes build output for Vercel
    */

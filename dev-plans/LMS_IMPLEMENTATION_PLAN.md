@@ -240,5 +240,5 @@ quiz:
 - All buttons must have `cursor-pointer` class
 - Follow existing documentation/comment standards
 - Dark mode only (already configured)
-- Static generation for GitHub Pages compatibility
+- Static generation for Vercel compatibility
 - Progress persists in localStorage (no backend required)

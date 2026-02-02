@@ -19,7 +19,7 @@ Transform the single-roadmap DevOps LMS into a multi-roadmap platform supporting
 **Primary Dependencies**: Nuxt 4.x, @nuxt/content, Nuxt UI v4, Tailwind CSS
 **Storage**: localStorage (client-side) - key: `devops-lms-progress`
 **Testing**: Manual testing, `npm run lint`, `npm run typecheck`, `npm run build`
-**Target Platform**: Static site (GitHub Pages) - browser-only, no SSR
+**Target Platform**: Vercel (static output) - browser-only, no SSR
 **Project Type**: Web application (Nuxt 4 SPA)
 **Performance Goals**: Static site generation, instant page transitions (SPA)
 **Constraints**: Must work with `baseURL: '/devops/'`, no server-side APIs, SSR-safe patterns required

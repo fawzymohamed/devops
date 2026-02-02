@@ -225,7 +225,7 @@ The system has a structured data layer for the Full Stack Interview roadmap that
 2. **Consistent design language**: The Full Stack roadmap will use the same visual design (dark mode, Tailwind CSS, Nuxt UI components) as the existing DevOps roadmap.
 3. **Same feature set**: All existing features (quizzes, cheat sheets, progress tracking, certificates) will be available for the new roadmap once content is created.
 4. **localStorage for progress**: Progress will continue to be stored in localStorage, with the storage structure updated to support multiple roadmaps.
-5. **Static generation**: The site will continue to use static site generation for GitHub Pages deployment.
+5. **Static generation**: The site can use Vercel static output generation.
 6. **Priority mapping**: The different priority naming conventions (essential vs Must Know) will map to the same visual styling (red for highest priority, amber for medium, blue for lowest).
 
 ---
