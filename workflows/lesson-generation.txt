@@ -36,4 +36,26 @@ BUGS:
 
 Please suggest a one line short commit message that can describe the changes we have did.
 
-============================
+========================================================
+========================================================
+
+  To generate content for The AI-Age DevOps Architect roadmap, you'd prompt the agent like this:
+
+  Single lesson:
+
+  Create architect lesson for: phase-1-sdlc-and-requirements/sdlc-models-and-methodologies/waterfall-v-model
+
+
+  All lessons in a topic:
+
+  Create all architect lessons in: phase-1-sdlc-and-requirements/requirements-engineering
+
+
+  Full phase (all topics + all subtopics):
+
+  Create all architect lessons in: phase-1-sdlc-and-requirements
+
+
+  With cheat sheet after finishing a topic:
+
+  Generate architect cheat sheet for: phase-1-sdlc-and-requirements/sdlc-models-and-methodologies
