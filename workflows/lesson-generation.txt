@@ -21,7 +21,7 @@ Include:  'Prototypes & Prototype Chain',
 
 /review content/fullstack/2.phase-2-advanced-javascript/object-oriented-javascript
 
-Please test the newly created lessons on the browser. The dev server is already running on http://localhost:5000/
+Please test the newly created lessons on the browser. Don't test the quiz section, just make sure that the new lesson/s is/are rendered ok and the navigation buttons at the bottom of the page is working fine. The dev server is already running on http://localhost:5000/
 
 ============================
 
@@ -43,7 +43,7 @@ Please suggest a one line short commit message that can describe the changes we 
 
   Single lesson:
 
-  Spawn a lesson-creator agent to create a lesson for: phase-1-sdlc-and-requirements/sdlc-models-and-methodologies/waterfall-v-model
+  Spawn a lesson-creator agent to create a lesson for: phase-1-sdlc-and-requirements/sdlc-models/scrum-framework
 
 
   All lessons in a topic:
