@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Overview
-Multi-roadmap LMS covering DevOps and Full Stack Interview Mastery. Built with Nuxt 4, Nuxt UI v4, Tailwind CSS (dark mode only), and @nuxt/content. Static generation targets GitHub Pages (`baseURL: /devops/`).
+Multi-roadmap LMS covering DevOps and Full Stack Interview Mastery. Built with Nuxt 4, Nuxt UI v4, Tailwind CSS (dark mode only), and @nuxt/content. Deployment targets Vercel.
 
 ## Project Structure & Module Organization
 - `app/` is the Nuxt app. Key areas: `app/pages/`, `app/components/`, `app/composables/`, `app/plugins/`, `app/assets/`.
@@ -11,12 +11,12 @@ Multi-roadmap LMS covering DevOps and Full Stack Interview Mastery. Built with N
 - `specs/` and `workflows/` capture product and process docs.
 
 ## Build, Test, and Development Commands
-- `pnpm dev`: start dev server at `http://localhost:3000/devops/`.
-- `pnpm build`: production build.
-- `pnpm generate`: static site generation (GitHub Pages).
-- `pnpm preview`: preview production output.
-- `pnpm lint`: run ESLint.
-- `pnpm typecheck`: run Nuxt/Vue TypeScript checks.
+- `npm run dev`: start dev server at `http://localhost:5000/`.
+- `npm run build`: production build.
+- `npm run generate`: Vercel static output generation (optional).
+- `npm run preview`: preview production output.
+- `npm run lint`: run ESLint.
+- `npm run typecheck`: run Nuxt/Vue TypeScript checks.
 
 ## Data & Content Conventions
 - Roadmap registry defines priorities: `essential`, `important`, `recommended` with labels “Must/Should/Good to Know.”

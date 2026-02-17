@@ -13,7 +13,7 @@ Replace static duration labels (e.g., "1-2 weeks") with projected completion dat
 **Primary Dependencies**: Nuxt 4.x, Nuxt UI v4, @nuxt/content, Tailwind CSS
 **Storage**: localStorage (browser-side, consistent with existing progress tracking)
 **Testing**: Manual testing (no automated test framework configured)
-**Target Platform**: Web browser (static site, GitHub Pages/Vercel)
+**Target Platform**: Web browser (Vercel static output)
 **Project Type**: Single Nuxt web application
 **Performance Goals**: <1 second date calculation and display
 **Constraints**: SSR-safe (must handle server-side rendering gracefully)

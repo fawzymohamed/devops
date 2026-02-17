@@ -9,7 +9,7 @@ Multi-roadmap LMS with a DevOps roadmap and a Full Stack Interview Mastery roadm
 - **Framework**: Nuxt 4 with @nuxt/content
 - **UI Library**: Nuxt UI v4
 - **Styling**: Tailwind CSS (dark mode only)
-- **Deployment**: GitHub Pages (static generation)
+- **Deployment**: Vercel
 - **Data**: DevOps (10 phases, 69 topics, 527 subtopics) + Full Stack (13 phases, 79 topics, 450+ subtopics)
 
 ## Tech Stack
@@ -28,13 +28,13 @@ Multi-roadmap LMS with a DevOps roadmap and a Full Stack Interview Mastery roadm
 ```bash
 npm run dev       # Start development server
 npm run build     # Build for production
-npm run generate  # Generate static site for GitHub Pages
+npm run generate  # Generate Vercel static output (optional)
 npm run preview   # Preview production build
 npm run lint      # Run ESLint
 npm run typecheck # Run TypeScript checks
 ```
 
-**Dev Server URL**: `http://localhost:3000/devops/` (Nuxt default)
+**Dev Server URL**: `http://localhost:5000/`
 
 ## Architecture
 
@@ -373,10 +373,9 @@ resetProgress(roadmapId)
 
 ## Deployment
 
-Configured for GitHub Pages with:
-- `baseURL: '/devops/'` in nuxt.config.ts
-- GitHub Actions workflow in `.github/workflows/deploy.yml`
-- Static site generation (`npm run generate`)
+Configured for **Vercel**:
+- `nitro.preset: 'vercel'`
+- `app.baseURL: '/'`
 
 ## Code Conventions
 

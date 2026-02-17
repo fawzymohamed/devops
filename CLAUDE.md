@@ -10,10 +10,14 @@ Multi-roadmap LMS with three learning paths.
 - **UI Library**: Nuxt UI v4
 - **Styling**: Tailwind CSS (dark mode only)
 - **Deployment**: Vercel
+<<<<<<< HEAD
 - **Data**:
   - The AI-Age DevOps Architect (15 phases, 106 topics, 605 subtopics)
   - Full Stack Interview Mastery (13 phases, 79 topics, 450+ subtopics)
   - DevOps (10 phases, 69 topics, 527 subtopics)
+=======
+- **Data**: DevOps (10 phases, 69 topics, 527 subtopics) + Full Stack (13 phases, 79 topics, 450+ subtopics)
+>>>>>>> a5d4c75ce7df3b8766445261191bee2ed704942f
 
 ## Tech Stack
 
@@ -31,13 +35,13 @@ Multi-roadmap LMS with three learning paths.
 ```bash
 npm run dev       # Start development server
 npm run build     # Build for production
-npm run generate  # Generate static site for GitHub Pages
+npm run generate  # Generate Vercel static output (optional)
 npm run preview   # Preview production build
 npm run lint      # Run ESLint
 npm run typecheck # Run TypeScript checks
 ```
 
-**Dev Server URL**: `http://localhost:3000/devops/` (Nuxt default)
+**Dev Server URL**: `http://localhost:5000/`
 
 ## Architecture
 
@@ -385,6 +389,15 @@ resetProgress(roadmapId)
 - Export/import progress data as JSON
 - Reset progress with confirmation
 
+<<<<<<< HEAD
+=======
+## Deployment
+
+Configured for **Vercel**:
+- `nitro.preset: 'vercel'`
+- `app.baseURL: '/'`
+
+>>>>>>> a5d4c75ce7df3b8766445261191bee2ed704942f
 ## Code Conventions
 
 - Apply `cursor-pointer` class to all interactive elements (buttons, cards)

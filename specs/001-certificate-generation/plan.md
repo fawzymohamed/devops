@@ -13,8 +13,8 @@ Implement a certificate system that awards learners with downloadable PDF certif
 **Primary Dependencies**: Vue 3.x, Nuxt 4.x, Nuxt UI v4, html2canvas, jsPDF
 **Storage**: localStorage (key: `devops-lms-progress` for progress, new key for learner profile)
 **Testing**: Manual testing with browser DevTools, visual verification of PDF output
-**Target Platform**: Web browsers (static site on GitHub Pages)
-**Project Type**: Web application (Nuxt 4 full-stack static site)
+**Target Platform**: Web browsers (Vercel static output)
+**Project Type**: Web application (Nuxt 4 full-stack, Vercel static output)
 **Performance Goals**: Certificate download within 5 seconds, dashboard load within 2 seconds
 **Constraints**: SSR-safe (no server-side localStorage access), static generation compatible
 **Scale/Scope**: 10 phase certificates + 1 course completion certificate, single-user local storage
