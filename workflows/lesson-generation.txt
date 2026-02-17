@@ -43,19 +43,19 @@ Please suggest a one line short commit message that can describe the changes we 
 
   Single lesson:
 
-  Create architect lesson for: phase-1-sdlc-and-requirements/sdlc-models-and-methodologies/waterfall-v-model
+  Spawn a lesson-creator agent to create a lesson for: phase-1-sdlc-and-requirements/sdlc-models-and-methodologies/waterfall-v-model
 
 
   All lessons in a topic:
 
-  Create all architect lessons in: phase-1-sdlc-and-requirements/requirements-engineering
+  Spawn a lesson-creator agent to create all lessons in: phase-1-sdlc-and-requirements/requirements-engineering
 
 
   Full phase (all topics + all subtopics):
 
-  Create all architect lessons in: phase-1-sdlc-and-requirements
+  Spawn a lesson-creator agent to create all lessons in: phase-1-sdlc-and-requirements
 
 
   With cheat sheet after finishing a topic:
 
-  Generate architect cheat sheet for: phase-1-sdlc-and-requirements/sdlc-models-and-methodologies
+  Spawn a lesson-creator agent to generate architect cheat sheet for: phase-1-sdlc-and-requirements/sdlc-models-and-methodologies

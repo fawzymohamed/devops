@@ -260,10 +260,9 @@ const prevLesson = computed((): SurroundItem | null => {
   const prev = surround.value?.[0]
   if (!prev) return null
 
-  // Skip if it's a cheat sheet
-  if (prev.isCheatSheet === true) {
-    return null
-  }
+  // Skip if it's a cheat sheet or belongs to a different roadmap
+  if (prev.isCheatSheet === true) return null
+  if (!prev.path.startsWith('/architect/')) return null
 
   return prev
 })
@@ -272,10 +271,9 @@ const nextLesson = computed((): SurroundItem | null => {
   const next = surround.value?.[1]
   if (!next) return null
 
-  // Skip if it's a cheat sheet
-  if (next.isCheatSheet === true) {
-    return null
-  }
+  // Skip if it's a cheat sheet or belongs to a different roadmap
+  if (next.isCheatSheet === true) return null
+  if (!next.path.startsWith('/architect/')) return null
 
   return next
 })
