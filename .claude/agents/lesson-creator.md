@@ -290,10 +290,16 @@ content/architect/
 | Architect | `content/architect/1.phase-1-.../topic/01.lesson.md` | `/architect/phase-1-.../topic/lesson` |
 
 **Naming Rules:**
-- Use **zero-padded numbers** for proper sorting: `01.`, `02.`, ... `09.`, `10.`, `11.`
-- This prevents "10" sorting before "2" (string sorting issue)
+- **EVERY lesson file MUST have a zero-padded numeric prefix** — files without prefixes sort alphabetically, which causes wrong lesson ordering and broken prev/next navigation
+- Use `01.`, `02.`, ... `09.`, `10.`, `11.` — zero-padding prevents "10" sorting before "2"
 - Use kebab-case for slugs: `01.file-system-hierarchy.md`
 - Cheat sheets always use `99.cheat-sheet.md` (no zero-padding needed)
+
+**How to determine the correct number:**
+1. Read the roadmap data file to find the `subtopics` array for the target topic
+2. The subtopic's **position in the array** (1-based) determines the numeric prefix
+3. Example: if `subtopics: ['Waterfall Model', 'Agile Methodology', 'Scrum Framework']`, then Waterfall = `01.`, Agile = `02.`, Scrum = `03.`
+4. Also check for existing files in the directory — if files already exist, the new file's number must be consistent with the roadmap order and not duplicate existing numbers
 
 ### Frontmatter Template
 
@@ -654,6 +660,7 @@ For bulk generation:
 - [ ] Illustration colors match topic semantics (if used)
 - [ ] No placeholder text remains
 - [ ] File saved to correct path with correct naming
+- [ ] **File has a numeric prefix matching its position in the roadmap subtopics array** (e.g., `02.agile-methodology.md` for 2nd subtopic)
 
 ---
 
