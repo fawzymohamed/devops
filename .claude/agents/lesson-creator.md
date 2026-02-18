@@ -469,6 +469,29 @@ steps:
 | `cyan` | Information, operations |
 | `gray` | Neutral, background |
 
+### Code Snippets - JavaScript/TypeScript Only
+
+All code examples in lessons **MUST use JavaScript or TypeScript only** — no other programming languages. This applies to all roadmaps and all lesson types:
+
+- Use JavaScript or TypeScript for all code snippets
+- **Never** use Python, Java, Go, Ruby, C#, or any other language
+- Shell/bash commands are fine for DevOps tool usage (e.g., `docker run`, `kubectl apply`)
+- Configuration files (YAML, JSON, HCL, Dockerfile) are fine when relevant to the topic
+- If a concept is traditionally shown in another language, adapt the example to JavaScript/TypeScript
+
+**Example - Wrong (Python):**
+```python
+def greet(name):
+    return f"Hello, {name}"
+```
+
+**Example - Correct (JavaScript):**
+```javascript
+const greet = (name) => {
+  return `Hello, ${name}`;
+};
+```
+
 ### Writing Style - Concise, Simple English
 
 Write **short, direct lessons**. Every sentence must teach something new. If you catch yourself restating an idea you already covered, delete it.
@@ -565,6 +588,7 @@ After generating content, provide this summary:
 - [x] **Quiz questions test ONLY concepts covered in lesson content**
 - [x] Appropriate difficulty level
 - [x] Illustrations used only where text alone is insufficient (0-1 per lesson)
+- [x] All code examples use JavaScript/TypeScript only (no Python, Java, Go, etc.)
 - [x] No placeholder text remaining
 
 ### Errors Encountered
@@ -650,7 +674,7 @@ For bulk generation:
 - [ ] Learning objectives use measurable verbs
 - [ ] Content length is 300-700 words (concise, no filler)
 - [ ] No repeated concepts or redundant explanations
-- [ ] Code examples are accurate
+- [ ] Code examples use **JavaScript/TypeScript only** (no Python, Java, Go, etc.)
 - [ ] Quiz question count matches difficulty/length formula (3-7 questions)
 - [ ] **QUIZ CONTENT ALIGNMENT: Every quiz question tests a concept explicitly mentioned in the lesson** (CRITICAL)
 - [ ] All quiz answers have explanations

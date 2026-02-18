@@ -5,7 +5,9 @@
       "mcp__notion__notion-fetch",
       "WebSearch",
       "WebFetch(domain:addyosmani.com)",
-      "WebFetch(domain:itrevolution.com)"
+      "WebFetch(domain:itrevolution.com)",
+      "WebFetch(domain:web.dev)",
+      "Bash(node -e:*)"
     ]
   },
   "hooks": {
