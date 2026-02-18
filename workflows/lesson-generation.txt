@@ -48,7 +48,7 @@ Please suggest a one line short commit message that can describe the changes we 
 
   All lessons in a topic:
 
-  Spawn a lesson-creator agent to create all lessons in: phase-1-sdlc-and-requirements/requirements-engineering
+  Spawn a lesson-creator agent to create all lessons in: phase-7-application-architecture/testing-strategy
 
 
   Full phase (all topics + all subtopics):
@@ -58,4 +58,4 @@ Please suggest a one line short commit message that can describe the changes we 
 
   With cheat sheet after finishing a topic:
 
-  Spawn a lesson-creator agent to generate architect cheat sheet for: phase-1-sdlc-and-requirements/sdlc-models-and-methodologies
+  Spawn a lesson-creator agent to generate architect cheat sheet for: phase-7-application-architecture/testing-strategy
