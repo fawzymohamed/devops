@@ -4,20 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Multi-roadmap LMS with three learning paths.
+Multi-roadmap LMS with two learning paths.
 
 - **Framework**: Nuxt 4 with @nuxt/content
 - **UI Library**: Nuxt UI v4
 - **Styling**: Tailwind CSS (dark mode only)
 - **Deployment**: Vercel
-<<<<<<< HEAD
 - **Data**:
-  - The AI-Age DevOps Architect (15 phases, 106 topics, 605 subtopics)
   - Full Stack Interview Mastery (13 phases, 79 topics, 450+ subtopics)
   - DevOps (10 phases, 69 topics, 527 subtopics)
-=======
-- **Data**: DevOps (10 phases, 69 topics, 527 subtopics) + Full Stack (13 phases, 79 topics, 450+ subtopics)
->>>>>>> a5d4c75ce7df3b8766445261191bee2ed704942f
 
 ## Tech Stack
 
@@ -77,7 +72,6 @@ app/
 |-- data/
 |   |-- roadmap.ts            # DevOps roadmap data
 |   |-- fullstack-roadmap.ts  # Full Stack roadmap data
-|   |-- combined-roadmap.ts   # AI-Age DevOps Architect roadmap data
 |   |-- roadmaps.ts           # Roadmap registry
 |   `-- types.ts              # Shared TypeScript interfaces
 |-- layouts/              # Page layouts
@@ -86,29 +80,23 @@ app/
 |   |-- progress.vue           # Progress dashboard page
 |   |-- certificate.vue        # Certificate page (roadmap-aware)
 |   |-- [phase]/[topic]/[subtopic].vue  # DevOps lesson pages
-|   |-- fullstack/
-|   |   |-- index.vue           # Full Stack roadmap page
-|   |   `-- [phase]/[topic]/[subtopic].vue  # Full Stack lesson pages
-|   `-- architect/
-|       |-- index.vue           # AI-Age DevOps Architect roadmap page
-|       `-- [phase]/[topic]/[subtopic].vue  # Architect lesson pages
+|   `-- fullstack/
+|       |-- index.vue           # Full Stack roadmap page
+|       `-- [phase]/[topic]/[subtopic].vue  # Full Stack lesson pages
 `-- app.vue               # Root layout
 
 content/                  # Markdown lesson files
 |-- 1.phase-1-sdlc/           # DevOps content at root (backward compatible)
 |-- ...
-|-- fullstack/                # Full Stack content (prefixed routes)
-|   `-- 1.phase-1-web-fundamentals/
-`-- architect/                # AI-Age DevOps Architect content
-    `-- 1.phase-1-sdlc-and-requirements/
+`-- fullstack/                # Full Stack content (prefixed routes)
+    `-- 1.phase-1-web-fundamentals/
 ```
 
 ### Data Layer
 
 - `app/data/roadmap.ts` - DevOps phases/topics
 - `app/data/fullstack-roadmap.ts` - Full Stack phases/topics
-- `app/data/combined-roadmap.ts` - AI-Age DevOps Architect phases/topics
-- `app/data/roadmaps.ts` - Roadmap registry with computed stats (order: architect, fullstack, devops)
+- `app/data/roadmaps.ts` - Roadmap registry with computed stats (order: fullstack, devops)
 - `app/data/types.ts` - Shared interfaces (`Roadmap`, `Phase`, `Topic`, `Priority`, `MultiRoadmapProgress`)
 - Priority system: `essential` (red), `important` (amber), `recommended` (blue)
 
@@ -258,7 +246,6 @@ content/
 Lesson pages are rendered by dynamic Vue routes:
 - **DevOps**: `app/pages/[phase]/[topic]/[subtopic].vue`
 - **Full Stack**: `app/pages/fullstack/[phase]/[topic]/[subtopic].vue`
-- **Architect**: `app/pages/architect/[phase]/[topic]/[subtopic].vue`
 
 **How It Works:**
 1. **Route Matching**: Nuxt matches URLs like `/fullstack/phase-2-advanced-javascript/asynchronous-javascript/promises` to the dynamic page
@@ -320,7 +307,6 @@ The numeric prefix (`02.`) is **removed** from the URL but controls sort order i
 
 **Key Files:**
 - `app/pages/fullstack/[phase]/[topic]/[subtopic].vue` - Full Stack lesson page
-- `app/pages/architect/[phase]/[topic]/[subtopic].vue` - Architect lesson page
 - `app/pages/[phase]/[topic]/[subtopic].vue` - DevOps lesson page
 - `app/composables/useRoadmap.ts` - Content path helper (`getContentLessonPath`)
 
@@ -389,15 +375,13 @@ resetProgress(roadmapId)
 - Export/import progress data as JSON
 - Reset progress with confirmation
 
-<<<<<<< HEAD
-=======
 ## Deployment
 
 Configured for **Vercel**:
 - `nitro.preset: 'vercel'`
 - `app.baseURL: '/'`
 
->>>>>>> a5d4c75ce7df3b8766445261191bee2ed704942f
+
 ## Code Conventions
 
 - Apply `cursor-pointer` class to all interactive elements (buttons, cards)
@@ -483,11 +467,9 @@ const value = computed(() => data.length) // Inline explanation
 ## Current Implementation Status
 
 ### Infrastructure
-- [x] Multi-roadmap data layer (DevOps + Full Stack + Architect + registry)
-- [x] Roadmap-aware routing (DevOps root + /fullstack + /architect prefixes)
+- [x] Multi-roadmap data layer (DevOps + Full Stack + registry)
+- [x] Roadmap-aware routing (DevOps root + /fullstack prefixes)
 - [x] Roadmap context (useRoadmap) and per-roadmap progress tracking
-- [x] Multi-roadmap UI (landing selection with 3-column grid, switcher, progress dashboard)
+- [x] Multi-roadmap UI (landing selection with 2-column grid, switcher, progress dashboard)
 - [x] Roadmap-specific certificates
-- [x] AI-Age DevOps Architect roadmap (data, routing, content directories)
-- [ ] Architect roadmap: lesson content generation (605 subtopics pending)
 - [ ] Phase 9 polish: remaining manual verification tasks (URLs, migration, walkthrough)

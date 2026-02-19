@@ -290,7 +290,7 @@ const prevLesson = computed((): SurroundItem | null => {
 
   // Skip if it's a cheat sheet or belongs to a different roadmap
   if (prev.isCheatSheet === true) return null
-  if (prev.path.startsWith('/fullstack/') || prev.path.startsWith('/architect/')) return null
+  if (prev.path.startsWith('/fullstack/')) return null
 
   // Transform content path to route path
   return {
@@ -305,7 +305,7 @@ const nextLesson = computed((): SurroundItem | null => {
 
   // Skip if it's a cheat sheet or belongs to a different roadmap
   if (next.isCheatSheet === true) return null
-  if (next.path.startsWith('/fullstack/') || next.path.startsWith('/architect/')) return null
+  if (next.path.startsWith('/fullstack/')) return null
 
   // Transform content path to route path
   return {

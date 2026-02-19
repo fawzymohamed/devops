@@ -6,7 +6,6 @@
 
 import { devopsPhases, totalWeeks as devopsTotalWeeks } from './roadmap'
 import { fullstackPhases } from './fullstack-roadmap'
-import { combinedPhases } from './combined-roadmap'
 import type { Roadmap } from './types'
 
 function countTopics(phases: Roadmap['phases']): number {
@@ -78,31 +77,7 @@ export const fullstackRoadmap: Roadmap = {
   }
 }
 
-export const combinedRoadmap: Roadmap = {
-  id: 'architect',
-  slug: 'architect',
-  title: 'The AI-Age DevOps Architect',
-  description: 'System architecture, AI-augmented engineering, and deep DevOps/Security skills',
-  fullDescription: 'A combined roadmap for the AI age — deep architectural thinking, DevOps mastery, and the meta-skills to orchestrate AI agents effectively.',
-  icon: 'Architect',
-  certificateTitle: 'The AI-Age DevOps Architect Certificate',
-  contentPath: 'architect',
-  routePrefix: 'architect',
-  priorityLabels: {
-    essential: 'Must Know',
-    important: 'Should Know',
-    recommended: 'Good to Know'
-  },
-  phases: combinedPhases,
-  stats: {
-    phaseCount: combinedPhases.length,
-    topicCount: countTopics(combinedPhases),
-    subtopicCount: countSubtopics(combinedPhases),
-    totalWeeks: sumWeeks(combinedPhases)
-  }
-}
-
-export const allRoadmaps: Roadmap[] = [combinedRoadmap, fullstackRoadmap, devopsRoadmap]
+export const allRoadmaps: Roadmap[] = [fullstackRoadmap, devopsRoadmap]
 
 export function getRoadmapBySlug(slug: string): Roadmap | undefined {
   return allRoadmaps.find(roadmap => roadmap.slug === slug)

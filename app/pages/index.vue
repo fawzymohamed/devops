@@ -201,14 +201,14 @@ function getRoadmapProgress(roadmapId: string): number {
               Choose Your <span class="gradient-text-emerald">Learning Path</span>
             </h2>
             <p class="text-gray-400">
-              Start with one roadmap or explore all three at your own pace.
+              Start with one roadmap or explore both at your own pace.
             </p>
           </div>
 
           <!--
             Roadmap Cards Grid
           -->
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
             <RoadmapHeroCard
               v-for="roadmap in allRoadmaps"
               :key="roadmap.id"
@@ -245,24 +245,10 @@ function getRoadmapProgress(roadmapId: string): number {
               Join thousands of developers mastering their skills with structured roadmaps and hands-on learning.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-              <NuxtLink to="/architect">
-                <UButton
-                  size="xl"
-                  color="primary"
-                  class="cursor-pointer w-full sm:w-auto"
-                >
-                  <UIcon
-                    name="i-lucide-brain"
-                    class="w-5 h-5 mr-2"
-                  />
-                  Start Architect Path
-                </UButton>
-              </NuxtLink>
               <NuxtLink to="/fullstack">
                 <UButton
                   size="xl"
-                  variant="outline"
-                  color="neutral"
+                  color="primary"
                   class="cursor-pointer w-full sm:w-auto"
                 >
                   <UIcon

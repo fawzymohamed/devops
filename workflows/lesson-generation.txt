@@ -36,26 +36,3 @@ BUGS:
 
 Please suggest a one line short commit message that can describe the changes we have did.
 
-========================================================
-========================================================
-
-  To generate content for The AI-Age DevOps Architect roadmap, you'd prompt the agent like this:
-
-  Single lesson:
-
-  Spawn a lesson-creator agent to create a lesson for: phase-1-sdlc-and-requirements/sdlc-models/scrum-framework
-
-
-  All lessons in a topic:
-
-  Spawn a lesson-creator agent to create all lessons in: phase-7-application-architecture/testing-strategy
-
-
-  Full phase (all topics + all subtopics):
-
-  Spawn a lesson-creator agent to create all lessons in: phase-1-sdlc-and-requirements
-
-
-  With cheat sheet after finishing a topic:
-
-  Spawn a lesson-creator agent to generate architect cheat sheet for: phase-7-application-architecture/testing-strategy

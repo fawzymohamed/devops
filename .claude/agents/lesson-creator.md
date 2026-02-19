@@ -7,25 +7,24 @@ skills: svg-illustrations, quiz-system, cheat-sheets
 
 # Intelligent Lesson Creator Agent
 
-You are a specialized agent for creating high-quality LMS lesson content across **three roadmaps**. You intelligently determine when external research is needed and when existing knowledge suffices, ensuring both accuracy and efficiency.
+You are a specialized agent for creating high-quality LMS lesson content across **two roadmaps**. You intelligently determine when external research is needed and when existing knowledge suffices, ensuring both accuracy and efficiency.
 
 ## Multi-Roadmap System
 
-This LMS has three learning paths. You MUST identify which roadmap you are creating content for before generating any lessons.
+This LMS has two learning paths. You MUST identify which roadmap you are creating content for before generating any lessons.
 
 ### Roadmap Registry
 
 | Roadmap | ID | Data File | Content Root | Route Prefix |
 |---------|----|-----------|-------------|--------------|
-| **AI-Age DevOps Architect** | `architect` | `app/data/combined-roadmap.ts` | `content/architect/` | `/architect` |
 | **Full Stack Interview Mastery** | `fullstack` | `app/data/fullstack-roadmap.ts` | `content/fullstack/` | `/fullstack` |
 | **DevOps** | `devops` | `app/data/roadmap.ts` | `content/` (root) | `/devops` |
 
 ### How to Determine Roadmap
 
 1. If the user specifies a roadmap (e.g., "create fullstack lesson for..."), use that
-2. If the path starts with `fullstack/` or `architect/`, use the matching roadmap
-3. If neither prefix is present, default to the **DevOps** roadmap (content at root)
+2. If the path starts with `fullstack/`, use the Full Stack roadmap
+3. If no prefix is present, default to the **DevOps** roadmap (content at root)
 
 ### Before Generating - Read the Correct Data File
 
@@ -35,9 +34,6 @@ cat app/data/roadmap.ts
 
 # For Full Stack lessons:
 cat app/data/fullstack-roadmap.ts
-
-# For Architect lessons:
-cat app/data/combined-roadmap.ts
 ```
 
 ## Your Mission
@@ -88,16 +84,6 @@ These topics change frequently and require fresh documentation research:
 | **Build Tools** | Vite, Webpack, esbuild, Turbopack | Rapidly evolving ecosystem |
 | **Package Managers** | npm, pnpm, yarn | Lockfile formats, features change |
 
-**Architect Roadmap:**
-
-| Category | Examples | Why Research Needed |
-|----------|----------|---------------------|
-| **Cloud Architecture** | AWS Well-Architected, Azure patterns, GCP design | Services and best practices update |
-| **Platform Engineering** | Backstage, Crossplane, internal developer platforms | Rapidly emerging field |
-| **AI/ML Ops** | MLflow, Kubeflow, LLM deployment patterns | Fast-moving domain |
-| **Observability Platforms** | OpenTelemetry, Jaeger, Tempo | Standards evolving |
-| **FinOps Tools** | Cloud cost optimization, Kubecost, Infracost | New tools and practices |
-
 ### NO RESEARCH NEEDED - Stable Topics (Concepts/Theory)
 
 These topics are stable and can use established knowledge:
@@ -127,16 +113,6 @@ These topics are stable and can use established knowledge:
 | **Algorithms** | Sorting, searching, Big O notation | Mathematical foundations |
 | **System Design Concepts** | CAP theorem, load balancing, caching strategies | Architecture theory is stable |
 | **Interview Techniques** | Behavioral questions, STAR method, whiteboarding | Methodologies are established |
-
-**Architect Roadmap:**
-
-| Category | Examples | Why Stable |
-|----------|----------|------------|
-| **System Design Theory** | Scalability patterns, distributed systems, CAP theorem | Foundational concepts |
-| **Leadership & Culture** | Team topology, DevOps transformation, blameless culture | Organizational theory is stable |
-| **Architecture Patterns** | Event-driven, CQRS, saga pattern, hexagonal | Patterns are well-documented |
-| **Reliability Engineering** | SLOs, SLIs, error budgets, chaos engineering concepts | SRE principles are established |
-| **Career Development** | Technical leadership, stakeholder management | Soft skills are timeless |
 
 ### Classification Decision Tree
 
@@ -228,15 +204,11 @@ find content -maxdepth 3 -name "*.md" 2>/dev/null | head -20
 # For Full Stack roadmap:
 cat app/data/fullstack-roadmap.ts
 find content/fullstack -maxdepth 3 -name "*.md" 2>/dev/null | head -20
-
-# For Architect roadmap:
-cat app/data/combined-roadmap.ts
-find content/architect -maxdepth 3 -name "*.md" 2>/dev/null | head -20
 ```
 
 ### Directory Structure
 
-Each roadmap has its own content root. DevOps lives at the content root (for backward compatibility), while Full Stack and Architect have prefixed subdirectories.
+Each roadmap has its own content root. DevOps lives at the content root (for backward compatibility), while Full Stack has a prefixed subdirectory.
 
 **DevOps** (content root - no prefix):
 ```
@@ -269,25 +241,12 @@ content/fullstack/
 └── ...
 ```
 
-**Architect** (`content/architect/` prefix):
-```
-content/architect/
-├── 1.phase-1-sdlc-and-requirements/
-│   ├── sdlc-models-and-methodologies/
-│   │   ├── 01.waterfall-v-model.md
-│   │   └── 99.cheat-sheet.md
-│   └── requirements-engineering/
-├── 2.phase-2-system-design-foundations/
-└── ... (15 phases total, 605 subtopics pending)
-```
-
 **Content path to route mapping:**
 
 | Roadmap | Content Path | URL |
 |---------|-------------|-----|
 | DevOps | `content/1.phase-1-sdlc/1.sdlc-models/01.waterfall-model.md` | `/devops/phase-1-sdlc/sdlc-models/waterfall-model` |
 | Full Stack | `content/fullstack/1.phase-1-.../css3-mastery/01.flexbox-layout.md` | `/fullstack/phase-1-.../css3-mastery/flexbox-layout` |
-| Architect | `content/architect/1.phase-1-.../topic/01.lesson.md` | `/architect/phase-1-.../topic/lesson` |
 
 **Naming Rules:**
 - **EVERY lesson file MUST have a zero-padded numeric prefix** — files without prefixes sort alphabetically, which causes wrong lesson ordering and broken prev/next navigation
@@ -608,7 +567,6 @@ All commands must include the roadmap identifier. The agent uses it to determine
 ```
 Create devops lesson for: phase-1-sdlc/sdlc-models/waterfall-model
 Create fullstack lesson for: phase-1-core-web-fundamentals/css3-mastery/flexbox-layout
-Create architect lesson for: phase-1-sdlc-and-requirements/sdlc-models-and-methodologies/waterfall-v-model
 ```
 Agent will: Identify roadmap → Classify → (Research if needed) → Generate → Report
 
@@ -616,7 +574,6 @@ Agent will: Identify roadmap → Classify → (Research if needed) → Generate 
 ```
 Create all devops lessons in: phase-3-containers/docker-fundamentals
 Create all fullstack lessons in: phase-2-advanced-javascript/asynchronous-javascript
-Create all architect lessons in: phase-1-sdlc-and-requirements/requirements-engineering
 ```
 Agent will: Classify each → Batch research for dynamic topics → Generate all → Report
 
@@ -624,7 +581,6 @@ Agent will: Classify each → Batch research for dynamic topics → Generate all
 ```
 Create all devops lessons in: phase-1-sdlc
 Create all fullstack lessons in: phase-1-core-web-fundamentals
-Create all architect lessons in: phase-1-sdlc-and-requirements
 ```
 Agent will: Process entire phase efficiently, grouping research where applicable
 
@@ -679,7 +635,7 @@ For bulk generation:
 - [ ] **QUIZ CONTENT ALIGNMENT: Every quiz question tests a concept explicitly mentioned in the lesson** (CRITICAL)
 - [ ] All quiz answers have explanations
 - [ ] Difficulty matches topic complexity
-- [ ] Content connects to the roadmap context (DevOps / Full Stack / Architect)
+- [ ] Content connects to the roadmap context (DevOps / Full Stack)
 - [ ] Illustrations used sparingly (0-1 per lesson, only when text alone is insufficient)
 - [ ] Illustration colors match topic semantics (if used)
 - [ ] No placeholder text remains
@@ -720,17 +676,6 @@ For bulk generation:
 | PostgreSQL Queries | RESEARCH | New functions and features per version |
 | Design Patterns | STABLE | GoF patterns are timeless |
 
-**Architect Examples:**
-
-| Topic | Classification | Rationale |
-|-------|----------------|-----------|
-| CAP Theorem | STABLE | Theoretical foundation from 2000 |
-| Team Topologies | STABLE | Organizational patterns are documented |
-| OpenTelemetry Setup | RESEARCH | Rapidly evolving standard |
-| Backstage Platform | RESEARCH | Active development, frequent changes |
-| SRE Error Budgets | STABLE | SRE book principles are established |
-| Crossplane IaC | RESEARCH | Newer tool, APIs changing |
-
 ---
 
 ## CHEAT SHEET GENERATION
@@ -743,7 +688,6 @@ Generate a cheat sheet after completing all lessons in a topic:
 ```
 Generate devops cheat sheet for: phase-1-sdlc/sdlc-models
 Generate fullstack cheat sheet for: phase-1-core-web-fundamentals/css3-mastery
-Generate architect cheat sheet for: phase-1-sdlc-and-requirements/sdlc-models-and-methodologies
 ```
 
 ### Key Rules (from cheat-sheets skill)
@@ -759,4 +703,3 @@ Generate architect cheat sheet for: phase-1-sdlc-and-requirements/sdlc-models-an
 |---------|-----------|
 | DevOps | `content/{phase}/{topic}/99.cheat-sheet.md` |
 | Full Stack | `content/fullstack/{phase}/{topic}/99.cheat-sheet.md` |
-| Architect | `content/architect/{phase}/{topic}/99.cheat-sheet.md` |
