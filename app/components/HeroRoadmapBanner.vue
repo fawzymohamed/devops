@@ -48,6 +48,7 @@ const props = withDefaults(defineProps<Props>(), {
  */
 const roadmapIcon = computed(() => {
   if (props.roadmap.slug === 'devops') return '🔧'
+  if (props.roadmap.slug === 'aws') return '☁️'
   return '💻'
 })
 
@@ -58,6 +59,9 @@ const gradientClasses = computed(() => {
   if (props.roadmap.slug === 'devops') {
     return 'from-emerald-900/50 via-emerald-800/30 to-teal-900/50'
   }
+  if (props.roadmap.slug === 'aws') {
+    return 'from-amber-900/50 via-amber-800/30 to-orange-900/50'
+  }
   return 'from-cyan-900/50 via-cyan-800/30 to-blue-900/50'
 })
 
@@ -66,6 +70,7 @@ const gradientClasses = computed(() => {
  */
 const accentColor = computed(() => {
   if (props.roadmap.slug === 'devops') return 'emerald'
+  if (props.roadmap.slug === 'aws') return 'amber'
   return 'cyan'
 })
 
@@ -102,11 +107,11 @@ const hasProgress = computed(() => props.completedLessons > 0)
     -->
     <div
       class="absolute top-10 right-10 w-32 h-32 rounded-full blur-3xl animate-float"
-      :class="accentColor === 'emerald' ? 'bg-emerald-500/20' : 'bg-cyan-500/20'"
+      :class="accentColor === 'emerald' ? 'bg-emerald-500/20' : accentColor === 'amber' ? 'bg-amber-500/20' : 'bg-cyan-500/20'"
     />
     <div
       class="absolute bottom-10 left-10 w-24 h-24 rounded-full blur-2xl animate-float-delayed"
-      :class="accentColor === 'emerald' ? 'bg-teal-500/15' : 'bg-blue-500/15'"
+      :class="accentColor === 'emerald' ? 'bg-teal-500/15' : accentColor === 'amber' ? 'bg-orange-500/15' : 'bg-blue-500/15'"
     />
 
     <!--
@@ -122,7 +127,7 @@ const hasProgress = computed(() => props.completedLessons > 0)
         <div
           class="w-20 h-20 md:w-28 md:h-28 rounded-2xl flex items-center justify-center text-4xl md:text-6xl ring-1 transition-transform duration-300 hover:scale-110"
           :class="[
-            accentColor === 'emerald' ? 'bg-emerald-500/20 ring-emerald-500/30' : 'bg-cyan-500/20 ring-cyan-500/30'
+            accentColor === 'emerald' ? 'bg-emerald-500/20 ring-emerald-500/30' : accentColor === 'amber' ? 'bg-amber-500/20 ring-amber-500/30' : 'bg-cyan-500/20 ring-cyan-500/30'
           ]"
         >
           {{ roadmapIcon }}
@@ -170,7 +175,7 @@ const hasProgress = computed(() => props.completedLessons > 0)
         >
           <div
             class="text-xl md:text-2xl font-bold"
-            :class="accentColor === 'emerald' ? 'text-emerald-400' : 'text-cyan-400'"
+            :class="accentColor === 'emerald' ? 'text-emerald-400' : accentColor === 'amber' ? 'text-amber-400' : 'text-cyan-400'"
           >
             <AnimatedCounter :value="stat.value" />
           </div>

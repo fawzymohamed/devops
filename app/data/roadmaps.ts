@@ -6,6 +6,7 @@
 
 import { devopsPhases, totalWeeks as devopsTotalWeeks } from './roadmap'
 import { fullstackPhases } from './fullstack-roadmap'
+import { awsPhases } from './aws-roadmap'
 import type { Roadmap } from './types'
 
 function countTopics(phases: Roadmap['phases']): number {
@@ -77,7 +78,31 @@ export const fullstackRoadmap: Roadmap = {
   }
 }
 
-export const allRoadmaps: Roadmap[] = [fullstackRoadmap, devopsRoadmap]
+export const awsRoadmap: Roadmap = {
+  id: 'aws',
+  slug: 'aws',
+  title: 'AWS Cloud & Security Career Path',
+  description: 'Master AWS from Cloud Practitioner to Security & Networking Specialist',
+  fullDescription: 'Progress through 5 AWS certifications covering Cloud Practitioner, CloudOps Engineer, DevOps Professional, Security Specialty, and Advanced Networking. Build skills for Cloud Admin, Cloud Engineer, DevSecOps Engineer, and Cloud Security Engineer roles.',
+  icon: 'AWS',
+  certificateTitle: 'AWS Cloud & Security Master Certificate',
+  contentPath: 'aws',
+  routePrefix: 'aws',
+  priorityLabels: {
+    essential: 'Exam Critical',
+    important: 'Exam Relevant',
+    recommended: 'Supplementary'
+  },
+  phases: awsPhases,
+  stats: {
+    phaseCount: awsPhases.length,
+    topicCount: countTopics(awsPhases),
+    subtopicCount: countSubtopics(awsPhases),
+    totalWeeks: sumWeeks(awsPhases)
+  }
+}
+
+export const allRoadmaps: Roadmap[] = [fullstackRoadmap, awsRoadmap, devopsRoadmap]
 
 export function getRoadmapBySlug(slug: string): Roadmap | undefined {
   return allRoadmaps.find(roadmap => roadmap.slug === slug)

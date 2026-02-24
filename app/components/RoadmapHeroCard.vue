@@ -52,9 +52,8 @@ const props = withDefaults(defineProps<Props>(), {
  * Returns appropriate emoji/icon for each roadmap type
  */
 const roadmapIcon = computed(() => {
-  if (props.roadmap.slug === 'devops') {
-    return '🔧'
-  }
+  if (props.roadmap.slug === 'devops') return '🔧'
+  if (props.roadmap.slug === 'aws') return '☁️'
   return '💻'
 })
 
@@ -62,9 +61,8 @@ const roadmapIcon = computed(() => {
  * Get accent color class based on roadmap
  */
 const accentColor = computed(() => {
-  if (props.roadmap.slug === 'devops') {
-    return 'emerald'
-  }
+  if (props.roadmap.slug === 'devops') return 'emerald'
+  if (props.roadmap.slug === 'aws') return 'amber'
   return 'cyan'
 })
 
@@ -101,7 +99,7 @@ const ctaText = computed(() => {
     <div
       class="relative h-full rounded-2xl p-6 md:p-8 transition-all duration-300 cursor-pointer card-glow glass-strong hover:scale-[1.02]"
       :class="[
-        accentColor === 'emerald' ? 'hover:ring-emerald-500/50' : 'hover:ring-cyan-500/50',
+        accentColor === 'emerald' ? 'hover:ring-emerald-500/50' : accentColor === 'amber' ? 'hover:ring-amber-500/50' : 'hover:ring-cyan-500/50',
         'ring-1 ring-white/10'
       ]"
     >
@@ -115,7 +113,9 @@ const ctaText = computed(() => {
         :class="[
           accentColor === 'emerald'
             ? 'bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-500'
-            : 'bg-gradient-to-r from-cyan-500 via-cyan-400 to-blue-500'
+            : accentColor === 'amber'
+              ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500'
+              : 'bg-gradient-to-r from-cyan-500 via-cyan-400 to-blue-500'
         ]"
       />
 
@@ -130,7 +130,9 @@ const ctaText = computed(() => {
           :class="[
             accentColor === 'emerald'
               ? 'bg-emerald-500/20 ring-1 ring-emerald-500/30'
-              : 'bg-cyan-500/20 ring-1 ring-cyan-500/30'
+              : accentColor === 'amber'
+                ? 'bg-amber-500/20 ring-1 ring-amber-500/30'
+                : 'bg-cyan-500/20 ring-1 ring-cyan-500/30'
           ]"
         >
           {{ roadmapIcon }}
@@ -142,7 +144,10 @@ const ctaText = computed(() => {
         ===================
       -->
       <div class="text-center mb-6">
-        <h3 class="text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
+        <h3
+          class="text-xl md:text-2xl font-bold text-white mb-2 transition-colors"
+          :class="accentColor === 'emerald' ? 'group-hover:text-emerald-400' : accentColor === 'amber' ? 'group-hover:text-amber-400' : 'group-hover:text-cyan-400'"
+        >
           {{ roadmap.title }}
         </h3>
         <p class="text-gray-400 text-sm md:text-base">
@@ -163,7 +168,7 @@ const ctaText = computed(() => {
         >
           <div
             class="text-lg md:text-xl font-bold"
-            :class="accentColor === 'emerald' ? 'text-emerald-400' : 'text-cyan-400'"
+            :class="accentColor === 'emerald' ? 'text-emerald-400' : accentColor === 'amber' ? 'text-amber-400' : 'text-cyan-400'"
           >
             {{ stat.value }}
           </div>
@@ -209,7 +214,9 @@ const ctaText = computed(() => {
           :class="[
             accentColor === 'emerald'
               ? 'bg-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500/30'
-              : 'bg-cyan-500/20 text-cyan-400 group-hover:bg-cyan-500/30'
+              : accentColor === 'amber'
+                ? 'bg-amber-500/20 text-amber-400 group-hover:bg-amber-500/30'
+                : 'bg-cyan-500/20 text-cyan-400 group-hover:bg-cyan-500/30'
           ]"
         >
           <span class="text-sm font-medium">{{ ctaText }}</span>

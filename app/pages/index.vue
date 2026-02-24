@@ -44,7 +44,7 @@ definePageMeta({
 
 useSeoMeta({
   title: 'Master Your Tech Career | Learning Roadmaps',
-  description: 'Comprehensive learning paths for DevOps and Full Stack development. Track your progress, take quizzes, and earn certificates.'
+  description: 'Comprehensive learning paths for Full Stack development, AWS Cloud & Security, and DevOps. Track your progress, take quizzes, and earn certificates.'
 })
 
 /**
@@ -201,14 +201,14 @@ function getRoadmapProgress(roadmapId: string): number {
               Choose Your <span class="gradient-text-emerald">Learning Path</span>
             </h2>
             <p class="text-gray-400">
-              Start with one roadmap or explore both at your own pace.
+              Start with one roadmap or explore all three at your own pace.
             </p>
           </div>
 
           <!--
             Roadmap Cards Grid
           -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
             <RoadmapHeroCard
               v-for="roadmap in allRoadmaps"
               :key="roadmap.id"
@@ -256,6 +256,20 @@ function getRoadmapProgress(roadmapId: string): number {
                     class="w-5 h-5 mr-2"
                   />
                   Full Stack Path
+                </UButton>
+              </NuxtLink>
+              <NuxtLink to="/aws">
+                <UButton
+                  size="xl"
+                  variant="outline"
+                  color="neutral"
+                  class="cursor-pointer w-full sm:w-auto"
+                >
+                  <UIcon
+                    name="i-lucide-cloud"
+                    class="w-5 h-5 mr-2"
+                  />
+                  AWS Path
                 </UButton>
               </NuxtLink>
               <NuxtLink to="/devops">

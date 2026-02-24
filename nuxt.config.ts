@@ -97,6 +97,7 @@ export default defineNuxtConfig({
     '/': { prerender: true },
     '/devops': { prerender: true },
     '/fullstack': { prerender: true },
+    '/aws': { prerender: true },
     '/progress': { prerender: true },
     '/certificate': { prerender: true }
   },

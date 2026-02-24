@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Multi-roadmap LMS with two learning paths.
+Multi-roadmap LMS with three learning paths.
 
 - **Framework**: Nuxt 4 with @nuxt/content
 - **UI Library**: Nuxt UI v4
@@ -12,6 +12,7 @@ Multi-roadmap LMS with two learning paths.
 - **Deployment**: Vercel
 - **Data**:
   - Full Stack Interview Mastery (13 phases, 79 topics, 450+ subtopics)
+  - AWS Cloud & Security Career Path (5 phases, 34 topics, 244+ subtopics)
   - DevOps (10 phases, 69 topics, 527 subtopics)
 
 ## Tech Stack
@@ -72,6 +73,7 @@ app/
 |-- data/
 |   |-- roadmap.ts            # DevOps roadmap data
 |   |-- fullstack-roadmap.ts  # Full Stack roadmap data
+|   |-- aws-roadmap.ts        # AWS Cloud & Security roadmap data
 |   |-- roadmaps.ts           # Roadmap registry
 |   `-- types.ts              # Shared TypeScript interfaces
 |-- layouts/              # Page layouts
@@ -80,23 +82,29 @@ app/
 |   |-- progress.vue           # Progress dashboard page
 |   |-- certificate.vue        # Certificate page (roadmap-aware)
 |   |-- [phase]/[topic]/[subtopic].vue  # DevOps lesson pages
-|   `-- fullstack/
-|       |-- index.vue           # Full Stack roadmap page
-|       `-- [phase]/[topic]/[subtopic].vue  # Full Stack lesson pages
+|   |-- fullstack/
+|   |   |-- index.vue           # Full Stack roadmap page
+|   |   `-- [phase]/[topic]/[subtopic].vue  # Full Stack lesson pages
+|   `-- aws/
+|       |-- index.vue           # AWS roadmap page
+|       `-- [phase]/[topic]/[subtopic].vue  # AWS lesson pages
 `-- app.vue               # Root layout
 
 content/                  # Markdown lesson files
 |-- 1.phase-1-sdlc/           # DevOps content at root (backward compatible)
 |-- ...
-`-- fullstack/                # Full Stack content (prefixed routes)
-    `-- 1.phase-1-web-fundamentals/
+|-- fullstack/                # Full Stack content (prefixed routes)
+|   `-- 1.phase-1-web-fundamentals/
+`-- aws/                      # AWS Cloud & Security content
+    `-- 1.phase-1-cloud-practitioner/
 ```
 
 ### Data Layer
 
 - `app/data/roadmap.ts` - DevOps phases/topics
 - `app/data/fullstack-roadmap.ts` - Full Stack phases/topics
-- `app/data/roadmaps.ts` - Roadmap registry with computed stats (order: fullstack, devops)
+- `app/data/aws-roadmap.ts` - AWS Cloud & Security phases/topics
+- `app/data/roadmaps.ts` - Roadmap registry with computed stats (order: fullstack, aws, devops)
 - `app/data/types.ts` - Shared interfaces (`Roadmap`, `Phase`, `Topic`, `Priority`, `MultiRoadmapProgress`)
 - Priority system: `essential` (red), `important` (amber), `recommended` (blue)
 

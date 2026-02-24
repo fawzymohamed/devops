@@ -39,6 +39,9 @@ export function useRoadmap() {
     if (route.path.startsWith('/fullstack')) {
       return getRoadmapBySlug('fullstack')
     }
+    if (route.path.startsWith('/aws')) {
+      return getRoadmapBySlug('aws')
+    }
     return getRoadmapBySlug('devops')
   }
 
