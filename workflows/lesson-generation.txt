@@ -6,14 +6,15 @@ phase-2-advanced-javascript/closures-and-scope/'Lexical Scope & Scope Chain'
 
 ============================
 
-Spawn a lesson-creator agent to create all lessons for Phase 2, 'phase-2-advanced-javascript/object-oriented-javascript'
-Include:  'Prototypes & Prototype Chain',
-          'Classes (ES6 syntax, constructor, methods)',
-          'Inheritance (extends, super)',
-          'Static Methods & Properties',
-          'Getters & Setters',
-          'Private Fields (#privateField)',
-          'this Binding Deep Dive (call, apply, bind, explicit vs implicit)'
+Spawn a lesson-creator agent to create all lessons for 'phase-1-cloud-practitioner/aws-core-services'
+Include:  'Amazon EC2 Instance Types & Use Cases',
+          'Amazon S3 Storage Classes & Features',
+          'Amazon VPC & Networking Basics',
+          'Amazon RDS & Database Options',
+          'AWS Lambda & Serverless Concepts',
+          'Elastic Load Balancing & Auto Scaling',
+          'Amazon CloudFront & Edge Services',
+          'Amazon Route 53 DNS Basics'
 
 ============================
 
@@ -25,7 +26,7 @@ Please test the newly created lessons on the browser. Don't test the quiz sectio
 
 ============================
 
-/generate-cheat-sheet for "content/fullstack/1.phase-1-core-web-fundamentals/javascript-fundamentals" lessons
+/generate-cheat-sheet for 'phase-1-cloud-practitioner/aws-core-services' lessons
 
 ============================
 BUGS:
